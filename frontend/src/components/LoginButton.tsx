@@ -2,13 +2,16 @@
 
 import { User } from "firebase/auth"
 import { loginWithGoogle, logout } from "../lib/auth"
-import { auth } from "../lib/firebase"
+import { getFirebaseAuth } from "../lib/firebase"
 import { useEffect, useState } from "react"
 
 export default function LoginButton() {
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
+    const auth = getFirebaseAuth()
+    if (!auth) return
+
     return auth.onAuthStateChanged(setUser)
   }, [])
 
