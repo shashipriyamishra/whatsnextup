@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Git
+.git/
+.gitignore
+
+# Node / frontend leftovers
+node_modules/
+
+# Databases
+*.db
+
+# OS junk
+.DS_Store
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# HuggingFace cache (VERY IMPORTANT)
+.cache/
