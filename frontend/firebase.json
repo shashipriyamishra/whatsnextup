@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "site": "whatsnextup-d2415",
+    "public": ".next/static",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
