@@ -30,28 +30,42 @@ def cosine_similarity(v1, v2):
 
 
 def embed_text(text: str):
-    model = get_model()
-    return model.encode(text).tolist()
+    try:
+        model = get_model()
+        return model.encode(text).tolist()
+    except Exception as e:
+        print(f"❌ Error embedding text: {e}")
+        return []
 
 
 def add_document(text: str):
-    vector = embed_text(text)
-    _documents.append(text)
-    _vectors.append(vector)
+    try:
+        vector = embed_text(text)
+        if vector:
+            _documents.append(text)
+            _vectors.append(vector)
+    except Exception as e:
+        print(f"❌ Error adding document: {e}")
 
 
 def search_similar(query: str, k: int = 3):
-    if not _vectors:
+    try:
+        if not _vectors:
+            return []
+
+        query_vector = embed_text(query)
+        if not query_vector:
+            return []
+
+        scores = [
+            (cosine_similarity(query_vector, v), idx)
+            for idx, v in enumerate(_vectors)
+        ]
+
+        scores.sort(reverse=True)
+        top_indices = [idx for _, idx in scores[:k]]
+
+        return [_documents[i] for i in top_indices]
+    except Exception as e:
+        print(f"❌ Error searching similar documents: {e}")
         return []
-
-    query_vector = embed_text(query)
-
-    scores = [
-        (cosine_similarity(query_vector, v), idx)
-        for idx, v in enumerate(_vectors)
-    ]
-
-    scores.sort(reverse=True)
-    top_indices = [idx for _, idx in scores[:k]]
-
-    return [_documents[i] for i in top_indices]
