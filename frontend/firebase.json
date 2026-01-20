@@ -2,15 +2,29 @@
   "hosting": {
     "site": "whatsnextup-d2415",
     "public": ".next/static",
+    "cleanUrls": true,
+    "trailingSlashBehavior": "ADD",
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      ".next/cache/**"
     ],
     "rewrites": [
       {
         "source": "**",
         "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=0, must-revalidate"
+          }
+        ]
       }
     ]
   }
