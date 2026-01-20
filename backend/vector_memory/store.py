@@ -1,33 +1,57 @@
-import faiss
-import numpy as np
-from sentence_transformers import SentenceTransformer
+# backend/vector_memory/store.py
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+import math
 
-VECTOR_DIM = 384
-index = faiss.IndexFlatL2(VECTOR_DIM)
-documents = []
+_documents = []
+_vectors = []
+_model = None
+
+
+def get_model():
+    """
+    Lazily load SentenceTransformer model.
+    This avoids heavy startup cost on Cloud Run.
+    """
+    global _model
+
+    if _model is None:
+        from sentence_transformers import SentenceTransformer
+        print("[ML] Loading SentenceTransformer model...")
+        _model = SentenceTransformer("all-MiniLM-L6-v2")
+
+    return _model
+
+
+def cosine_similarity(v1, v2):
+    dot = sum(a * b for a, b in zip(v1, v2))
+    norm1 = math.sqrt(sum(a * a for a in v1))
+    norm2 = math.sqrt(sum(b * b for b in v2))
+    return dot / (norm1 * norm2 + 1e-8)
 
 
 def embed_text(text: str):
-    return model.encode([text])[0]
+    model = get_model()
+    return model.encode(text).tolist()
 
 
 def add_document(text: str):
     vector = embed_text(text)
-    index.add(np.array([vector]).astype("float32"))
-    documents.append(text)
+    _documents.append(text)
+    _vectors.append(vector)
 
 
 def search_similar(query: str, k: int = 3):
+    if not _vectors:
+        return []
+
     query_vector = embed_text(query)
-    distances, indices = index.search(
-        np.array([query_vector]).astype("float32"), k
-    )
 
-    results = []
-    for idx in indices[0]:
-        if idx < len(documents):
-            results.append(documents[idx])
+    scores = [
+        (cosine_similarity(query_vector, v), idx)
+        for idx, v in enumerate(_vectors)
+    ]
 
-    return results
+    scores.sort(reverse=True)
+    top_indices = [idx for _, idx in scores[:k]]
+
+    return [_documents[i] for i in top_indices]
