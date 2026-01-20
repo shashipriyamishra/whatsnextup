@@ -52,5 +52,3 @@ export function getFirebaseAuth() {
 }
 
 export const auth = typeof window !== "undefined" ? getFirebaseAuth() : null
-
-export const auth = typeof window !== "undefined" ? getFirebaseAuth() : null
