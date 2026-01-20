@@ -5,6 +5,7 @@ export async function sendMessage(message: string) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: "Bearer WHATSNEXTUP",
     },
     body: JSON.stringify({ message }),
   })
