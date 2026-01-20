@@ -21,7 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false)
       return
     }
-    
+
     return auth.onAuthStateChanged((u: FirebaseUser | null) => {
       setUser(u)
       setLoading(false)
