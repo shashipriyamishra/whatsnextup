@@ -14,7 +14,7 @@ let initError: Error | null = null
 function initializeFirebase() {
   if (typeof window === "undefined") return null
   if (initError) return null
-  
+
   if (!app) {
     try {
       if (!firebaseConfig.apiKey) {
@@ -33,10 +33,10 @@ function initializeFirebase() {
 export function getFirebaseAuth() {
   if (typeof window === "undefined") return null
   if (initError) return null
-  
+
   const firebaseApp = initializeFirebase()
   if (!firebaseApp) return null
-  
+
   if (!authInstance) {
     try {
       authInstance = getAuth(firebaseApp)

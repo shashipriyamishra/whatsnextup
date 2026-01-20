@@ -5,7 +5,9 @@ export async function loginWithGoogle() {
   try {
     const auth = getFirebaseAuth()
     if (!auth) {
-      throw new Error("Firebase authentication not configured. Please check your environment variables.")
+      throw new Error(
+        "Firebase authentication not configured. Please check your environment variables.",
+      )
     }
 
     const provider = new GoogleAuthProvider()
