@@ -5,8 +5,9 @@ export async function loginWithGoogle() {
   try {
     const auth = getFirebaseAuth()
     if (!auth) {
+      console.error("Firebase auth not available - check environment variables")
       throw new Error(
-        "Firebase authentication not configured. Please check your environment variables.",
+        "Firebase authentication not configured. Check that NEXT_PUBLIC_FIREBASE_API_KEY is set in Vercel.",
       )
     }
 
