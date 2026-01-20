@@ -16,16 +16,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const auth = getFirebaseAuth()
-    if (!auth) {
-      setLoading(false)
-      return
-    }
+    try {
+      const auth = getFirebaseAuth()
+      if (!auth) {
+        console.warn("Firebase auth not available")
+        setLoading(false)
+        return
+      }
 
-    return auth.onAuthStateChanged((u: FirebaseUser | null) => {
-      setUser(u)
+      return auth.onAuthStateChanged((u: FirebaseUser | null) => {
+        setUser(u)
+        setLoading(false)
+      })
+    } catch (error) {
+      console.warn("Auth state change error:", error)
       setLoading(false)
-    })
+    }
   }, [])
 
   return (

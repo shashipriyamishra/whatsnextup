@@ -9,21 +9,41 @@ const firebaseConfig = {
 
 let app: any = null
 let authInstance: any = null
+let initError: Error | null = null
 
 function initializeFirebase() {
   if (typeof window === "undefined") return null
+  if (initError) return null
+  
   if (!app) {
-    app = initializeApp(firebaseConfig)
+    try {
+      if (!firebaseConfig.apiKey) {
+        throw new Error("Firebase API key not configured")
+      }
+      app = initializeApp(firebaseConfig)
+    } catch (error) {
+      initError = error as Error
+      console.warn("Firebase initialization failed:", initError.message)
+      return null
+    }
   }
   return app
 }
 
 export function getFirebaseAuth() {
   if (typeof window === "undefined") return null
+  if (initError) return null
+  
   const firebaseApp = initializeFirebase()
   if (!firebaseApp) return null
+  
   if (!authInstance) {
-    authInstance = getAuth(firebaseApp)
+    try {
+      authInstance = getAuth(firebaseApp)
+    } catch (error) {
+      console.warn("Failed to get Firebase auth:", error)
+      return null
+    }
   }
   return authInstance
 }
