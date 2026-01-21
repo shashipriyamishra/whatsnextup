@@ -1,5 +1,6 @@
 "use client"
 
+// ✅ Frontend deployment: CI/CD pipeline active
 import { useAuth } from "../lib/AuthContext"
 import LoginScreen from "../components/LoginScreen"
 import ChatScreen from "../components/ChatScreen"

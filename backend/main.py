@@ -3,6 +3,7 @@ load_dotenv()
 
 from fastapi import FastAPI, HTTPException, Header, Request, Depends
 print("🔥 MAIN.PY LOADED 🔥")
+print("✅ Backend deployment: CI/CD pipeline active")
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
