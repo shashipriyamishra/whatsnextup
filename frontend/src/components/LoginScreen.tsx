@@ -44,12 +44,10 @@ export default function LoginScreen() {
         <div className="space-y-10 mb-16">
           <div className="group px-8 py-8 rounded-3xl bg-gradient-to-br from-white/10 to-purple-500/10 border border-purple-500/30 hover:border-pink-500/50 shadow-2xl backdrop-blur-xl transition-all duration-500 hover:shadow-pink-500/20 hover:shadow-2xl">
             <p className="text-lg leading-relaxed font-semibold text-white">
-              <span className="text-pink-400 font-bold">
-                Planning is hard.
-              </span>
-              {" "}But with{" "}
-              <span className="text-pink-300 font-bold">intelligent</span>{" "}
-              AI guidance, you can make better decisions{" "}
+              <span className="text-pink-400 font-bold">Planning is hard.</span>{" "}
+              But with{" "}
+              <span className="text-pink-300 font-bold">intelligent</span> AI
+              guidance, you can make better decisions{" "}
               <span className="text-purple-300 font-bold">instantly</span>.
             </p>
           </div>

@@ -49,10 +49,11 @@ export default function ChatScreen() {
       if (containerRef.current) {
         const scrollElement = containerRef.current
         // Scroll to the very bottom
-        scrollElement.scrollTop = scrollElement.scrollHeight - scrollElement.clientHeight
+        scrollElement.scrollTop =
+          scrollElement.scrollHeight - scrollElement.clientHeight
       }
     }
-    
+
     // Use requestAnimationFrame for better performance and ensure layout is done
     requestAnimationFrame(() => {
       requestAnimationFrame(scrollToBottom)
@@ -79,9 +80,7 @@ export default function ChatScreen() {
               <span className="text-xl">✨</span>
             </div>
             <div>
-              <h1 className="font-bold text-lg text-white">
-                What's Next Up
-              </h1>
+              <h1 className="font-bold text-lg text-white">What's Next Up</h1>
               <p className="text-xs text-white/50">AI Planning Companion</p>
             </div>
           </div>
@@ -109,104 +108,104 @@ export default function ChatScreen() {
       </header>
 
       {/* Messages Container - Scrollable in middle only */}
-      <div 
+      <div
         ref={containerRef}
-        className="flex-1 overflow-y-auto px-4 md:px-6 py-6 relative z-10 mt-20 mb-28 scroll-smooth" 
+        className="flex-1 overflow-y-auto px-4 md:px-6 py-6 relative z-10 mt-20 mb-28 scroll-smooth"
         data-messages
       >
         <div className="max-w-3xl mx-auto w-full space-y-4">
-            {messages.length === 0 && (
-              <div className="flex flex-col items-center justify-center h-full py-16 text-center">
-                <div className="mb-8">
-                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-8 shadow-xl bg-gradient-to-br from-purple-600/40 to-pink-600/30 border border-white/20 backdrop-blur-sm">
-                    <span className="text-4xl">🚀</span>
-                  </div>
-                  <h2 className="text-4xl font-black text-white mb-3">
-                    What's Your Next Move?
-                  </h2>
-                  <p className="text-base text-white/70 max-w-lg leading-relaxed font-medium">
-                    Tell me about your goals, challenges, or decisions. I'll
-                    help you think through them with clarity and confidence.
-                  </p>
+          {messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-full py-16 text-center">
+              <div className="mb-8">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-8 shadow-xl bg-gradient-to-br from-purple-600/40 to-pink-600/30 border border-white/20 backdrop-blur-sm">
+                  <span className="text-4xl">🚀</span>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-10 w-full max-w-2xl">
-                  {[
-                    {
-                      title: "Plan Tomorrow",
-                      description: "Help me plan my day",
-                      icon: "📅",
-                    },
-                    {
-                      title: "Prioritize",
-                      description: "Which tasks matter most?",
-                      icon: "🎯",
-                    },
-                    {
-                      title: "New Ideas",
-                      description: "I want to try something new",
-                      icon: "💭",
-                    },
-                  ].map((item, i) => (
-                    <button
-                      key={i}
-                      onClick={() => {
-                        setInput(item.description)
-                        document.querySelector("textarea")?.focus()
-                      }}
-                      className="group p-5 rounded-2xl bg-white/10 border border-white/20 hover:border-white/40 hover:bg-white/15 hover:shadow-lg hover:shadow-pink-500/20 transition-all duration-300 text-left cursor-pointer backdrop-blur-sm"
-                    >
-                      <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300 origin-center">
-                        {item.icon}
-                      </div>
-                      <div className="font-bold text-white text-sm">
-                        {item.title}
-                      </div>
-                      <p className="text-xs text-white/60 font-medium">
-                        {item.description}
-                      </p>
-                    </button>
-                  ))}
-                </div>
+                <h2 className="text-4xl font-black text-white mb-3">
+                  What's Your Next Move?
+                </h2>
+                <p className="text-base text-white/70 max-w-lg leading-relaxed font-medium">
+                  Tell me about your goals, challenges, or decisions. I'll help
+                  you think through them with clarity and confidence.
+                </p>
               </div>
-            )}
 
-            {messages.map((msg, idx) => (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-10 w-full max-w-2xl">
+                {[
+                  {
+                    title: "Plan Tomorrow",
+                    description: "Help me plan my day",
+                    icon: "📅",
+                  },
+                  {
+                    title: "Prioritize",
+                    description: "Which tasks matter most?",
+                    icon: "🎯",
+                  },
+                  {
+                    title: "New Ideas",
+                    description: "I want to try something new",
+                    icon: "💭",
+                  },
+                ].map((item, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setInput(item.description)
+                      document.querySelector("textarea")?.focus()
+                    }}
+                    className="group p-5 rounded-2xl bg-white/10 border border-white/20 hover:border-white/40 hover:bg-white/15 hover:shadow-lg hover:shadow-pink-500/20 transition-all duration-300 text-left cursor-pointer backdrop-blur-sm"
+                  >
+                    <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300 origin-center">
+                      {item.icon}
+                    </div>
+                    <div className="font-bold text-white text-sm">
+                      {item.title}
+                    </div>
+                    <p className="text-xs text-white/60 font-medium">
+                      {item.description}
+                    </p>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-message-in`}
+            >
               <div
-                key={idx}
-                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-message-in`}
+                className={`max-w-xs md:max-w-md px-5 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap shadow-lg transition-all ${
+                  msg.role === "user"
+                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-br-none shadow-pink-500/40"
+                    : "bg-white/15 text-white border border-white/20 rounded-bl-none backdrop-blur-sm"
+                }`}
               >
-                <div
-                  className={`max-w-xs md:max-w-md px-5 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap shadow-lg transition-all ${
-                    msg.role === "user"
-                      ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-br-none shadow-pink-500/40"
-                      : "bg-white/15 text-white border border-white/20 rounded-bl-none backdrop-blur-sm"
-                  }`}
-                >
-                  {msg.text}
-                </div>
+                {msg.text}
               </div>
-            ))}
+            </div>
+          ))}
 
-            {loading && (
-              <div className="flex justify-start">
-                <div className="bg-white/15 text-white border border-white/20 px-4 py-3 rounded-2xl rounded-bl-none shadow-lg backdrop-blur-sm">
-                  <div className="flex gap-2 items-center">
-                    <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
-                    <div
-                      className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
-                    ></div>
-                    <div
-                      className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.4s" }}
-                    ></div>
-                  </div>
+          {loading && (
+            <div className="flex justify-start">
+              <div className="bg-white/15 text-white border border-white/20 px-4 py-3 rounded-2xl rounded-bl-none shadow-lg backdrop-blur-sm">
+                <div className="flex gap-2 items-center">
+                  <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
+                  <div
+                    className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.2s" }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.4s" }}
+                  ></div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
+      </div>
 
       {/* Input Area - Fixed at bottom */}
       <footer className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-white/5 backdrop-blur-2xl px-4 md:px-6 py-4">
