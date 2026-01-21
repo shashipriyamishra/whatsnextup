@@ -15,10 +15,10 @@ env/
 .git/
 .gitignore
 
-# Node / frontend junk
-node_modules/
+# Firebase/GCP secrets (IMPORTANT - NEVER COMMIT)
+service-account-key.json
+*.json
 
-# OS / IDE
 .DS_Store
 .vscode/
 .idea/

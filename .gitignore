@@ -4,6 +4,7 @@
 # Node
 node_modules/
 .next/
+out/
 
 # Python
 venv/
@@ -16,3 +17,5 @@ __pycache__/
 
 # Databases
 *.db
+# Firebase/GCP secrets (IMPORTANT - NEVER COMMIT)
+service-account-key.json

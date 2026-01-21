@@ -7,6 +7,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from agents.orchestrator import handle_user_message
+from agents.planning_agent import PlanningAgent
+from agents.reflection_agent import ReflectionAgent
+from agents.memory_agent import MemoryAgent
+from firestore.client import init_firebase
 from memory.store import init_db
 from tasks.store import init_tasks_db
 import threading
@@ -14,11 +18,21 @@ from tasks.worker import run_worker
 from fastapi.responses import JSONResponse
 import time
 from auth.deps import get_current_user
+from datetime import datetime
 
 REQUESTS = {}
 MAX_REQUESTS = 10   # per IP
 WINDOW = 60         # seconds
 app = FastAPI(title="whatsnextup Backend")
+
+# Initialize Firestore
+try:
+    init_firebase()
+    print("✅ Firebase Admin SDK initialized successfully")
+except Exception as e:
+    print(f"❌ Firebase initialization warning: {e}")
+    # Continue even if Firebase fails - some features may still work
+
 
 # Initialize database
 init_db()
@@ -43,9 +57,16 @@ app.add_middleware(
 )
 
 
-# Request schema
+# Request schemas
 class ChatRequest(BaseModel):
     message: str
+
+class PlanRequest(BaseModel):
+    goal: str
+
+class ReflectionRequest(BaseModel):
+    content: str
+    mood: str = "thoughtful"
 
 @app.get("/health")
 def health_check():
@@ -77,8 +98,10 @@ def chat(
             raise HTTPException(status_code=401, detail=str(e))
     else:
         print(f"⚠️  No auth header provided - proceeding as anonymous")
+        uid = "anonymous"
 
-    response = handle_user_message(request.message)
+    # Use user_id for context in orchestrator
+    response = handle_user_message(request.message, uid)
 
     return {
         "user": name,
@@ -103,3 +126,124 @@ async def rate_limit(request: Request, call_next):
     return await call_next(request)
 
 #threading.Thread(target=run_worker, daemon=True).start()
+
+# ============ MEMORY ENDPOINTS ============
+
+@app.get("/api/memories")
+def get_memories(authorization: str = Header(None)):
+    """Retrieve user's saved memories"""
+    try:
+        if not authorization:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        
+        user = get_current_user(authorization)
+        uid = user.get("uid")
+        
+        memory_agent = MemoryAgent(uid)
+        summary = memory_agent.get_memory_summary()
+        
+        return {
+            "memories": summary.get("memories", []),
+            "total": summary.get("total", 0)
+        }
+    except Exception as e:
+        print(f"❌ Error getting memories: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============ PLANS ENDPOINTS ============
+
+@app.get("/api/plans")
+def get_plans(authorization: str = Header(None)):
+    """Retrieve user's plans"""
+    try:
+        if not authorization:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        
+        user = get_current_user(authorization)
+        uid = user.get("uid")
+        
+        # For now, return empty plans (would fetch from Firestore)
+        return {
+            "plans": [],
+            "total": 0
+        }
+    except Exception as e:
+        print(f"❌ Error getting plans: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/plans")
+def create_plan(
+    request: PlanRequest,
+    authorization: str = Header(None)
+):
+    """Create a new plan from a goal"""
+    try:
+        if not authorization:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        
+        user = get_current_user(authorization)
+        uid = user.get("uid")
+        
+        planning_agent = PlanningAgent(uid)
+        plan = planning_agent.create_plan_from_goal(request.goal)
+        
+        return {
+            "plan": plan,
+            "created_at": datetime.now().isoformat()
+        }
+    except Exception as e:
+        print(f"❌ Error creating plan: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============ REFLECTIONS ENDPOINTS ============
+
+@app.get("/api/reflections")
+def get_reflections(authorization: str = Header(None)):
+    """Retrieve user's reflections"""
+    try:
+        if not authorization:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        
+        user = get_current_user(authorization)
+        uid = user.get("uid")
+        
+        # For now, return empty reflections (would fetch from Firestore)
+        return {
+            "reflections": [],
+            "total": 0
+        }
+    except Exception as e:
+        print(f"❌ Error getting reflections: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/reflections")
+def create_reflection(
+    request: ReflectionRequest,
+    authorization: str = Header(None)
+):
+    """Create a new reflection"""
+    try:
+        if not authorization:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+        
+        user = get_current_user(authorization)
+        uid = user.get("uid")
+        
+        reflection_agent = ReflectionAgent(uid)
+        analysis = reflection_agent.analyze_reflection(request.content)
+        
+        return {
+            "reflection": {
+                "id": uid + "_" + str(datetime.now().timestamp()),
+                "content": request.content,
+                "analysis": analysis,
+                "created_at": datetime.now().isoformat()
+            }
+        }
+    except Exception as e:
+        print(f"❌ Error creating reflection: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

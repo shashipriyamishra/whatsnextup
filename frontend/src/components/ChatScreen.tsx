@@ -4,6 +4,7 @@ import { useAuth } from "../lib/AuthContext"
 import { sendMessage } from "../lib/chat"
 import { logout } from "../lib/auth"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 
 interface Message {
@@ -85,6 +86,24 @@ export default function ChatScreen() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <Link
+              href="/memory"
+              className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold"
+            >
+              💭 Memory
+            </Link>
+            <Link
+              href="/plans"
+              className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold"
+            >
+              📋 Plans
+            </Link>
+            <Link
+              href="/reflections"
+              className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold"
+            >
+              🪞 Reflect
+            </Link>
             <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/10 rounded-xl border border-white/20 backdrop-blur-sm">
               {user?.photoURL && (
                 <img
