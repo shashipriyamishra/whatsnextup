@@ -10,15 +10,15 @@
 │       whatsnextup/backend/.env                              │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│ GEMINI_API_KEY=AIzaSyC31ANIJyGbetkPzbzXTUbXsRwtD2w8BAA    │
+│ GEMINI_API_KEY=[See your backend/.env]                    │
 │ ↑↑↑                                                         │
 │ → Secret #1: GEMINI_API_KEY                                 │
-│ → Value: AIzaSyC31ANIJyGbetkPzbzXTUbXsRwtD2w8BAA            │
+│ → Value: [See your backend/.env - keep private!]           │
 │                                                             │
-│ FIREBASE_PROJECT_ID=whatsnextup-d2415                       │
+│ FIREBASE_PROJECT_ID=[See your backend/.env]               │
 │ ↑↑↑                                                         │
 │ → Secret #2: GCP_PROJECT_ID                                 │
-│ → Value: whatsnextup-d2415                                  │
+│ → Value: [See your backend/.env]                           │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 
@@ -160,7 +160,7 @@
 │                                                                 │
 │ 3. Enter Secret #1:                                            │
 │    Name: GEMINI_API_KEY                                        │
-│    Value: AIzaSyC31ANIJyGbetkPzbzXTUbXsRwtD2w8BAA             │
+│    Value: [Copy from your backend/.env]                       │
 │    Click "Add secret"                                          │
 │                                                                 │
 │ 4. Repeat for all 8 secrets:                                   │

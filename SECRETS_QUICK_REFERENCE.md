@@ -3,13 +3,15 @@
 ## 🔴 RED: From Local Files (Copy & Paste)
 
 ### Secret 1: GEMINI_API_KEY
+
 ```
 📁 Location: /Users/shashipriyamishra/Documents/GitHub/whatsnextup/backend/.env
 🔑 Key name: GEMINI_API_KEY
-📋 Value: AIzaSyC31ANIJyGbetkPzbzXTUbXsRwtD2w8BAA
+📋 Value: [See backend/.env - keep private!]
 ```
 
 ### Secret 2: GCP_PROJECT_ID
+
 ```
 📁 Location: /Users/shashipriyamishra/Documents/GitHub/whatsnextup/backend/.env
 🔑 Key name: FIREBASE_PROJECT_ID
@@ -17,6 +19,7 @@
 ```
 
 ### Secret 3: NEXT_PUBLIC_API_BASE
+
 ```
 📁 Location: /Users/shashipriyamishra/Documents/GitHub/whatsnextup/frontend/.env.local
 🔑 Key name: NEXT_PUBLIC_API_BASE
@@ -24,13 +27,15 @@
 ```
 
 ### Secret 4: NEXT_PUBLIC_FIREBASE_API_KEY
+
 ```
 📁 Location: /Users/shashipriyamishra/Documents/GitHub/whatsnextup/frontend/.env.local
 🔑 Key name: NEXT_PUBLIC_FIREBASE_API_KEY
-📋 Value: AIzaSyCUr9df-M0IMnm_7GLBa3igZ4dpPH02SRw
+📋 Value: [See frontend/.env.local - keep private!]
 ```
 
 ### Secret 5: GCP_SA_KEY (Needs Base64 Encoding)
+
 ```
 📁 Location: /Users/shashipriyamishra/Documents/GitHub/whatsnextup/backend/service-account-key.json
 
@@ -45,6 +50,7 @@ Copy the entire output (long string starting with 'ew0K...')
 ## 🟢 GREEN: From Vercel Website
 
 ### Secret 6: VERCEL_TOKEN
+
 ```
 🌐 Website: https://vercel.com/account/tokens
 📝 Steps:
@@ -55,6 +61,7 @@ Copy the entire output (long string starting with 'ew0K...')
 ```
 
 ### Secret 7: VERCEL_ORG_ID
+
 ```
 🌐 Website: https://vercel.com/account/organization/~/settings/account
 📝 Steps:
@@ -66,6 +73,7 @@ Copy the entire output (long string starting with 'ew0K...')
 ```
 
 ### Secret 8: VERCEL_PROJECT_ID
+
 ```
 🌐 Website: https://vercel.com/dashboard
 📝 Steps:
@@ -81,6 +89,7 @@ Copy the entire output (long string starting with 'ew0K...')
 ## 📍 Where to Add All Secrets in GitHub
 
 ### Location
+
 ```
 GitHub.com → Your Repository
    ↓
@@ -94,6 +103,7 @@ Actions tab
 ```
 
 ### Add All 8:
+
 1. GEMINI_API_KEY
 2. GCP_PROJECT_ID
 3. NEXT_PUBLIC_API_BASE
@@ -108,12 +118,14 @@ Actions tab
 ## 🎯 Repository vs Environment Secrets
 
 ### Use: Repository Secrets ✅
+
 - Simpler
 - Works for all branches
 - One-time setup
 - Perfect for your case
 
 ### Don't use yet: Environment Secrets
+
 - For staging/production separation
 - Adds complexity
 - Set up later if needed

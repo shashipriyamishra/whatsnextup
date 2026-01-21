@@ -1,6 +1,7 @@
 # 🔐 Complete GitHub Actions Secrets Setup Guide
 
 ## Overview
+
 - **Environment Secrets**: Applied to specific workflow environments (staging, production)
 - **Repository Secrets**: Applied to all workflows across all branches
 - **For your setup**: Use **Repository Secrets** (simpler, one-time setup)
@@ -14,11 +15,13 @@
 **Local Path:** `/Users/shashipriyamishra/Documents/GitHub/whatsnextup/backend/.env`
 
 **Current Value:**
+
 ```
-GEMINI_API_KEY=AIzaSyC31ANIJyGbetkPzbzXTUbXsRwtD2w8BAA
+GEMINI_API_KEY=[YOUR_API_KEY_FROM_backend/.env]
 ```
 
 **How to copy:**
+
 1. Open VSCode
 2. File → Open File → `/Users/shashipriyamishra/Documents/GitHub/whatsnextup/backend/.env`
 3. Copy the value after `GEMINI_API_KEY=`
@@ -56,11 +59,14 @@ cat /Users/shashipriyamishra/Documents/GitHub/whatsnextup/backend/service-accoun
 ```
 
 **Step-by-step:**
+
 1. Open VSCode Terminal (Ctrl+` or View → Terminal)
 2. Paste this command:
+
 ```bash
 cat /Users/shashipriyamishra/Documents/GitHub/whatsnextup/backend/service-account-key.json | base64
 ```
+
 3. Press Enter
 4. Select all output (Cmd+A)
 5. Copy (Cmd+C)
@@ -73,6 +79,7 @@ cat /Users/shashipriyamishra/Documents/GitHub/whatsnextup/backend/service-accoun
 **Local Path:** `/Users/shashipriyamishra/Documents/GitHub/whatsnextup/frontend/.env.local`
 
 **Current Value:**
+
 ```
 NEXT_PUBLIC_API_BASE=https://whatsnextup-api-214675476458.us-central1.run.app
 ```
@@ -86,8 +93,9 @@ NEXT_PUBLIC_API_BASE=https://whatsnextup-api-214675476458.us-central1.run.app
 **Local Path:** `/Users/shashipriyamishra/Documents/GitHub/whatsnextup/frontend/.env.local`
 
 **Current Value:**
+
 ```
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyCUr9df-M0IMnm_7GLBa3igZ4dpPH02SRw
+NEXT_PUBLIC_FIREBASE_API_KEY=[YOUR_API_KEY_FROM_frontend/.env.local]
 ```
 
 ---
@@ -112,9 +120,10 @@ NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyCUr9df-M0IMnm_7GLBa3igZ4dpPH02SRw
 1. Go to: https://vercel.com/account/settings/general
 2. Look at the URL in your browser
 3. It looks like: `https://vercel.com/account/organization/XXXXXXXX/settings/general`
-4. The `XXXXXXXX` is your ORG_ID (usually starts with `Org_`)
+4. The `XXXXXXXX` is your ORG*ID (usually starts with `Org*`)
 
 **Or simpler:**
+
 1. Go to https://vercel.com/dashboard
 2. Click on your organization name (top left)
 3. Go to Settings → General
@@ -132,6 +141,7 @@ NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyCUr9df-M0IMnm_7GLBa3igZ4dpPH02SRw
 4. Copy the value (UUID format like: `prj_xxxxx`)
 
 **Or from URL:**
+
 - Vercel URL: https://vercel.com/shashipriyamishra/whatsnextup-frontend
 - The `whatsnextup-frontend` part is your project (you can also find exact ID in Settings)
 
@@ -148,24 +158,25 @@ NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyCUr9df-M0IMnm_7GLBa3igZ4dpPH02SRw
 
 ### Add These 8 Secrets:
 
-| # | Secret Name | Value | From Where |
-|---|---|---|---|
-| 1 | `GEMINI_API_KEY` | `AIzaSyC31ANIJyGbetkPzbzXTUbXsRwtD2w8BAA` | `backend/.env` |
-| 2 | `GCP_PROJECT_ID` | `whatsnextup-d2415` | `backend/.env` |
-| 3 | `GCP_SA_KEY` | (base64 string) | Terminal base64 command ↑ |
-| 4 | `NEXT_PUBLIC_API_BASE` | `https://whatsnextup-api-214675476458.us-central1.run.app` | `frontend/.env.local` |
-| 5 | `NEXT_PUBLIC_FIREBASE_API_KEY` | `AIzaSyCUr9df-M0IMnm_7GLBa3igZ4dpPH02SRw` | `frontend/.env.local` |
-| 6 | `VERCEL_TOKEN` | (from https://vercel.com/account/tokens) | Website ↑ |
-| 7 | `VERCEL_ORG_ID` | (from Vercel settings) | Website ↑ |
-| 8 | `VERCEL_PROJECT_ID` | (from Vercel project settings) | Website ↑ |
+| #   | Secret Name                    | Value                                    | From Where                |
+| --- | ------------------------------ | ---------------------------------------- | ------------------------- |
+| 1   | `GEMINI_API_KEY`               | See `backend/.env`                       | `backend/.env`            |
+| 2   | `GCP_PROJECT_ID`               | See `backend/.env`                       | `backend/.env`            |
+| 3   | `GCP_SA_KEY`                   | (base64 string)                          | Terminal base64 command ↑ |
+| 4   | `NEXT_PUBLIC_API_BASE`         | Your Cloud Run deployment URL            | `frontend/.env.local`     |
+| 5   | `NEXT_PUBLIC_FIREBASE_API_KEY` | See `frontend/.env.local`                | `frontend/.env.local`     |
+| 6   | `VERCEL_TOKEN`                 | (from https://vercel.com/account/tokens) | Website ↑                 |
+| 7   | `VERCEL_ORG_ID`                | (from Vercel settings)                   | Website ↑                 |
+| 8   | `VERCEL_PROJECT_ID`            | (from Vercel project settings)           | Website ↑                 |
 
 ### Step-by-Step for Each Secret:
 
 **Example: Adding GEMINI_API_KEY**
+
 1. GitHub → Settings → Secrets and variables → Actions
 2. Click "New repository secret"
 3. **Name:** `GEMINI_API_KEY`
-4. **Value:** `AIzaSyC31ANIJyGbetkPzbzXTUbXsRwtD2w8BAA`
+4. **Value:** Check your `backend/.env` file
 5. Click "Add secret"
 6. ✅ Done! Repeat for all 8 secrets
 
@@ -174,12 +185,14 @@ NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyCUr9df-M0IMnm_7GLBa3igZ4dpPH02SRw
 ## Part 3: Repository vs Environment Secrets
 
 ### Repository Secrets (Use This) ✅
+
 - Applied to ALL workflows
 - Applied to ALL branches
 - Simpler to manage
 - Perfect for your setup
 
 ### Environment Secrets (Skip for Now)
+
 - Used for staging/production separation
 - Add later when you want different secrets per environment
 - More complex setup
@@ -204,6 +217,7 @@ After adding all secrets:
    - ✅ VERCEL_PROJECT_ID
 
 3. Now push to main:
+
 ```bash
 git add .
 git commit -m "Add GitHub Actions CI/CD"
@@ -232,16 +246,19 @@ frontend/src/app/reflections/     ← New pages
 ```
 
 **If VSCode shows more**, it might be:
+
 - `node_modules/` (10k+ files) - Should be in `.gitignore` ✅
 - `backend/venv/` - Should be in `.gitignore` ✅
 - `__pycache__/` - Should be in `.gitignore` ✅
 
 **Check your gitignore is correct:**
+
 ```bash
 cat /Users/shashipriyamishra/Documents/GitHub/whatsnextup/.gitignore
 ```
 
 If still seeing issues, run:
+
 ```bash
 git clean -fd  # Remove untracked files
 git clean -fd -X  # Remove ignored files too

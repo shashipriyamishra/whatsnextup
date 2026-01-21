@@ -11,20 +11,22 @@
 #### Answer with EXACT Paths:
 
 **From Your Computer:**
+
 ```
 Path 1: /Users/shashipriyamishra/Documents/GitHub/whatsnextup/backend/.env
-  ├─ GEMINI_API_KEY = AIzaSyC31ANIJyGbetkPzbzXTUbXsRwtD2w8BAA
-  └─ GCP_PROJECT_ID = whatsnextup-d2415
+  ├─ GEMINI_API_KEY = [See your backend/.env - keep private!]
+  └─ GCP_PROJECT_ID = [YOUR_GCP_PROJECT_ID]
 
 Path 2: /Users/shashipriyamishra/Documents/GitHub/whatsnextup/frontend/.env.local
-  ├─ NEXT_PUBLIC_API_BASE = https://whatsnextup-api-214675476458.us-central1.run.app
-  └─ NEXT_PUBLIC_FIREBASE_API_KEY = AIzaSyCUr9df-M0IMnm_7GLBa3igZ4dpPH02SRw
+  ├─ NEXT_PUBLIC_API_BASE = [YOUR_DEPLOYMENT_URL]
+  └─ NEXT_PUBLIC_FIREBASE_API_KEY = [See your frontend/.env.local - keep private!]
 
 Path 3: /Users/shashipriyamishra/Documents/GitHub/whatsnextup/backend/service-account-key.json
   └─ Run: cat [path] | base64 → Copy output
 ```
 
 **From Vercel Websites:**
+
 ```
 Website 1: https://vercel.com/account/tokens
   └─ Create new token → VERCEL_TOKEN
@@ -54,10 +56,11 @@ GitHub.com
                  └─ Add all 8 secrets here
 ```
 
-**Direct URL:** 
+**Direct URL:**
 https://github.com/shashipriyamishra/whatsnextup/settings/secrets/actions
 
 **Why Repository Secrets?**
+
 - Simpler (one setup, all workflows use them)
 - Works for all branches
 - Standard practice
@@ -70,6 +73,7 @@ https://github.com/shashipriyamishra/whatsnextup/settings/secrets/actions
 #### Answer: Actually Only ~14 Files!
 
 **Untracked (Should Commit):** ~14 files
+
 ```
 ✅ .github/                     (CI/CD workflows)
 ✅ DEPLOYMENT.md                (guide)
@@ -90,6 +94,7 @@ https://github.com/shashipriyamishra/whatsnextup/settings/secrets/actions
 ```
 
 **Ignored (Properly Hidden):** ~17,000 files - 2.2GB
+
 ```
 ✅ node_modules/        (~9k files, ~581MB)    → Hidden
 ✅ venv/                (~5k files, ~1.5GB)    → Hidden
@@ -108,24 +113,29 @@ https://github.com/shashipriyamishra/whatsnextup/settings/secrets/actions
 For Different Learning Styles:
 
 ### Quick Start (Choose ONE)
+
 - **START_HERE.md** - Navigation hub (start with this!)
 - **QUICK_START.md** - 5-minute setup
 - **COMPLETE_SUMMARY.md** - All questions answered
 
 ### Step-by-Step
+
 - **SETUP_FINAL_CHECKLIST.md** - Detailed steps with exact locations
 
 ### Reference
+
 - **SECRETS_QUICK_REFERENCE.md** - All 8 secrets in table format
 - **VISUAL_FLOWCHART.md** - Step-by-step visual flowchart
 - **ALL_QUESTIONS_ANSWERED.md** - Detailed with diagrams
 
 ### Technical
+
 - **GITHUB_SECRETS_SETUP.md** - Deep dive guide
 - **DEPLOYMENT.md** - Deployment information
 - **README_DOCUMENTATION.md** - Documentation index
 
 ### Explanations
+
 - **UNTRACKED_FILES_EXPLAINED.md** - About the files mystery
 - **START_HERE.md** - This guide!
 
@@ -145,6 +155,7 @@ For Different Learning Styles:
 ## ✨ Everything Ready
 
 ### System Status
+
 ✅ Backend running on localhost:8000
 ✅ Frontend running on localhost:3000
 ✅ Firestore configured
@@ -156,6 +167,7 @@ For Different Learning Styles:
 ✅ Documentation complete
 
 ### What's Next
+
 Just follow **QUICK_START.md** (5 minutes!)
 → Copy values
 → Add to GitHub
@@ -176,16 +188,16 @@ Just follow **QUICK_START.md** (5 minutes!)
 
 ## 📊 All 8 Secrets Quick Table
 
-| # | Name | Source | Length | Format |
-|---|------|--------|--------|--------|
-| 1 | GEMINI_API_KEY | backend/.env | 39 chars | Base string |
-| 2 | GCP_PROJECT_ID | backend/.env | 17 chars | Base string |
-| 3 | NEXT_PUBLIC_API_BASE | frontend/.env.local | ~60 chars | URL |
-| 4 | NEXT_PUBLIC_FIREBASE_API_KEY | frontend/.env.local | 39 chars | Base string |
-| 5 | GCP_SA_KEY | Terminal (base64) | 2000+ chars | Base64 |
-| 6 | VERCEL_TOKEN | Vercel website | ~25 chars | Token |
-| 7 | VERCEL_ORG_ID | Vercel website | ~8 chars | Org ID |
-| 8 | VERCEL_PROJECT_ID | Vercel website | ~8 chars | Project ID |
+| #   | Name                         | Source              | Length      | Format      |
+| --- | ---------------------------- | ------------------- | ----------- | ----------- |
+| 1   | GEMINI_API_KEY               | backend/.env        | 39 chars    | Base string |
+| 2   | GCP_PROJECT_ID               | backend/.env        | 17 chars    | Base string |
+| 3   | NEXT_PUBLIC_API_BASE         | frontend/.env.local | ~60 chars   | URL         |
+| 4   | NEXT_PUBLIC_FIREBASE_API_KEY | frontend/.env.local | 39 chars    | Base string |
+| 5   | GCP_SA_KEY                   | Terminal (base64)   | 2000+ chars | Base64      |
+| 6   | VERCEL_TOKEN                 | Vercel website      | ~25 chars   | Token       |
+| 7   | VERCEL_ORG_ID                | Vercel website      | ~8 chars    | Org ID      |
+| 8   | VERCEL_PROJECT_ID            | Vercel website      | ~8 chars    | Project ID  |
 
 ---
 
@@ -240,6 +252,7 @@ git push origin main
 ## 🎉 Final Status
 
 ### Completed ✅
+
 - ✅ Local backend working
 - ✅ Local frontend working
 - ✅ Firestore database ready
@@ -252,25 +265,27 @@ git push origin main
 - ✅ All questions answered in detail
 
 ### Ready to Deploy ✅
+
 - ✅ 8 secrets identified
 - ✅ CI/CD pipeline designed
 - ✅ Automation ready
 - ✅ Documentation complete
 
 ### Next Step
+
 → Follow **QUICK_START.md** (5 minutes!)
 
 ---
 
 ## 🔗 Direct Links
 
-| Resource | URL |
-|----------|-----|
-| GitHub Secrets | https://github.com/shashipriyamishra/whatsnextup/settings/secrets/actions |
-| Vercel Tokens | https://vercel.com/account/tokens |
-| Vercel Org Settings | https://vercel.com/account/organization/~/settings/account |
-| GitHub Actions | https://github.com/shashipriyamishra/whatsnextup/actions |
-| Cloud Run | https://console.cloud.google.com/run |
+| Resource            | URL                                                                       |
+| ------------------- | ------------------------------------------------------------------------- |
+| GitHub Secrets      | https://github.com/shashipriyamishra/whatsnextup/settings/secrets/actions |
+| Vercel Tokens       | https://vercel.com/account/tokens                                         |
+| Vercel Org Settings | https://vercel.com/account/organization/~/settings/account                |
+| GitHub Actions      | https://github.com/shashipriyamishra/whatsnextup/actions                  |
+| Cloud Run           | https://console.cloud.google.com/run                                      |
 
 ---
 
