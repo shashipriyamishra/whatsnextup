@@ -44,13 +44,20 @@ export default function ChatScreen() {
   }
 
   useEffect(() => {
-    if (containerRef.current) {
-      const messageArea = containerRef.current.querySelector("[data-messages]")
-      if (messageArea) {
-        messageArea.scrollTop = messageArea.scrollHeight
+    // Scroll to bottom when messages change or loading state changes
+    const scrollToBottom = () => {
+      if (containerRef.current) {
+        const scrollElement = containerRef.current
+        // Scroll to the very bottom
+        scrollElement.scrollTop = scrollElement.scrollHeight - scrollElement.clientHeight
       }
     }
-  }, [messages])
+    
+    // Use requestAnimationFrame for better performance and ensure layout is done
+    requestAnimationFrame(() => {
+      requestAnimationFrame(scrollToBottom)
+    })
+  }, [messages, loading])
 
   return (
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">
@@ -64,8 +71,8 @@ export default function ChatScreen() {
         <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl"></div>
       </div>
 
-      {/* Header */}
-      <header className="relative z-20 px-4 md:px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl sticky top-0">
+      {/* Header - Fixed */}
+      <header className="fixed top-0 left-0 right-0 z-30 px-4 md:px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-pink-500/30 hover:scale-110 transition-all">
@@ -101,8 +108,12 @@ export default function ChatScreen() {
         </div>
       </header>
 
-      {/* Messages Container - Main scrollable area */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6 scroll-smooth relative z-10" data-messages ref={containerRef}>
+      {/* Messages Container - Scrollable in middle only */}
+      <div 
+        ref={containerRef}
+        className="flex-1 overflow-y-auto px-4 md:px-6 py-6 relative z-10 mt-20 mb-28 scroll-smooth" 
+        data-messages
+      >
         <div className="max-w-3xl mx-auto w-full space-y-4">
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center h-full py-16 text-center">
@@ -143,9 +154,9 @@ export default function ChatScreen() {
                         setInput(item.description)
                         document.querySelector("textarea")?.focus()
                       }}
-                      className="group p-5 rounded-2xl bg-white/10 border border-white/20 hover:border-white/40 hover:bg-white/15 hover:shadow-lg hover:shadow-pink-500/20 transition-all duration-300 text-left cursor-pointer transform hover:scale-105 backdrop-blur-sm"
+                      className="group p-5 rounded-2xl bg-white/10 border border-white/20 hover:border-white/40 hover:bg-white/15 hover:shadow-lg hover:shadow-pink-500/20 transition-all duration-300 text-left cursor-pointer backdrop-blur-sm"
                     >
-                      <div className="text-3xl mb-3 group-hover:scale-125 transition-transform duration-300">
+                      <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300 origin-center">
                         {item.icon}
                       </div>
                       <div className="font-bold text-white text-sm">
@@ -198,7 +209,7 @@ export default function ChatScreen() {
         </div>
 
       {/* Input Area - Fixed at bottom */}
-      <footer className="relative z-20 border-t border-white/10 bg-white/5 backdrop-blur-2xl px-4 md:px-6 py-4">
+      <footer className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-white/5 backdrop-blur-2xl px-4 md:px-6 py-4">
         <div className="max-w-3xl mx-auto">
           <div className="flex gap-3">
             <textarea

@@ -98,7 +98,7 @@ export default function LoginScreen() {
             onClick={loginWithGoogle}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
-            className="w-full group relative px-8 py-4 rounded-2xl font-bold text-base transition-all duration-300 overflow-hidden shadow-2xl hover:shadow-pink-500/70 bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+            className="w-full group relative px-8 py-4 rounded-2xl font-bold text-base transition-all duration-300 overflow-hidden shadow-2xl hover:shadow-pink-500/70 bg-gradient-to-r from-purple-600 to-pink-600 text-white cursor-pointer"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
