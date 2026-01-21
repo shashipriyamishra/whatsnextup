@@ -24,7 +24,8 @@ jobs:
 
       - name: Configure Docker for GCP
         run: |
-          gcloud auth configure-docker
+          gcloud auth configure-docker gcr.io
+          gcloud auth configure-docker us-central1-docker.pkg.dev
 
       - name: Build Docker image
         run: |
