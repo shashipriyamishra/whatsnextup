@@ -30,18 +30,21 @@ export default function ReflectionPage() {
     try {
       setIsLoading(true)
       const token = await user?.getIdToken()
-      
+
       if (!token) {
         console.error("No auth token available")
         return
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/reflections`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/api/reflections`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         },
-      })
+      )
 
       if (response.ok) {
         const data = await response.json()
@@ -59,20 +62,23 @@ export default function ReflectionPage() {
 
     try {
       const token = await user?.getIdToken()
-      
+
       if (!token) {
         console.error("No auth token available")
         return
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/reflections`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/api/reflections`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ content: newReflection }),
         },
-        body: JSON.stringify({ content: newReflection }),
-      })
+      )
 
       if (response.ok) {
         setNewReflection("")

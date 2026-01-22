@@ -1,63 +1,67 @@
 // frontend/src/lib/api.ts
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000"
 
 export async function apiRequest(
   endpoint: string,
   options: RequestInit = {},
-  authToken?: string
+  authToken?: string,
 ) {
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
+    "Content-Type": "application/json",
+  }
 
   if (authToken) {
-    headers['Authorization'] = `Bearer ${authToken}`;
+    headers["Authorization"] = `Bearer ${authToken}`
   }
 
   const response = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
     headers,
-  });
+  })
 
   if (!response.ok) {
-    const error = await response.text();
-    throw new Error(error || 'API request failed');
+    const error = await response.text()
+    throw new Error(error || "API request failed")
   }
 
-  return response.json();
+  return response.json()
 }
 
 export async function getMemories(authToken: string) {
-  return apiRequest('/api/memories', { method: 'GET' }, authToken);
+  return apiRequest("/api/memories", { method: "GET" }, authToken)
 }
 
 export async function getPlans(authToken: string) {
-  return apiRequest('/api/plans', { method: 'GET' }, authToken);
+  return apiRequest("/api/plans", { method: "GET" }, authToken)
 }
 
 export async function createPlan(goal: string, authToken: string) {
   return apiRequest(
-    '/api/plans',
+    "/api/plans",
     {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ goal }),
     },
-    authToken
-  );
+    authToken,
+  )
 }
 
 export async function getReflections(authToken: string) {
-  return apiRequest('/api/reflections', { method: 'GET' }, authToken);
+  return apiRequest("/api/reflections", { method: "GET" }, authToken)
 }
 
-export async function createReflection(content: string, mood: string, authToken: string) {
+export async function createReflection(
+  content: string,
+  mood: string,
+  authToken: string,
+) {
   return apiRequest(
-    '/api/reflections',
+    "/api/reflections",
     {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ content, mood }),
     },
-    authToken
-  );
+    authToken,
+  )
 }

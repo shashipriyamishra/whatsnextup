@@ -41,18 +41,21 @@ export default function PlansPage() {
     try {
       setIsLoading(true)
       const token = await user?.getIdToken()
-      
+
       if (!token) {
         console.error("No auth token available")
         return
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/plans`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/api/plans`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         },
-      })
+      )
 
       if (response.ok) {
         const data = await response.json()
@@ -70,20 +73,23 @@ export default function PlansPage() {
 
     try {
       const token = await user?.getIdToken()
-      
+
       if (!token) {
         console.error("No auth token available")
         return
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/plans`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/api/plans`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ goal: newGoal }),
         },
-        body: JSON.stringify({ goal: newGoal }),
-      })
+      )
 
       if (response.ok) {
         setNewGoal("")

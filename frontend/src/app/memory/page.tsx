@@ -46,18 +46,21 @@ export default function MemoryPage() {
     try {
       setIsLoading(true)
       const token = await user?.getIdToken()
-      
+
       if (!token) {
         console.error("No auth token available")
         return
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/memories`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/api/memories`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         },
-      })
+      )
 
       if (response.ok) {
         const data = await response.json()
