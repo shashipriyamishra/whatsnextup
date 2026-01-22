@@ -85,24 +85,30 @@ export default function ChatScreen() {
               <p className="text-xs text-white/50">AI Planning Companion</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <Link
               href="/memory"
-              className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold"
+              className="text-xs px-2 md:px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold whitespace-nowrap"
+              title="View Memories"
             >
-              💭 Memory
+              <span className="hidden sm:inline">💭 Memory</span>
+              <span className="sm:hidden">💭</span>
             </Link>
             <Link
               href="/plans"
-              className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold"
+              className="text-xs px-2 md:px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold whitespace-nowrap"
+              title="View Plans"
             >
-              📋 Plans
+              <span className="hidden sm:inline">📋 Plans</span>
+              <span className="sm:hidden">📋</span>
             </Link>
             <Link
               href="/reflections"
-              className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold"
+              className="text-xs px-2 md:px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold whitespace-nowrap"
+              title="View Reflections"
             >
-              🪞 Reflect
+              <span className="hidden sm:inline">🪞 Reflect</span>
+              <span className="sm:hidden">🪞</span>
             </Link>
             <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/10 rounded-xl border border-white/20 backdrop-blur-sm">
               {user?.photoURL && (
