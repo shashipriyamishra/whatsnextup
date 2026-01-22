@@ -29,9 +29,17 @@ export default function ReflectionPage() {
   const fetchReflections = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch("/api/reflections", {
+      const token = await user?.getIdToken()
+      
+      if (!token) {
+        console.error("No auth token available")
+        return
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/reflections`, {
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
       })
 
@@ -50,10 +58,18 @@ export default function ReflectionPage() {
     if (!newReflection.trim()) return
 
     try {
-      const response = await fetch("/api/reflections", {
+      const token = await user?.getIdToken()
+      
+      if (!token) {
+        console.error("No auth token available")
+        return
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/reflections`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ content: newReflection }),
       })

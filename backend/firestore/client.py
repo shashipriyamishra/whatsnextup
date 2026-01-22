@@ -234,13 +234,14 @@ class FirestoreReflection:
     """Daily/Weekly reflection storage"""
     
     @staticmethod
-    def save_reflection(user_id: str, reflection_type: str, content: str, insights: List[str] = None) -> str:
+    def save_reflection(user_id: str, title: str, content: str, analysis: Dict = None, mood: str = "thoughtful") -> str:
         """Save a reflection"""
         try:
             reflection_data = {
-                "type": reflection_type,  # daily, weekly, monthly
+                "title": title,
                 "content": content,
-                "insights": insights or [],
+                "analysis": analysis or {},
+                "mood": mood,
                 "createdAt": datetime.utcnow()
             }
             
@@ -259,7 +260,72 @@ class FirestoreReflection:
                    .limit(limit)
                    .stream())
             
-            return [doc.to_dict() for doc in docs]
+            results = []
+            for doc in docs:
+                data = doc.to_dict()
+                data['id'] = doc.id
+                results.append(data)
+            return results
         except Exception as e:
             print(f"❌ Error getting reflections: {e}")
             return []
+
+
+class FirestorePlan:
+    """Plans storage"""
+    
+    @staticmethod
+    def save_plan(user_id: str, goal: str, plan_data: Dict) -> str:
+        """Save a plan"""
+        try:
+            plan_document = {
+                "goal": goal,
+                "timeframe": plan_data.get("timeframe", ""),
+                "priority": plan_data.get("priority", "medium"),
+                "steps": plan_data.get("steps", []),
+                "potential_challenges": plan_data.get("potential_challenges", []),
+                "resources_needed": plan_data.get("resources_needed", []),
+                "success_metric": plan_data.get("success_metric", ""),
+                "status": "active",
+                "createdAt": datetime.utcnow()
+            }
+            
+            doc_ref = db.collection("users").document(user_id).collection("plans").add(plan_document)
+            return doc_ref[1].id
+        except Exception as e:
+            print(f"❌ Error saving plan: {e}")
+            raise
+
+    @staticmethod
+    def get_plans(user_id: str, status: str = None, limit: int = 20) -> List[Dict]:
+        """Get plans for user"""
+        try:
+            query = db.collection("users").document(user_id).collection("plans")
+            
+            if status:
+                query = query.where("status", "==", status)
+            
+            docs = query.order_by("createdAt", direction=firestore.Query.DESCENDING).limit(limit).stream()
+            
+            results = []
+            for doc in docs:
+                data = doc.to_dict()
+                data['id'] = doc.id
+                results.append(data)
+            return results
+        except Exception as e:
+            print(f"❌ Error getting plans: {e}")
+            return []
+
+    @staticmethod
+    def update_plan_status(user_id: str, plan_id: str, status: str) -> bool:
+        """Update plan status"""
+        try:
+            db.collection("users").document(user_id).collection("plans").document(plan_id).update({
+                "status": status,
+                "updatedAt": datetime.utcnow()
+            })
+            return True
+        except Exception as e:
+            print(f"❌ Error updating plan status: {e}")
+            return False

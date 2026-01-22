@@ -125,17 +125,36 @@ class MemoryAgent:
         Get summary of all user memories by category.
         """
         try:
-            categories = ["habit", "goal", "fact", "preference", "decision"]
-            summary = {}
+            categories = ["habit", "goal", "fact", "preference", "decision", "chat"]
+            all_memories = []
+            summary_by_category = {}
             
             for category in categories:
-                memories = self.get_memories_by_type(category, limit=5)
-                summary[category] = memories
+                memories = self.get_memories_by_type(category, limit=10)
+                summary_by_category[category] = len(memories)
+                
+                # Format memories for response
+                for mem in memories:
+                    all_memories.append({
+                        "id": mem.get("id", ""),
+                        "text": mem.get("content", ""),
+                        "category": category,
+                        "created_at": mem.get("createdAt", datetime.now()).isoformat() if isinstance(mem.get("createdAt"), datetime) else str(mem.get("createdAt", ""))
+                    })
             
-            return summary
+            return {
+                "memories": all_memories,
+                "total": len(all_memories),
+                "by_category": summary_by_category
+            }
         except Exception as e:
             print(f"❌ Error getting summary: {e}")
-            return {}
+            return {
+                "memories": [],
+                "total": 0,
+                "by_category": {},
+                "error": str(e)
+            }
     
     def extract_insights(self, memories: List[Dict]) -> List[str]:
         """

@@ -164,10 +164,13 @@ def get_plans(authorization: str = Header(None)):
         user = get_current_user(authorization)
         uid = user.get("uid")
         
-        # For now, return empty plans (would fetch from Firestore)
+        from firestore.client import FirestorePlan
+        plans_db = FirestorePlan()
+        plans = plans_db.get_plans(uid, limit=20)
+        
         return {
-            "plans": [],
-            "total": 0
+            "plans": plans,
+            "total": len(plans)
         }
     except Exception as e:
         print(f"❌ Error getting plans: {e}")
@@ -190,6 +193,14 @@ def create_plan(
         planning_agent = PlanningAgent(uid)
         plan = planning_agent.create_plan_from_goal(request.goal)
         
+        # Save to Firestore
+        from firestore.client import FirestorePlan
+        plans_db = FirestorePlan()
+        plan_id = plans_db.save_plan(uid, request.goal, plan)
+        
+        plan['id'] = plan_id
+        plan['created_at'] = datetime.now().isoformat()
+        
         return {
             "plan": plan,
             "created_at": datetime.now().isoformat()
@@ -211,10 +222,25 @@ def get_reflections(authorization: str = Header(None)):
         user = get_current_user(authorization)
         uid = user.get("uid")
         
-        # For now, return empty reflections (would fetch from Firestore)
+        from firestore.client import FirestoreReflection
+        reflections_db = FirestoreReflection()
+        reflections = reflections_db.get_reflections(uid, limit=20)
+        
+        # Format for frontend
+        formatted = []
+        for r in reflections:
+            formatted.append({
+                "id": r.get("id", ""),
+                "title": r.get("title", "Reflection"),
+                "content": r.get("content", ""),
+                "insights": r.get("analysis", {}).get("key_insights", []),
+                "mood": r.get("mood", "thoughtful"),
+                "created_at": r.get("createdAt", datetime.now()).isoformat() if isinstance(r.get("createdAt"), datetime) else str(r.get("createdAt", ""))
+            })
+        
         return {
-            "reflections": [],
-            "total": 0
+            "reflections": formatted,
+            "total": len(formatted)
         }
     except Exception as e:
         print(f"❌ Error getting reflections: {e}")
@@ -237,10 +263,24 @@ def create_reflection(
         reflection_agent = ReflectionAgent(uid)
         analysis = reflection_agent.analyze_reflection(request.content)
         
+        # Save to Firestore
+        from firestore.client import FirestoreReflection
+        reflections_db = FirestoreReflection()
+        reflection_id = reflections_db.save_reflection(
+            uid,
+            title=analysis.get("title", "Reflection"),
+            content=request.content,
+            analysis=analysis,
+            mood=analysis.get("mood", request.mood)
+        )
+        
         return {
             "reflection": {
-                "id": uid + "_" + str(datetime.now().timestamp()),
+                "id": reflection_id,
+                "title": analysis.get("title", "Reflection"),
                 "content": request.content,
+                "insights": analysis.get("key_insights", []),
+                "mood": analysis.get("mood", request.mood),
                 "analysis": analysis,
                 "created_at": datetime.now().isoformat()
             }

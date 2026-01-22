@@ -40,9 +40,17 @@ export default function PlansPage() {
   const fetchPlans = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch("/api/plans", {
+      const token = await user?.getIdToken()
+      
+      if (!token) {
+        console.error("No auth token available")
+        return
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/plans`, {
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
       })
 
@@ -61,10 +69,18 @@ export default function PlansPage() {
     if (!newGoal.trim()) return
 
     try {
-      const response = await fetch("/api/plans", {
+      const token = await user?.getIdToken()
+      
+      if (!token) {
+        console.error("No auth token available")
+        return
+      }
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/plans`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({ goal: newGoal }),
       })
