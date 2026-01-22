@@ -17,6 +17,9 @@ def verify_firebase_token(token: str) -> Dict:
         # Google-signed tokens are cryptographically secure and trusted
         payload = jwt.decode(token, options={"verify_signature": False})
         
+        print(f"🔍 JWT payload keys: {list(payload.keys())}")
+        print(f"🔍 JWT payload: {payload}")
+        
         # Validate audience - it should be the project ID
         aud = payload.get("aud")
         if aud not in ["whatsnextup-d2415", "whatsnextup"]:
@@ -27,6 +30,7 @@ def verify_firebase_token(token: str) -> Dict:
         if exp < time.time():
             raise ValueError("Token expired")
         
+        print(f"🔍 Extracted uid: {payload.get('uid')}, sub: {payload.get('sub')}, user_id: {payload.get('user_id')}")
         logger.info(f"Token verified successfully for user: {payload.get('uid')}")
         return payload
         
