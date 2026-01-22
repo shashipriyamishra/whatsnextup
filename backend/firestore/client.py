@@ -6,6 +6,9 @@ from firebase_admin import credentials, firestore
 from typing import Optional, Dict, Any, List
 from datetime import datetime
 
+# Global Firestore client instance
+db = None
+
 # Initialize Firebase Admin SDK
 def init_firebase():
     """Initialize Firebase Admin SDK"""
@@ -19,17 +22,18 @@ def init_firebase():
             print("✅ Firebase Admin SDK initialized")
         except Exception as e:
             print(f"❌ Firebase initialization failed: {e}")
-            raise
+            # Don't raise - allow app to continue
+            return None
     
     # Always ensure db is set after initialization
     try:
         db = firestore.client()
         print("✅ Firestore client connected")
+        return db
     except Exception as e:
         print(f"❌ Failed to get Firestore client: {e}")
-        raise
-    
-    return db
+        # Don't raise - allow app to continue
+        return None
 
 # Get Firestore client
 def get_firestore_client():
@@ -51,9 +55,6 @@ def get_firestore_client():
             return None
     
     return db
-
-# Initialize on import - will be called from main.py
-db = None
 
 
 class FirestoreUser:
