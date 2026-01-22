@@ -3,11 +3,13 @@
 ## The Mystery of 10k Files - SOLVED ✅
 
 ### What You Probably Saw
+
 You might have seen VSCode show "10k+" files in the Source Control panel, but this is **NOT a problem**.
 
 ### What's Actually Happening
 
 #### Large Ignored Directories (2.2GB, NOT tracked):
+
 ```
 ✅ Properly ignored (in .gitignore):
    - frontend/node_modules/              ~581MB (9,000+ files)
@@ -19,6 +21,7 @@ You might have seen VSCode show "10k+" files in the Source Control panel, but th
 These are **not showing as untracked** because they're in `.gitignore`.
 
 #### Actually Untracked (14 files, ~2MB total):
+
 ```
 ✅ NEW files we just created (totally fine to commit):
    .github/workflows/
@@ -42,21 +45,24 @@ These are **not showing as untracked** because they're in `.gitignore`.
 ## Why You See This in VSCode
 
 ### VSCode Source Control Panel Shows:
+
 - "Modified" files (M) - Changed existing files
 - "Untracked" files (?) - New files
 - "Staged" files (A) - Added to commit
 
 ### It Does NOT Show (Because .gitignore works):
+
 - node_modules files
 - venv files
 - .next build files
-- Compiled __pycache__ files
+- Compiled **pycache** files
 
 ---
 
 ## The Real Count
 
 ### What Git Sees
+
 ```bash
 git status --porcelain | wc -l
 # Shows: ~80-90 (including deleted files, modified files, untracked files)
@@ -69,6 +75,7 @@ git status --porcelain | grep "^M" | wc -l
 ```
 
 ### Actual Situation
+
 - ✅ 2.2GB of ignored files (not shown)
 - ✅ 14 untracked new files (should be committed)
 - ✅ ~10 modified files (existing code changes)
@@ -79,6 +86,7 @@ git status --porcelain | grep "^M" | wc -l
 ## Your .gitignore is Perfect ✅
 
 ### Current `.gitignore` at root:
+
 ```ignore
 # Node (10k+ files ignored)
 node_modules/
@@ -98,6 +106,7 @@ service-account-key.json
 ```
 
 ### Result:
+
 - ✅ node_modules ignored (VSCode doesn't count them)
 - ✅ venv ignored (VSCode doesn't count them)
 - ✅ .env files ignored (safe)
@@ -108,11 +117,13 @@ service-account-key.json
 ## If You Still See "10k+" in VSCode
 
 ### Option 1: It's Just a Display Issue
+
 - VSCode counts folders as "1 file" in the untracked count
 - Expand the folder to see actual file count
 - This is normal and harmless
 
 ### Option 2: Clean Up (Optional)
+
 ```bash
 # Remove ignored files from tracking (one-time)
 git clean -fd          # Remove untracked files
@@ -122,6 +133,7 @@ git clean -fd -X       # Remove ignored files
 ```
 
 ### Option 3: Refresh VSCode
+
 - Cmd+Shift+P → "Git: Refresh"
 - Or just close and reopen VSCode
 
@@ -130,12 +142,14 @@ git clean -fd -X       # Remove ignored files
 ## What To Do Now
 
 ### 1. Commit Your New Files
+
 ```bash
 git add .
 git commit -m "Add CI/CD workflows and setup guides"
 ```
 
 ### 2. Check Status
+
 ```bash
 git status
 # Should show: "nothing to commit, working tree clean"
@@ -143,11 +157,13 @@ git status
 ```
 
 ### 3. Push to GitHub
+
 ```bash
 git push origin main
 ```
 
 ### 4. GitHub Actions Runs
+
 - Go to GitHub → Actions
 - Your workflows start automatically
 - Backend deploys to Cloud Run
@@ -157,15 +173,15 @@ git push origin main
 
 ## Summary Table
 
-| Directory | Files | Size | Status | Shown in VSCode? |
-|-----------|-------|------|--------|-----------------|
-| node_modules/ | 9,000+ | 581MB | Ignored ✅ | NO |
-| venv/ | 5,000+ | 1.5GB | Ignored ✅ | NO |
-| .next/ | 2,000+ | 185MB | Ignored ✅ | NO |
-| __pycache__/ | 1,000+ | ~20MB | Ignored ✅ | NO |
-| New files | 14 | ~2MB | Untracked ✅ | YES |
-| **TOTAL SHOWN** | **~14** | **~2MB** | **OK** | **YES** |
-| **TOTAL ACTUAL** | **~17k** | **~2.3GB** | **Normal** | **N/A** |
+| Directory        | Files    | Size       | Status       | Shown in VSCode? |
+| ---------------- | -------- | ---------- | ------------ | ---------------- |
+| node_modules/    | 9,000+   | 581MB      | Ignored ✅   | NO               |
+| venv/            | 5,000+   | 1.5GB      | Ignored ✅   | NO               |
+| .next/           | 2,000+   | 185MB      | Ignored ✅   | NO               |
+| **pycache**/     | 1,000+   | ~20MB      | Ignored ✅   | NO               |
+| New files        | 14       | ~2MB       | Untracked ✅ | YES              |
+| **TOTAL SHOWN**  | **~14**  | **~2MB**   | **OK**       | **YES**          |
+| **TOTAL ACTUAL** | **~17k** | **~2.3GB** | **Normal**   | **N/A**          |
 
 ---
 

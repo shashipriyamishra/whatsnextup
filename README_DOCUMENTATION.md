@@ -9,6 +9,7 @@
 ### 📍 Read This File: `ALL_QUESTIONS_ANSWERED.md`
 
 Contains detailed explanations with:
+
 - ✅ Local file paths to copy from
 - ✅ Website links to get Vercel values
 - ✅ Terminal commands to run
@@ -16,6 +17,7 @@ Contains detailed explanations with:
 - ✅ Visual diagrams
 
 **Quick Links in That File:**
+
 - **Red Section**: Local values (backend/.env, frontend/.env.local)
 - **Green Section**: Vercel values (tokens, IDs)
 - **Blue Section**: Terminal commands
@@ -27,18 +29,21 @@ Contains detailed explanations with:
 ### 📍 Read This File: `SETUP_FINAL_CHECKLIST.md`
 
 Complete step-by-step with:
+
 - ✅ Exact URL: github.com/shashipriyamishra/whatsnextup/settings/secrets/actions
 - ✅ Screenshot-like instructions
 - ✅ Where to paste each value
 - ✅ Verification checklist
 
 **Quick Process:**
+
 1. GitHub → Settings → Secrets and variables → Actions
 2. Click "New repository secret" 8 times
 3. Add all 8 secrets
 4. Done!
 
 **Repository Secrets vs Environment Secrets:**
+
 - Use **Repository Secrets** (simpler)
 - Skip **Environment Secrets** (for later)
 
@@ -49,6 +54,7 @@ Complete step-by-step with:
 ### 📍 Read This File: `UNTRACKED_FILES_EXPLAINED.md`
 
 Explains:
+
 - ✅ You only have ~14 untracked files (good!)
 - ✅ ~2.2GB properly ignored (excellent!)
 - ✅ Your .gitignore is perfect
@@ -62,7 +68,9 @@ Explains:
 ## All Documentation Created
 
 ### Quick Start (5 minutes)
+
 **File:** `QUICK_START.md`
+
 - Fastest path to get deployed
 - Copy 4 values from your computer
 - Get 3 from Vercel website
@@ -70,14 +78,18 @@ Explains:
 - Push and done!
 
 ### Complete Checklist
+
 **File:** `SETUP_FINAL_CHECKLIST.md`
+
 - Step-by-step with details
 - All 8 secrets explained
 - Verification steps
 - Troubleshooting
 
 ### All Questions Answered
+
 **File:** `ALL_QUESTIONS_ANSWERED.md`
+
 - Visual diagrams
 - Where to get each value
 - Local file paths
@@ -86,7 +98,9 @@ Explains:
 - Exactly what to copy
 
 ### Detailed Setup Guide
+
 **File:** `GITHUB_SECRETS_SETUP.md`
+
 - Deep dive into each secret
 - How to get Vercel tokens
 - Base64 encoding explained
@@ -94,14 +108,18 @@ Explains:
 - Environment variable management
 
 ### Quick Reference
+
 **File:** `SECRETS_QUICK_REFERENCE.md`
+
 - One-page lookup
 - All 8 secrets in table format
 - Quick copy-paste guide
 - Verification checklist
 
 ### Untracked Files Explained
+
 **File:** `UNTRACKED_FILES_EXPLAINED.md`
+
 - Why you see "10k+ files"
 - What's actually ignored
 - What's actually untracked
@@ -112,24 +130,30 @@ Explains:
 ## GitHub Actions Workflows Created
 
 ### 1. Deploy Backend (`deploy-backend.yml`)
+
 Runs when: Push to main → backend files changed
 Does:
+
 - Builds Docker image
 - Pushes to GCP Container Registry
 - Deploys to Cloud Run
 - Sets environment variables
 
 ### 2. Deploy Frontend (`deploy-frontend.yml`)
+
 Runs when: Push to main → frontend files changed
 Does:
+
 - Installs dependencies
 - Builds Next.js app
 - Deploys to Vercel
 - Uses Vercel secrets
 
 ### 3. Code Quality (`lint.yml`)
+
 Runs when: Push to main or PR
 Does:
+
 - Lints Python backend
 - Lints TypeScript frontend
 - Reports issues
@@ -140,16 +164,19 @@ Does:
 ## What You Need to Do Now
 
 ### Step 1: Read `QUICK_START.md` (5 min)
+
 - Get all 8 values
 - Add to GitHub secrets
 - Push code
 
 ### Step 2: Watch It Deploy
+
 - Go to GitHub Actions tab
 - See workflows running
 - Wait for completion
 
 ### Step 3: You're Done!
+
 - Auto-deployment enabled
 - No more manual steps
 - Push and forget!
@@ -181,37 +208,43 @@ whatsnextup/
 
 ## Value Reference Table
 
-| # | Name | Example | From | Length |
-|---|------|---------|------|--------|
-| 1 | GEMINI_API_KEY | AIzaSyC... | backend/.env | 39 chars |
-| 2 | GCP_PROJECT_ID | whatsnextup-d2415 | backend/.env | 17 chars |
-| 3 | NEXT_PUBLIC_API_BASE | https://whatsnext... | frontend/.env.local | ~60 chars |
-| 4 | NEXT_PUBLIC_FIREBASE_API_KEY | AIzaSyCUr... | frontend/.env.local | 39 chars |
-| 5 | GCP_SA_KEY | ew0KICJt... | base64 terminal | 2000+ chars |
-| 6 | VERCEL_TOKEN | [token] | https://vercel.com/account/tokens | 20-30 chars |
-| 7 | VERCEL_ORG_ID | Org_xxxxx | https://vercel.com/dashboard | 8-10 chars |
-| 8 | VERCEL_PROJECT_ID | prj_xxxxx | https://vercel.com/dashboard | 8-10 chars |
+| #   | Name                         | Example              | From                              | Length      |
+| --- | ---------------------------- | -------------------- | --------------------------------- | ----------- |
+| 1   | GEMINI_API_KEY               | AIzaSyC...           | backend/.env                      | 39 chars    |
+| 2   | GCP_PROJECT_ID               | whatsnextup-d2415    | backend/.env                      | 17 chars    |
+| 3   | NEXT_PUBLIC_API_BASE         | https://whatsnext... | frontend/.env.local               | ~60 chars   |
+| 4   | NEXT_PUBLIC_FIREBASE_API_KEY | AIzaSyCUr...         | frontend/.env.local               | 39 chars    |
+| 5   | GCP_SA_KEY                   | ew0KICJt...          | base64 terminal                   | 2000+ chars |
+| 6   | VERCEL_TOKEN                 | [token]              | https://vercel.com/account/tokens | 20-30 chars |
+| 7   | VERCEL_ORG_ID                | Org_xxxxx            | https://vercel.com/dashboard      | 8-10 chars  |
+| 8   | VERCEL_PROJECT_ID            | prj_xxxxx            | https://vercel.com/dashboard      | 8-10 chars  |
 
 ---
 
 ## Common Questions
 
 ### Q: "Repository Secrets" or "Environment Secrets"?
+
 **A:** Use **Repository Secrets** (simpler, recommended)
 
 ### Q: Why so many docs?
+
 **A:** Different people learn different ways:
+
 - Visual learners → `ALL_QUESTIONS_ANSWERED.md`
 - Step-by-step people → `SETUP_FINAL_CHECKLIST.md`
 - Quick people → `QUICK_START.md`
 
 ### Q: Will CI/CD automatically deploy?
+
 **A:** Yes! After you add secrets, every push to main auto-deploys
 
 ### Q: Can I see deployment progress?
+
 **A:** Yes! GitHub → Actions tab shows real-time progress
 
 ### Q: What if deployment fails?
+
 **A:** Check the workflow logs (GitHub Actions shows error details)
 
 ---

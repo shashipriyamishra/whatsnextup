@@ -159,18 +159,23 @@
 Based on your learning style:
 
 ### Visual Learner?
+
 → Read `ALL_QUESTIONS_ANSWERED.md` (lots of diagrams)
 
 ### Want Quick Start?
+
 → Read `QUICK_START.md` (5 minutes)
 
 ### Detail Oriented?
+
 → Read `SETUP_FINAL_CHECKLIST.md` (step-by-step)
 
 ### Just Want Values?
+
 → Read `SECRETS_QUICK_REFERENCE.md` (table format)
 
 ### Need Everything?
+
 → Read `GITHUB_SECRETS_SETUP.md` (comprehensive)
 
 ---
