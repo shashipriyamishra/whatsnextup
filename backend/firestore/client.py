@@ -38,11 +38,17 @@ def get_firestore_client():
     
     if db is None:
         try:
+            # Ensure Firebase is initialized first
+            if not firebase_admin._apps:
+                firebase_admin.initialize_app()
+                print("✅ Firebase Admin SDK auto-initialized in get_firestore_client")
+            
             db = firestore.client()
             print("✅ Firestore client retrieved")
         except Exception as e:
             print(f"❌ Failed to get Firestore client: {e}")
-            raise
+            # Don't raise - return None to allow app to start
+            return None
     
     return db
 
@@ -152,6 +158,10 @@ class FirestoreMemory:
         """Get memories by category"""
         try:
             db = get_firestore_client()
+            if db is None:
+                print("⚠️  Firestore not available, returning empty list")
+                return []
+            
             docs = (db.collection("users").document(user_id).collection("memories")
                    .where("category", "==", category)
                    .order_by("createdAt", direction=firestore.Query.DESCENDING)
