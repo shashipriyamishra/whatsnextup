@@ -104,7 +104,7 @@ class FirestoreUser:
 
     @staticmethod
     def update_preferences(user_id: str, preferences: Dict) -> bool:
-        \"\"\"Update user preferences\"\"\"
+        """Update user preferences"""
         try:
             db = get_firestore_client()
             db.collection("users").document(user_id).update({
