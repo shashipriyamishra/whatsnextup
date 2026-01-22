@@ -5,18 +5,20 @@ import vertexai
 from vertexai.generative_models import GenerativeModel
 from google.api_core.exceptions import GoogleAPICallError
 
-# These are SAFE defaults
-PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "whatsnextup-d2415")
+# On Cloud Run, this will be set automatically. Fallback to project ID from Firebase env
+PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("GCP_PROJECT") or os.getenv("FIREBASE_PROJECT_ID", "whatsnextup")
 LOCATION = "us-central1"  # supported for Gemini
 
 print(f"📍 Initializing Vertex AI with PROJECT_ID={PROJECT_ID}, LOCATION={LOCATION}")
 
 # Initialize Vertex AI with error handling
 try:
+    # On Cloud Run, Application Default Credentials are used automatically
     vertexai.init(project=PROJECT_ID, location=LOCATION)
     print(f"✅ Vertex AI initialized successfully")
 except Exception as e:
     print(f"❌ Vertex AI initialization failed: {e}")
+    print(f"⚠️  This may happen if GOOGLE_CLOUD_PROJECT is not set or ADC is not available")
     raise
 
 # IMPORTANT: use EXACT model name from Vertex AI Studio

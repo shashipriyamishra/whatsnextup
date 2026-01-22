@@ -9,33 +9,45 @@ from datetime import datetime
 # Initialize Firebase Admin SDK
 def init_firebase():
     """Initialize Firebase Admin SDK"""
-    if not firebase_admin.get_app():
-        # Use default credentials (set via GOOGLE_APPLICATION_CREDENTIALS env var)
+    global db
+    
+    if not firebase_admin._apps:
         try:
+            # On Cloud Run, use Application Default Credentials
+            # Locally, set GOOGLE_APPLICATION_CREDENTIALS to your service account key
             firebase_admin.initialize_app()
             print("✅ Firebase Admin SDK initialized")
         except Exception as e:
             print(f"❌ Firebase initialization failed: {e}")
             raise
+    
+    # Always ensure db is set after initialization
+    try:
+        db = firestore.client()
+        print("✅ Firestore client connected")
+    except Exception as e:
+        print(f"❌ Failed to get Firestore client: {e}")
+        raise
+    
+    return db
 
 # Get Firestore client
 def get_firestore_client():
     """Get Firestore client instance"""
-    try:
-        return firestore.client()
-    except Exception as e:
-        print(f"❌ Failed to get Firestore client: {e}")
-        raise
+    global db
+    
+    if db is None:
+        try:
+            db = firestore.client()
+            print("✅ Firestore client retrieved")
+        except Exception as e:
+            print(f"❌ Failed to get Firestore client: {e}")
+            raise
+    
+    return db
 
 # Initialize on import - will be called from main.py
 db = None
-
-try:
-    # Check if already initialized
-    if firebase_admin._apps:
-        db = get_firestore_client()
-except Exception as e:
-    pass  # Will initialize when called from main.py
 
 
 class FirestoreUser:
