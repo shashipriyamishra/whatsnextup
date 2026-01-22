@@ -338,21 +338,28 @@ class FirestorePlan:
         """Get plans for user"""
         try:
             db = get_firestore_client()
+            print(f"🔍 Getting plans for user_id: {user_id}")
             query = db.collection("users").document(user_id).collection("plans")
             
             if status:
+                print(f"🔍 Filtering by status: {status}")
                 query = query.where("status", "==", status)
             
+            print(f"🔍 Executing query with order_by createdAt DESC, limit {limit}")
             docs = query.order_by("createdAt", direction=firestore.Query.DESCENDING).limit(limit).stream()
             
             results = []
             for doc in docs:
+                print(f"✅ Found plan document: {doc.id}")
                 data = doc.to_dict()
                 data['id'] = doc.id
                 results.append(data)
+            print(f"📊 Total plans found: {len(results)}")
             return results
         except Exception as e:
             print(f"❌ Error getting plans: {e}")
+            import traceback
+            traceback.print_exc()
             return []
 
     @staticmethod

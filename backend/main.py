@@ -131,13 +131,9 @@ async def rate_limit(request: Request, call_next):
 # ============ MEMORY ENDPOINTS ============
 
 @app.get("/api/memories")
-def get_memories(authorization: str = Header(None)):
+def get_memories(user: dict = Depends(get_current_user)):
     """Retrieve user's saved memories"""
     try:
-        if not authorization:
-            raise HTTPException(status_code=401, detail="Unauthorized")
-        
-        user = get_current_user(authorization)
         uid = user.get("uid")
         
         memory_agent = MemoryAgent(uid)
@@ -155,13 +151,9 @@ def get_memories(authorization: str = Header(None)):
 # ============ PLANS ENDPOINTS ============
 
 @app.get("/api/plans")
-def get_plans(authorization: str = Header(None)):
+def get_plans(user: dict = Depends(get_current_user)):
     """Retrieve user's plans"""
     try:
-        if not authorization:
-            raise HTTPException(status_code=401, detail="Unauthorized")
-        
-        user = get_current_user(authorization)
         uid = user.get("uid")
         
         from firestore.client import FirestorePlan
@@ -180,14 +172,10 @@ def get_plans(authorization: str = Header(None)):
 @app.post("/api/plans")
 def create_plan(
     request: PlanRequest,
-    authorization: str = Header(None)
+    user: dict = Depends(get_current_user)
 ):
     """Create a new plan from a goal"""
     try:
-        if not authorization:
-            raise HTTPException(status_code=401, detail="Unauthorized")
-        
-        user = get_current_user(authorization)
         uid = user.get("uid")
         
         planning_agent = PlanningAgent(uid)
@@ -213,13 +201,9 @@ def create_plan(
 # ============ REFLECTIONS ENDPOINTS ============
 
 @app.get("/api/reflections")
-def get_reflections(authorization: str = Header(None)):
+def get_reflections(user: dict = Depends(get_current_user)):
     """Retrieve user's reflections"""
     try:
-        if not authorization:
-            raise HTTPException(status_code=401, detail="Unauthorized")
-        
-        user = get_current_user(authorization)
         uid = user.get("uid")
         
         from firestore.client import FirestoreReflection
@@ -250,14 +234,10 @@ def get_reflections(authorization: str = Header(None)):
 @app.post("/api/reflections")
 def create_reflection(
     request: ReflectionRequest,
-    authorization: str = Header(None)
+    user: dict = Depends(get_current_user)
 ):
     """Create a new reflection"""
     try:
-        if not authorization:
-            raise HTTPException(status_code=401, detail="Unauthorized")
-        
-        user = get_current_user(authorization)
         uid = user.get("uid")
         
         reflection_agent = ReflectionAgent(uid)
