@@ -163,13 +163,17 @@ class FirestoreMemory:
                 print("⚠️  Firestore not available, returning empty list")
                 return []
             
+            print(f"🧠 Querying memories for user: {user_id}, category: {category}")
+            
             docs = (db.collection("users").document(user_id).collection("memories")
                    .where("category", "==", category)
                    .order_by("createdAt", direction=firestore.Query.DESCENDING)
                    .limit(limit)
                    .stream())
             
-            return [doc.to_dict() for doc in docs]
+            result = [doc.to_dict() for doc in docs]
+            print(f"🧠 Found {len(result)} memories for category {category}")
+            return result
         except Exception as e:
             print(f"❌ Error getting memories by category: {e}")
             return []

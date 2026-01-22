@@ -129,8 +129,11 @@ class MemoryAgent:
             all_memories = []
             summary_by_category = {}
             
+            print(f"🧠 Getting memories for user: {self.user_id}")
+            
             for category in categories:
                 memories = self.get_memories_by_type(category, limit=10)
+                print(f"🧠 Category '{category}': {len(memories)} memories")
                 summary_by_category[category] = len(memories)
                 
                 # Format memories for response
@@ -142,6 +145,7 @@ class MemoryAgent:
                         "created_at": mem.get("createdAt", datetime.now()).isoformat() if isinstance(mem.get("createdAt"), datetime) else str(mem.get("createdAt", ""))
                     })
             
+            print(f"📊 Total memories found: {len(all_memories)}")
             return {
                 "memories": all_memories,
                 "total": len(all_memories),
