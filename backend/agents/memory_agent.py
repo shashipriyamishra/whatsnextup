@@ -52,7 +52,7 @@ class MemoryAgent:
         
         return default_category
     
-    def save_with_context(self, message: str, category: str = None, tags: List[str] = None) -> Dict[str, Any]:
+    def save_with_context(self, message: str, category: str = None, tags: List[str] = None, metadata: Dict = None) -> Dict[str, Any]:
         """
         Save memory with automatic categorization and embedding.
         """
