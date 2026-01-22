@@ -57,6 +57,7 @@ class FirestoreUser:
     def get_or_create(user_id: str, email: str, display_name: str) -> Dict:
         """Get or create user document"""
         try:
+            db = get_firestore_client()
             user_ref = db.collection("users").document(user_id)
             user_doc = user_ref.get()
             
@@ -85,6 +86,7 @@ class FirestoreUser:
     def get_preferences(user_id: str) -> Dict:
         """Get user preferences"""
         try:
+            db = get_firestore_client()
             user_doc = db.collection("users").document(user_id).get()
             if user_doc.exists:
                 data = user_doc.to_dict()
@@ -96,8 +98,9 @@ class FirestoreUser:
 
     @staticmethod
     def update_preferences(user_id: str, preferences: Dict) -> bool:
-        """Update user preferences"""
+        \"\"\"Update user preferences\"\"\"
         try:
+            db = get_firestore_client()
             db.collection("users").document(user_id).update({
                 "preferences": preferences
             })
@@ -114,6 +117,7 @@ class FirestoreMemory:
     def save_memory(user_id: str, content: str, category: str = "chat", tags: List[str] = None) -> str:
         """Save a memory/message"""
         try:
+            db = get_firestore_client()
             memory_data = {
                 "content": content,
                 "category": category,  # chat, habit, goal, fact, preference
@@ -132,6 +136,7 @@ class FirestoreMemory:
     def get_recent_memories(user_id: str, limit: int = 10) -> List[Dict]:
         """Get recent memories for user"""
         try:
+            db = get_firestore_client()
             docs = (db.collection("users").document(user_id).collection("memories")
                    .order_by("createdAt", direction=firestore.Query.DESCENDING)
                    .limit(limit)
@@ -146,6 +151,7 @@ class FirestoreMemory:
     def get_memories_by_category(user_id: str, category: str, limit: int = 10) -> List[Dict]:
         """Get memories by category"""
         try:
+            db = get_firestore_client()
             docs = (db.collection("users").document(user_id).collection("memories")
                    .where("category", "==", category)
                    .order_by("createdAt", direction=firestore.Query.DESCENDING)
@@ -165,6 +171,7 @@ class FirestoreChat:
     def save_message(user_id: str, role: str, message: str, embeddings: List[float] = None) -> str:
         """Save chat message"""
         try:
+            db = get_firestore_client()
             chat_data = {
                 "role": role,  # user or ai
                 "message": message,
@@ -182,6 +189,7 @@ class FirestoreChat:
     def get_chat_history(user_id: str, limit: int = 50) -> List[Dict]:
         """Get chat history for user"""
         try:
+            db = get_firestore_client()
             docs = (db.collection("users").document(user_id).collection("chats")
                    .order_by("timestamp", direction=firestore.Query.DESCENDING)
                    .limit(limit)
@@ -200,6 +208,7 @@ class FirestoreTask:
     def create_task(user_id: str, title: str, description: str, due_date: str = None) -> str:
         """Create a task"""
         try:
+            db = get_firestore_client()
             task_data = {
                 "title": title,
                 "description": description,
@@ -218,6 +227,7 @@ class FirestoreTask:
     def get_tasks(user_id: str, completed: bool = False) -> List[Dict]:
         """Get tasks for user"""
         try:
+            db = get_firestore_client()
             docs = (db.collection("users").document(user_id).collection("tasks")
                    .where("completed", "==", completed)
                    .order_by("dueDate")
@@ -232,6 +242,7 @@ class FirestoreTask:
     def mark_completed(user_id: str, task_id: str) -> bool:
         """Mark task as completed"""
         try:
+            db = get_firestore_client()
             db.collection("users").document(user_id).collection("tasks").document(task_id).update({
                 "completed": True,
                 "completedAt": datetime.utcnow()
@@ -249,6 +260,7 @@ class FirestoreReflection:
     def save_reflection(user_id: str, title: str, content: str, analysis: Dict = None, mood: str = "thoughtful") -> str:
         """Save a reflection"""
         try:
+            db = get_firestore_client()
             reflection_data = {
                 "title": title,
                 "content": content,
@@ -267,6 +279,7 @@ class FirestoreReflection:
     def get_reflections(user_id: str, limit: int = 10) -> List[Dict]:
         """Get reflections for user"""
         try:
+            db = get_firestore_client()
             docs = (db.collection("users").document(user_id).collection("reflections")
                    .order_by("createdAt", direction=firestore.Query.DESCENDING)
                    .limit(limit)
@@ -290,6 +303,7 @@ class FirestorePlan:
     def save_plan(user_id: str, goal: str, plan_data: Dict) -> str:
         """Save a plan"""
         try:
+            db = get_firestore_client()
             plan_document = {
                 "goal": goal,
                 "timeframe": plan_data.get("timeframe", ""),
@@ -312,6 +326,7 @@ class FirestorePlan:
     def get_plans(user_id: str, status: str = None, limit: int = 20) -> List[Dict]:
         """Get plans for user"""
         try:
+            db = get_firestore_client()
             query = db.collection("users").document(user_id).collection("plans")
             
             if status:
@@ -333,6 +348,7 @@ class FirestorePlan:
     def update_plan_status(user_id: str, plan_id: str, status: str) -> bool:
         """Update plan status"""
         try:
+            db = get_firestore_client()
             db.collection("users").document(user_id).collection("plans").document(plan_id).update({
                 "status": status,
                 "updatedAt": datetime.utcnow()
