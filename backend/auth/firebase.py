@@ -31,7 +31,15 @@ def verify_firebase_token(token: str) -> Dict:
             raise ValueError("Token expired")
         
         print(f"🔍 Extracted uid: {payload.get('uid')}, sub: {payload.get('sub')}, user_id: {payload.get('user_id')}")
-        logger.info(f"Token verified successfully for user: {payload.get('uid')}")
+        logger.info(f"Token verified successfully for user: {payload.get('user_id')}")
+        
+        # Firebase tokens use 'user_id' not 'uid'
+        if not payload.get('user_id'):
+            raise ValueError("Missing user_id in token")
+        
+        # Normalize to 'uid' for consistency
+        payload['uid'] = payload.get('user_id')
+        
         return payload
         
     except jwt.InvalidTokenError as e:
