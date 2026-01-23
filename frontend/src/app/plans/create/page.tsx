@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation"
 import { useState, useState as useState2 } from "react"
 import Link from "next/link"
 import { getApiUrl } from "@/lib/api"
-import EditableField from "../../components/EditableField"
-import SuggestionBox from "../../components/SuggestionBox"
+import EditableField from "@/components/EditableField"
+import SuggestionBox from "@/components/SuggestionBox"
 
 interface PlanStep {
   step: number
