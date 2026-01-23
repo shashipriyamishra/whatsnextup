@@ -133,14 +133,51 @@ export default function PlansPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-white text-xl mb-4">
-            Please log in to view plans
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950">
+        <nav className="sticky top-0 z-50 bg-gray-900/80 backdrop-blur border-b border-white/10">
+          <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-white hover:text-pink-400 transition"
+            >
+              <span className="text-xl">✨</span>
+              <span className="font-bold">whatsnextup</span>
+            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                href="/"
+                className="text-white/70 hover:text-white transition"
+                title="Chat"
+              >
+                💬
+              </Link>
+              <span className="text-white font-bold">📋</span>
+              <Link
+                href="/reflections"
+                className="text-white/70 hover:text-white transition"
+                title="Reflections"
+              >
+                💭
+              </Link>
+              <Link
+                href="/memories"
+                className="text-white/70 hover:text-white transition"
+                title="Memories"
+              >
+                🧠
+              </Link>
+            </div>
           </div>
-          <Link href="/" className="text-pink-500 hover:underline">
-            Go back to login
-          </Link>
+        </nav>
+        <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
+          <div className="text-center">
+            <div className="text-white text-xl mb-4">
+              Please log in to view plans
+            </div>
+            <Link href="/" className="text-pink-500 hover:underline">
+              Go back to login
+            </Link>
+          </div>
         </div>
       </div>
     )
