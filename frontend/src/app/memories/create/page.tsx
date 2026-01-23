@@ -79,13 +79,12 @@ export default function CreateMemoryPage() {
 
   const handleGetSuggestions = async (field: string, value: string) => {
     if (!value.trim()) {
-      setSuggestions((prev) => ({ ...prev, [field]: [] }))
-      return
+      return []
     }
 
     try {
       const token = await user?.getIdToken()
-      if (!token) return
+      if (!token) return []
 
       const response = await fetch(`${getApiUrl()}/api/memories/suggestions`, {
         method: "POST",
@@ -102,20 +101,19 @@ export default function CreateMemoryPage() {
 
       if (response.ok) {
         const data = await response.json()
-        setSuggestions((prev) => ({
-          ...prev,
-          [field]: data.suggestions || [],
-        }))
+        const suggestions = data.suggestions || []
+        return Array.isArray(suggestions) ? suggestions : [suggestions]
       }
+      return []
     } catch (err) {
       console.error("Error fetching suggestions:", err)
+      return []
     }
   }
 
   const handleFieldChange = (field: keyof MemoryDraft, value: any) => {
     if (draft) {
       setDraft((prev) => (prev ? { ...prev, [field]: value } : null))
-      handleGetSuggestions(field, typeof value === "string" ? value : "")
     }
   }
 

@@ -104,16 +104,18 @@ export default function CreatePlanPage() {
     }
   }
 
-  const handleFieldChange = async (field: string, value: string) => {
+  const handleFieldChange = (field: string, value: string) => {
     if (!draft) return
-
     const updatedDraft = { ...draft, [field]: value }
     setDraft(updatedDraft)
+  }
 
-    // Request suggestions
+  const getSuggestionsForField = async (field: string, value: string) => {
+    if (!draft || !value.trim()) return []
+
     try {
       const token = await user?.getIdToken()
-      if (!token) return
+      if (!token) return []
 
       const response = await fetch(`${getApiUrl()}/api/plans/suggestions`, {
         method: "POST",
@@ -124,19 +126,20 @@ export default function CreatePlanPage() {
         body: JSON.stringify({
           field,
           currentValue: value,
-          context: updatedDraft,
+          context: draft,
         }),
       })
 
       if (response.ok) {
         const data = await response.json()
-        setFieldSuggestions((prev) => ({
-          ...prev,
-          [field]: data.suggestions,
-        }))
+        const suggestions = data.suggestions || []
+        // Return suggestions array
+        return Array.isArray(suggestions) ? suggestions : [suggestions]
       }
+      return []
     } catch (err) {
       console.error("Error getting suggestions:", err)
+      return []
     }
   }
 
@@ -302,7 +305,9 @@ export default function CreatePlanPage() {
                 label="Goal"
                 value={draft.goal}
                 onChange={(val) => handleFieldChange("goal", val)}
-                onBlur={() => handleRefineField("goal", draft.goal)}
+                onSuggestionsRequest={() =>
+                  getSuggestionsForField("goal", draft.goal)
+                }
                 placeholder="Your main goal"
               />
 
@@ -310,7 +315,9 @@ export default function CreatePlanPage() {
                 label="Timeframe"
                 value={draft.timeframe}
                 onChange={(val) => handleFieldChange("timeframe", val)}
-                onBlur={() => handleRefineField("timeframe", draft.timeframe)}
+                onSuggestionsRequest={() =>
+                  getSuggestionsForField("timeframe", draft.timeframe)
+                }
                 placeholder="E.g., 4 weeks, 3 months"
               />
 
@@ -330,8 +337,8 @@ export default function CreatePlanPage() {
                 label="Success Metric"
                 value={draft.success_metric}
                 onChange={(val) => handleFieldChange("success_metric", val)}
-                onBlur={() =>
-                  handleRefineField("success_metric", draft.success_metric)
+                onSuggestionsRequest={() =>
+                  getSuggestionsForField("success_metric", draft.success_metric)
                 }
                 placeholder="How will you know you've succeeded?"
                 multiline
