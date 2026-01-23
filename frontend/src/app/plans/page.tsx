@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "../../lib/AuthContext"
+import PlanCard from "../../components/PlanCard"
 
 interface PlanStep {
   step: number
@@ -19,6 +20,9 @@ interface Plan {
   steps: PlanStep[]
   status: "active" | "completed" | "paused"
   created_at: string
+  potential_challenges?: string[]
+  resources_needed?: string[]
+  success_metric?: string
 }
 
 export default function PlansPage() {
@@ -30,12 +34,15 @@ export default function PlansPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showNewPlan, setShowNewPlan] = useState(false)
   const [newGoal, setNewGoal] = useState("")
+  const [creatingPlan, setCreatingPlan] = useState(false)
+  const [followUp, setFollowUp] = useState("")
+  const [suggestedActions, setSuggestedActions] = useState<any[]>([])
 
   useEffect(() => {
     if (user && !loading) {
       fetchPlans()
     }
-  }, [user, loading, selectedStatus])
+  }, [user, loading])
 
   const fetchPlans = async () => {
     try {
@@ -72,6 +79,7 @@ export default function PlansPage() {
     if (!newGoal.trim()) return
 
     try {
+      setCreatingPlan(true)
       const token = await user?.getIdToken()
 
       if (!token) {
@@ -92,31 +100,38 @@ export default function PlansPage() {
       )
 
       if (response.ok) {
+        const data = await response.json()
+        setFollowUp(data.followUp || "")
+        setSuggestedActions(data.suggestedActions || [])
         setNewGoal("")
         setShowNewPlan(false)
-        fetchPlans()
+        setTimeout(() => fetchPlans(), 500)
       }
     } catch (error) {
       console.error("Failed to create plan:", error)
+    } finally {
+      setCreatingPlan(false)
     }
+  }
+
+  const handleDeletePlan = (planId: string) => {
+    setPlans(plans.filter((p) => p.id !== planId))
+  }
+
+  const handleUpdateStatus = (planId: string, status: string) => {
+    setPlans(
+      plans.map((p) => (p.id === planId ? { ...p, status: status as any } : p)),
+    )
+  }
+
+  const handleCreateSubPlan = () => {
+    // Plan is created, UI will refresh
   }
 
   const filteredPlans =
     selectedStatus === "all"
       ? plans
       : plans.filter((p) => p.status === selectedStatus)
-
-  const priorityColor = {
-    high: "from-red-500",
-    medium: "from-yellow-500",
-    low: "from-green-500",
-  }
-
-  const statusColor = {
-    active: "from-blue-500",
-    completed: "from-green-500",
-    paused: "from-gray-500",
-  }
 
   if (loading) {
     return (
@@ -130,9 +145,11 @@ export default function PlansPage() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-white mb-4">Please log in to view your plans</p>
-          <Link href="/" className="text-purple-400 hover:text-purple-300">
-            Back to chat
+          <div className="text-white text-xl mb-4">
+            Please log in to view plans
+          </div>
+          <Link href="/" className="text-pink-500 hover:underline">
+            Go back to login
           </Link>
         </div>
       </div>
@@ -141,21 +158,61 @@ export default function PlansPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-30 bg-black/40 backdrop-blur-md border-b border-white/10">
+      <nav className="sticky top-0 z-50 bg-gray-900/80 backdrop-blur border-b border-white/10">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-white text-xl font-bold">📋 My Plans</h1>
           <Link
-            href="/"
-            className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition"
+            href="/chat"
+            className="flex items-center gap-2 text-white hover:text-pink-400 transition"
           >
-            Back to chat
+            <span className="text-2xl">🚀</span>
+            <span className="font-bold">whatsnextup</span>
           </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/chat"
+              className="text-white/70 hover:text-white transition"
+              title="Chat"
+            >
+              💬
+            </Link>
+            <span className="text-white/70">📋</span>
+            <Link
+              href="/reflections"
+              className="text-white/70 hover:text-white transition"
+              title="Reflections"
+            >
+              💭
+            </Link>
+            <Link
+              href="/memories"
+              className="text-white/70 hover:text-white transition"
+              title="Memories"
+            >
+              🧠
+            </Link>
+          </div>
         </div>
-      </header>
+      </nav>
 
-      {/* Main content */}
       <main className="max-w-5xl mx-auto px-4 pt-32 pb-8">
+        {/* AI Follow-up notification */}
+        {followUp && (
+          <div className="mb-8 p-4 rounded-lg bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/50 animate-in fade-in">
+            <p className="text-white font-semibold mb-2">🤖 AI Follow-up:</p>
+            <p className="text-white/90">{followUp}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {suggestedActions.map((action: any, idx: number) => (
+                <button
+                  key={idx}
+                  className="px-3 py-1 text-sm rounded bg-white/10 hover:bg-white/20 text-white transition"
+                >
+                  {action.icon} {action.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* New plan button */}
         <div className="mb-8">
           {!showNewPlan ? (
@@ -177,9 +234,10 @@ export default function PlansPage() {
               <div className="flex gap-2 mt-3">
                 <button
                   onClick={handleCreatePlan}
-                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition"
+                  disabled={creatingPlan}
+                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition disabled:opacity-50"
                 >
-                  Create Plan
+                  {creatingPlan ? "Creating..." : "Create Plan"}
                 </button>
                 <button
                   onClick={() => {
@@ -201,29 +259,17 @@ export default function PlansPage() {
             Filter by status:
           </h2>
           <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setSelectedStatus("all")}
-              className={`px-4 py-2 rounded-lg transition ${
-                selectedStatus === "all"
-                  ? "bg-white text-gray-900 font-semibold"
-                  : "bg-white/10 hover:bg-white/20 text-white"
-              }`}
-            >
-              All ({plans.length})
-            </button>
-            {["active", "completed", "paused"].map((status) => (
+            {["active", "completed", "paused", "all"].map((status) => (
               <button
                 key={status}
-                onClick={() =>
-                  setSelectedStatus(status as "active" | "completed" | "paused")
-                }
-                className={`px-4 py-2 rounded-lg transition capitalize ${
+                onClick={() => setSelectedStatus(status as any)}
+                className={`px-4 py-2 rounded-lg transition ${
                   selectedStatus === status
-                    ? `bg-gradient-to-r ${statusColor[status as keyof typeof statusColor]} to-pink-500 text-white font-semibold`
-                    : "bg-white/10 hover:bg-white/20 text-white"
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                    : "bg-white/10 text-white/70 hover:text-white"
                 }`}
               >
-                {status} ({plans.filter((p) => p.status === status).length})
+                {status.charAt(0).toUpperCase() + status.slice(1)}
               </button>
             ))}
           </div>
@@ -243,59 +289,15 @@ export default function PlansPage() {
         ) : (
           <div className="space-y-4">
             {filteredPlans.map((plan) => (
-              <div
+              <PlanCard
                 key={plan.id}
-                className="p-6 rounded-lg bg-white/10 backdrop-blur border border-white/20 hover:border-white/40 transition"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-white font-semibold text-lg">
-                      {plan.goal}
-                    </h3>
-                    <p className="text-white/60 text-sm mt-1">
-                      Timeframe: {plan.timeframe}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`text-xs px-3 py-1 rounded-full bg-gradient-to-r ${priorityColor[plan.priority]} to-pink-500 text-white font-semibold capitalize`}
-                    >
-                      {plan.priority}
-                    </span>
-                    <span
-                      className={`text-xs px-3 py-1 rounded-full bg-gradient-to-r ${statusColor[plan.status]} to-pink-500 text-white font-semibold capitalize`}
-                    >
-                      {plan.status}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Steps */}
-                {plan.steps && plan.steps.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-white/80 text-sm font-semibold">
-                      Steps:
-                    </p>
-                    {plan.steps.map((step, idx) => (
-                      <div
-                        key={idx}
-                        className="pl-4 py-2 border-l-2 border-white/20 text-white/80 text-sm"
-                      >
-                        <div className="font-medium">
-                          {step.step}. {step.action}
-                        </div>
-                        <div className="text-white/50 text-xs mt-1">
-                          Deadline: {step.deadline} • Effort: {step.effort}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <div className="mt-4 text-xs text-white/50">
-                  Created: {new Date(plan.created_at).toLocaleDateString()}
-                </div>
-              </div>
+                plan={plan}
+                onUpdateStatus={handleUpdateStatus}
+                onDeletePlan={handleDeletePlan}
+                onCreateSubPlan={handleCreateSubPlan}
+                onGetNextSteps={() => fetchPlans()}
+                onRefresh={fetchPlans}
+              />
             ))}
           </div>
         )}
