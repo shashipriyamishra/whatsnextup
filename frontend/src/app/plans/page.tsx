@@ -193,9 +193,10 @@ export default function PlansPage() {
         ) : (
           <div className="space-y-4">
             {filteredPlans.map((plan) => (
-              <div
+              <Link
                 key={plan.id}
-                className="p-6 rounded-lg bg-white/10 backdrop-blur border border-white/20 hover:border-white/40 transition"
+                href={`/plans/${plan.id}`}
+                className="block p-6 rounded-lg bg-white/10 backdrop-blur border border-white/20 hover:border-white/40 transition hover:bg-white/15"
               >
                 <div className="flex items-start justify-between mb-4">
                   <div>
@@ -235,28 +236,30 @@ export default function PlansPage() {
                 {plan.steps && plan.steps.length > 0 && (
                   <div className="space-y-2 mb-4">
                     <p className="text-white/80 text-sm font-semibold">
-                      Steps:
+                      Steps: {plan.steps.length}
                     </p>
-                    {plan.steps.map((step, idx) => (
-                      <div
-                        key={idx}
-                        className="pl-4 py-2 border-l-2 border-white/20 text-white/80 text-sm"
-                      >
-                        <div className="font-medium">
-                          {step.step}. {step.action}
-                        </div>
-                        <div className="text-white/50 text-xs mt-1">
-                          Deadline: {step.deadline} • Effort: {step.effort}
-                        </div>
-                      </div>
-                    ))}
+                    <div className="flex gap-2">
+                      {plan.steps.slice(0, 3).map((step, idx) => (
+                        <span
+                          key={idx}
+                          className="text-xs px-2 py-1 rounded bg-white/10 text-white/70"
+                        >
+                          {step.action}
+                        </span>
+                      ))}
+                      {plan.steps.length > 3 && (
+                        <span className="text-xs px-2 py-1 text-white/50">
+                          +{plan.steps.length - 3} more
+                        </span>
+                      )}
+                    </div>
                   </div>
                 )}
 
                 <div className="text-xs text-white/50 mt-4 pt-4 border-t border-white/10">
                   Created: {new Date(plan.created_at).toLocaleDateString()}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
