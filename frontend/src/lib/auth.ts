@@ -6,6 +6,10 @@ const googleProvider = new GoogleAuthProvider()
 export const loginWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider)
+    // Redirect to home page after successful login
+    if (typeof window !== "undefined") {
+      window.location.href = "/"
+    }
     return result.user
   } catch (error) {
     console.error("Login error:", error)

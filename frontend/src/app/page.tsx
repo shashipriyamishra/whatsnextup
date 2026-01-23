@@ -8,7 +8,13 @@ import ChatScreen from "@/components/ChatScreen"
 export default function Home() {
   const { user, loading } = useAuth()
 
-  if (loading) return null
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    )
+  }
 
   if (!user) {
     return <DiscoveryHub />

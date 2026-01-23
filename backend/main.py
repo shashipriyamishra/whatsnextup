@@ -839,19 +839,107 @@ async def discovery_events(location: str = None):
 
 @app.get("/api/agents")
 def get_all_agents():
-    """Get list of all available AI agents"""
+    """Get list of all available AI agents - no auth required for discovery"""
     try:
-        from agents.agent_registry import agent_registry
-        from agents.specialized import get_all_specialized_agents
+        # Return hardcoded list for reliability
+        agents_list = [
+            {
+                "id": "daily-planner",
+                "name": "Daily Planner",
+                "description": "Plan your day with AI-powered scheduling and time management",
+                "icon": "📅"
+            },
+            {
+                "id": "financial-advisor",
+                "name": "Financial Advisor",
+                "description": "Get personalized financial advice and budgeting tips",
+                "icon": "💰"
+            },
+            {
+                "id": "health-coach",
+                "name": "Health Coach",
+                "description": "Personalized health and wellness guidance",
+                "icon": "🏃"
+            },
+            {
+                "id": "career-mentor",
+                "name": "Career Mentor",
+                "description": "Professional development and career guidance",
+                "icon": "💼"
+            },
+            {
+                "id": "learning-guide",
+                "name": "Learning Guide",
+                "description": "Personalized learning paths and educational support",
+                "icon": "📚"
+            },
+            {
+                "id": "travel-planner",
+                "name": "Travel Planner",
+                "description": "Plan your trips with personalized recommendations",
+                "icon": "✈️"
+            },
+            {
+                "id": "productivity-coach",
+                "name": "Productivity Coach",
+                "description": "Boost your productivity and achieve your goals",
+                "icon": "⚡"
+            },
+            {
+                "id": "relationship-coach",
+                "name": "Relationship Coach",
+                "description": "Improve your relationships and communication skills",
+                "icon": "❤️"
+            },
+            {
+                "id": "creative-writer",
+                "name": "Creative Writer",
+                "description": "Unleash your creativity with writing assistance",
+                "icon": "✍️"
+            },
+            {
+                "id": "home-organizer",
+                "name": "Home Organizer",
+                "description": "Organize your home and living space efficiently",
+                "icon": "🏠"
+            },
+            {
+                "id": "meal-planner",
+                "name": "Meal Planner",
+                "description": "Plan healthy meals and discover new recipes",
+                "icon": "🍽️"
+            },
+            {
+                "id": "budget-tracker",
+                "name": "Budget Tracker",
+                "description": "Track expenses and manage your budget",
+                "icon": "💵"
+            },
+            {
+                "id": "habit-builder",
+                "name": "Habit Builder",
+                "description": "Build positive habits and break bad ones",
+                "icon": "🎯"
+            },
+            {
+                "id": "decision-maker",
+                "name": "Decision Maker",
+                "description": "Make better decisions with AI guidance",
+                "icon": "🤔"
+            },
+            {
+                "id": "goal-coach",
+                "name": "Goal Coach",
+                "description": "Set and achieve your personal and professional goals",
+                "icon": "🏆"
+            }
+        ]
         
-        # Register all agents if not already registered
-        if not agent_registry.get_agent_ids():
-            for agent in get_all_specialized_agents():
-                agent_registry.register(agent)
-        
-        return {"agents": agent_registry.get_all()}
+        return {"agents": agents_list}
     except Exception as e:
         print(f"❌ Error getting agents: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 
