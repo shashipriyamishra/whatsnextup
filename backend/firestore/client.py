@@ -340,16 +340,18 @@ class FirestorePlan:
             
             print(f"📝 Plan document: {plan_document}")
             result = db.collection("users").document(user_id).collection("plans").add(plan_document)
-            print(f"📝 Add result: {result}")
+            print(f"📝 Add result type: {type(result)}, value: {result}")
             
-            # result is a tuple (doc_ref, doc_id) 
+            # result is a tuple (write_time, doc_ref) 
+            # We need the doc_ref.id
             if result and len(result) > 1:
-                plan_id = result[1]
+                doc_ref = result[1]
+                plan_id = doc_ref.id
                 print(f"✅ Plan saved successfully with ID: {plan_id}")
                 return plan_id
             else:
                 print(f"⚠️ Unexpected result format: {result}")
-                return str(result)
+                raise Exception(f"Unexpected result from Firestore add: {result}")
                 
         except Exception as e:
             print(f"❌ Error saving plan: {e}")

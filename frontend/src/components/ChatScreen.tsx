@@ -76,7 +76,10 @@ export default function ChatScreen() {
       {/* Header - Fixed */}
       <header className="fixed top-0 left-0 right-0 z-30 px-4 md:px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity">
+          <Link
+            href="/"
+            className="flex items-center gap-4 cursor-pointer hover:opacity-80 transition-opacity"
+          >
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-pink-500/30 hover:scale-110 transition-all">
               <span className="text-xl">✨</span>
             </div>
@@ -84,8 +87,8 @@ export default function ChatScreen() {
               <h1 className="font-bold text-lg text-white">What's Next Up</h1>
               <p className="text-xs text-white/50">AI Planning Companion</p>
             </div>
-          </div>
-          <div className="flex items-center gap-2 md:gap-3">
+          </Link>
+          <nav className="flex items-center gap-2 md:gap-3">
             <Link
               href="/memory"
               className="text-xs px-2 md:px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold whitespace-nowrap"
@@ -128,7 +131,7 @@ export default function ChatScreen() {
             >
               Sign out
             </button>
-          </div>
+          </nav>
         </div>
       </header>
 
