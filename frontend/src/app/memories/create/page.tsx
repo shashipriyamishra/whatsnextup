@@ -28,6 +28,9 @@ export default function CreateMemoryPage() {
   const [draft, setDraft] = useState<MemoryDraft | null>(null)
   const [hints, setHints] = useState<string[]>([])
   const [suggestions, setSuggestions] = useState<Record<string, string[]>>({})
+  const [loadingSuggestions, setLoadingSuggestions] = useState<
+    Record<string, boolean>
+  >({})
   const [isCreating, setIsCreating] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState("")
@@ -83,6 +86,7 @@ export default function CreateMemoryPage() {
     }
 
     try {
+      setLoadingSuggestions((prev) => ({ ...prev, [field]: true }))
       const token = await user?.getIdToken()
       if (!token) return []
 
@@ -101,13 +105,23 @@ export default function CreateMemoryPage() {
 
       if (response.ok) {
         const data = await response.json()
-        const suggestions = data.suggestions || []
-        return Array.isArray(suggestions) ? suggestions : [suggestions]
+        const suggestions_data = data.suggestions || []
+        setSuggestions((prev) => ({
+          ...prev,
+          [field]: Array.isArray(suggestions_data)
+            ? suggestions_data
+            : [suggestions_data],
+        }))
+        return Array.isArray(suggestions_data)
+          ? suggestions_data
+          : [suggestions_data]
       }
       return []
     } catch (err) {
       console.error("Error fetching suggestions:", err)
       return []
+    } finally {
+      setLoadingSuggestions((prev) => ({ ...prev, [field]: false }))
     }
   }
 
@@ -264,9 +278,23 @@ export default function CreateMemoryPage() {
 
               {/* Title */}
               <div>
-                <label className="block text-white font-semibold mb-3">
-                  Title
-                </label>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-white font-semibold">
+                    Title
+                  </label>
+                  {draft?.content && (
+                    <button
+                      onClick={() =>
+                        handleGetSuggestions("title", draft.title || "")
+                      }
+                      disabled={loadingSuggestions["title"]}
+                      className="text-lg hover:scale-110 transition disabled:opacity-50"
+                      title="Get AI suggestions"
+                    >
+                      ✨
+                    </button>
+                  )}
+                </div>
                 <input
                   type="text"
                   value={draft.title}
@@ -275,7 +303,7 @@ export default function CreateMemoryPage() {
                 />
                 <SuggestionBox
                   suggestions={suggestions["title"] || []}
-                  loading={false}
+                  loading={loadingSuggestions["title"] || false}
                   onApply={(suggestion) =>
                     handleFieldChange("title", suggestion)
                   }
@@ -285,9 +313,23 @@ export default function CreateMemoryPage() {
 
               {/* Content */}
               <div>
-                <label className="block text-white font-semibold mb-3">
-                  Content
-                </label>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-white font-semibold">
+                    Content
+                  </label>
+                  {draft?.content && (
+                    <button
+                      onClick={() =>
+                        handleGetSuggestions("content", draft.content)
+                      }
+                      disabled={loadingSuggestions["content"]}
+                      className="text-lg hover:scale-110 transition disabled:opacity-50"
+                      title="Get AI suggestions"
+                    >
+                      ✨
+                    </button>
+                  )}
+                </div>
                 <textarea
                   value={draft.content}
                   onChange={(e) => handleFieldChange("content", e.target.value)}
@@ -296,7 +338,7 @@ export default function CreateMemoryPage() {
                 />
                 <SuggestionBox
                   suggestions={suggestions["content"] || []}
-                  loading={false}
+                  loading={loadingSuggestions["content"] || false}
                   onApply={(suggestion) =>
                     handleFieldChange("content", suggestion)
                   }

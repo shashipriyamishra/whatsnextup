@@ -28,6 +28,9 @@ export default function CreateReflectionPage() {
   const [draft, setDraft] = useState<ReflectionDraft | null>(null)
   const [hints, setHints] = useState<string[]>([])
   const [suggestions, setSuggestions] = useState<Record<string, string[]>>({})
+  const [loadingSuggestions, setLoadingSuggestions] = useState<
+    Record<string, boolean>
+  >({})
   const [isCreating, setIsCreating] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState("")
@@ -79,13 +82,13 @@ export default function CreateReflectionPage() {
 
   const handleGetSuggestions = async (field: string, value: string) => {
     if (!value.trim()) {
-      setSuggestions((prev) => ({ ...prev, [field]: [] }))
-      return
+      return []
     }
 
     try {
+      setLoadingSuggestions((prev) => ({ ...prev, [field]: true }))
       const token = await user?.getIdToken()
-      if (!token) return
+      if (!token) return []
 
       const response = await fetch(
         `${getApiUrl()}/api/reflections/suggestions`,
@@ -105,20 +108,29 @@ export default function CreateReflectionPage() {
 
       if (response.ok) {
         const data = await response.json()
+        const suggestions_data = data.suggestions || []
         setSuggestions((prev) => ({
           ...prev,
-          [field]: data.suggestions || [],
+          [field]: Array.isArray(suggestions_data)
+            ? suggestions_data
+            : [suggestions_data],
         }))
+        return Array.isArray(suggestions_data)
+          ? suggestions_data
+          : [suggestions_data]
       }
+      return []
     } catch (err) {
       console.error("Error fetching suggestions:", err)
+      return []
+    } finally {
+      setLoadingSuggestions((prev) => ({ ...prev, [field]: false }))
     }
   }
 
   const handleFieldChange = (field: keyof ReflectionDraft, value: any) => {
     if (draft) {
       setDraft((prev) => (prev ? { ...prev, [field]: value } : null))
-      handleGetSuggestions(field, typeof value === "string" ? value : "")
     }
   }
 
@@ -271,9 +283,21 @@ export default function CreateReflectionPage() {
 
               {/* Title */}
               <div>
-                <label className="block text-white font-semibold mb-3">
-                  Title
-                </label>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-white font-semibold">
+                    Title
+                  </label>
+                  {draft?.content && (
+                    <button
+                      onClick={() => handleGetSuggestions("title", draft.title)}
+                      disabled={loadingSuggestions["title"]}
+                      className="text-lg hover:scale-110 transition disabled:opacity-50"
+                      title="Get AI suggestions"
+                    >
+                      ✨
+                    </button>
+                  )}
+                </div>
                 <input
                   type="text"
                   value={draft.title}
@@ -282,7 +306,7 @@ export default function CreateReflectionPage() {
                 />
                 <SuggestionBox
                   suggestions={suggestions["title"] || []}
-                  loading={false}
+                  loading={loadingSuggestions["title"] || false}
                   onApply={(suggestion) =>
                     handleFieldChange("title", suggestion)
                   }
@@ -292,9 +316,23 @@ export default function CreateReflectionPage() {
 
               {/* Content */}
               <div>
-                <label className="block text-white font-semibold mb-3">
-                  Content
-                </label>
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-white font-semibold">
+                    Content
+                  </label>
+                  {draft?.content && (
+                    <button
+                      onClick={() =>
+                        handleGetSuggestions("content", draft.content)
+                      }
+                      disabled={loadingSuggestions["content"]}
+                      className="text-lg hover:scale-110 transition disabled:opacity-50"
+                      title="Get AI suggestions"
+                    >
+                      ✨
+                    </button>
+                  )}
+                </div>
                 <textarea
                   value={draft.content}
                   onChange={(e) => handleFieldChange("content", e.target.value)}
@@ -303,7 +341,7 @@ export default function CreateReflectionPage() {
                 />
                 <SuggestionBox
                   suggestions={suggestions["content"] || []}
-                  loading={false}
+                  loading={loadingSuggestions["content"] || false}
                   onApply={(suggestion) =>
                     handleFieldChange("content", suggestion)
                   }
