@@ -2,7 +2,7 @@
 
 // ✅ Frontend deployment: CI/CD pipeline active
 import { useAuth } from "@/lib/AuthContext"
-import LoginScreen from "@/components/LoginScreen"
+import DiscoveryHub from "@/components/DiscoveryHub"
 import ChatScreen from "@/components/ChatScreen"
 
 export default function Home() {
@@ -11,7 +11,7 @@ export default function Home() {
   if (loading) return null
 
   if (!user) {
-    return <LoginScreen />
+    return <DiscoveryHub />
   }
 
   return <ChatScreen />

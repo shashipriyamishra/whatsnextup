@@ -92,6 +92,14 @@ export default function ChatScreen() {
             {user?.photoURL && (
               <>
                 <Link
+                  href="/agents"
+                  className="text-xs px-2 md:px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold whitespace-nowrap"
+                  title="AI Agents"
+                >
+                  <span className="hidden sm:inline">🤖 Agents</span>
+                  <span className="sm:hidden">🤖</span>
+                </Link>
+                <Link
                   href="/memories"
                   className="text-xs px-2 md:px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold whitespace-nowrap"
                   title="View Memories"

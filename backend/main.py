@@ -711,3 +711,189 @@ def create_reflection(
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============ DISCOVERY ENDPOINTS (No Auth Required) ============
+
+@app.get("/api/discovery/entertainment")
+async def discovery_entertainment(category: str = "movies"):
+    """Get entertainment suggestions (movies, TV shows, etc.)"""
+    try:
+        from discovery import get_entertainment_suggestions
+        suggestions = await get_entertainment_suggestions(category)
+        return {"suggestions": suggestions, "category": category}
+    except Exception as e:
+        print(f"❌ Error getting entertainment suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/discovery/food")
+async def discovery_food(cuisine: str = None):
+    """Get food and recipe suggestions"""
+    try:
+        from discovery import get_food_suggestions
+        suggestions = await get_food_suggestions(cuisine)
+        return {"suggestions": suggestions, "cuisine": cuisine}
+    except Exception as e:
+        print(f"❌ Error getting food suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/discovery/learning")
+async def discovery_learning(topic: str = None):
+    """Get learning suggestions"""
+    try:
+        from discovery import get_learning_suggestions
+        suggestions = await get_learning_suggestions(topic)
+        return {"suggestions": suggestions, "topic": topic}
+    except Exception as e:
+        print(f"❌ Error getting learning suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/discovery/travel")
+async def discovery_travel(location: str = None):
+    """Get travel suggestions"""
+    try:
+        from discovery import get_travel_suggestions
+        suggestions = await get_travel_suggestions(location)
+        return {"suggestions": suggestions, "location": location}
+    except Exception as e:
+        print(f"❌ Error getting travel suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/discovery/wellness")
+async def discovery_wellness(focus: str = None):
+    """Get wellness suggestions"""
+    try:
+        from discovery import get_wellness_suggestions
+        suggestions = await get_wellness_suggestions(focus)
+        return {"suggestions": suggestions, "focus": focus}
+    except Exception as e:
+        print(f"❌ Error getting wellness suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/discovery/shopping")
+async def discovery_shopping(category: str = None):
+    """Get shopping suggestions"""
+    try:
+        from discovery import get_shopping_suggestions
+        suggestions = await get_shopping_suggestions(category)
+        return {"suggestions": suggestions, "category": category}
+    except Exception as e:
+        print(f"❌ Error getting shopping suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/discovery/hobbies")
+async def discovery_hobbies(interest: str = None):
+    """Get hobby suggestions"""
+    try:
+        from discovery import get_hobbies_suggestions
+        suggestions = await get_hobbies_suggestions(interest)
+        return {"suggestions": suggestions, "interest": interest}
+    except Exception as e:
+        print(f"❌ Error getting hobby suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/discovery/home")
+async def discovery_home(room: str = None):
+    """Get home improvement suggestions"""
+    try:
+        from discovery import get_home_suggestions
+        suggestions = await get_home_suggestions(room)
+        return {"suggestions": suggestions, "room": room}
+    except Exception as e:
+        print(f"❌ Error getting home suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/discovery/career")
+async def discovery_career(field: str = None):
+    """Get career development suggestions"""
+    try:
+        from discovery import get_career_suggestions
+        suggestions = await get_career_suggestions(field)
+        return {"suggestions": suggestions, "field": field}
+    except Exception as e:
+        print(f"❌ Error getting career suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/discovery/events")
+async def discovery_events(location: str = None):
+    """Get event suggestions"""
+    try:
+        from discovery import get_events_suggestions
+        suggestions = await get_events_suggestions(location)
+        return {"suggestions": suggestions, "location": location}
+    except Exception as e:
+        print(f"❌ Error getting event suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============ AGENT ENDPOINTS (Requires Auth) ============
+
+@app.get("/api/agents")
+def get_all_agents():
+    """Get list of all available AI agents"""
+    try:
+        from agents.agent_registry import agent_registry
+        from agents.specialized import get_all_specialized_agents
+        
+        # Register all agents if not already registered
+        if not agent_registry.get_agent_ids():
+            for agent in get_all_specialized_agents():
+                agent_registry.register(agent)
+        
+        return {"agents": agent_registry.get_all()}
+    except Exception as e:
+        print(f"❌ Error getting agents: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/agents/{agent_id}/chat")
+async def chat_with_agent(
+    agent_id: str,
+    request: dict,
+    user: dict = Depends(get_current_user)
+):
+    """Chat with a specific AI agent"""
+    try:
+        uid = user.get("uid")
+        message = request.get("message", "")
+        
+        if not message.strip():
+            raise HTTPException(status_code=400, detail="Message cannot be empty")
+        
+        from agents.agent_registry import agent_registry
+        from agents.specialized import get_all_specialized_agents
+        
+        # Register agents if needed
+        if not agent_registry.get_agent_ids():
+            for agent in get_all_specialized_agents():
+                agent_registry.register(agent)
+        
+        # Get the agent
+        agent = agent_registry.get(agent_id)
+        if not agent:
+            raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found")
+        
+        # Process the message
+        response = await agent.process_message(message, uid, context=request.get("context"))
+        
+        return {
+            "agent": agent.name,
+            "response": response,
+            "agent_icon": agent.icon
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error chatting with agent: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
