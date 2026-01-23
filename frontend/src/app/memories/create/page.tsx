@@ -36,7 +36,12 @@ export default function CreateMemoryPage() {
   const [error, setError] = useState("")
 
   const handleCreateDraft = async () => {
-    if (!memoryTitle.trim() || !memoryContent.trim()) {
+    if (
+      !memoryTitle ||
+      !memoryContent ||
+      !memoryTitle.trim() ||
+      !memoryContent.trim()
+    ) {
       setError("Please enter both title and content")
       return
     }
@@ -233,7 +238,11 @@ export default function CreateMemoryPage() {
               <button
                 onClick={handleCreateDraft}
                 disabled={
-                  isCreating || !memoryTitle.trim() || !memoryContent.trim()
+                  isCreating ||
+                  !memoryTitle ||
+                  !memoryContent ||
+                  !memoryTitle.trim() ||
+                  !memoryContent.trim()
                 }
                 className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold hover:opacity-90 transition disabled:opacity-50"
               >

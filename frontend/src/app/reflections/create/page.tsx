@@ -36,7 +36,12 @@ export default function CreateReflectionPage() {
   const [error, setError] = useState("")
 
   const handleCreateDraft = async () => {
-    if (!reflectionTitle.trim() || !reflectionContent.trim()) {
+    if (
+      !reflectionTitle ||
+      !reflectionContent ||
+      !reflectionTitle.trim() ||
+      !reflectionContent.trim()
+    ) {
       setError("Please enter both title and content")
       return
     }
@@ -237,6 +242,8 @@ export default function CreateReflectionPage() {
                 onClick={handleCreateDraft}
                 disabled={
                   isCreating ||
+                  !reflectionTitle ||
+                  !reflectionContent ||
                   !reflectionTitle.trim() ||
                   !reflectionContent.trim()
                 }

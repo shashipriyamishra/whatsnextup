@@ -68,7 +68,7 @@ export default function CreatePlanPage() {
   }
 
   const handleCreateDraft = async () => {
-    if (!goalInput.trim()) {
+    if (!goalInput || typeof goalInput !== "string" || !goalInput.trim()) {
       setError("Please enter a goal")
       return
     }
@@ -255,7 +255,7 @@ export default function CreatePlanPage() {
 
               <button
                 onClick={handleCreateDraft}
-                disabled={creatingDraft || !goalInput.trim()}
+                disabled={creatingDraft || !goalInput || !goalInput.trim()}
                 className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition disabled:opacity-50"
               >
                 {creatingDraft ? "Creating your plan..." : "Create Plan Draft"}
