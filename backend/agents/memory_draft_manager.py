@@ -7,7 +7,7 @@ Allows users to refine memories before committing.
 from agents.llm import call_llm
 from agents.memory_agent import MemoryAgent
 import json
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 class MemoryDraftManager:
     """Manages interactive memory refinement"""

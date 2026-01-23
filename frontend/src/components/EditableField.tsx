@@ -32,23 +32,24 @@ export default function EditableField({
   const [loadingSuggestions, setLoadingSuggestions] = useState(false)
   const [showSuggestions, setShowSuggestions] = useState(false)
 
-  const handleChange = async (newValue: string) => {
+  const handleChange = (newValue: string) => {
     onChange(newValue)
+  }
 
-    // Request suggestions after user stops typing
-    if (onSuggestionsRequest && newValue.length > 3) {
-      setShowSuggestions(true)
-      setLoadingSuggestions(true)
+  const handleRequestSuggestions = async () => {
+    if (!onSuggestionsRequest || !value.trim()) return
 
-      try {
-        const sugg = await onSuggestionsRequest(newValue)
-        setSuggestions(sugg || [])
-      } catch (error) {
-        console.error("Error getting suggestions:", error)
-        setSuggestions([])
-      } finally {
-        setLoadingSuggestions(false)
-      }
+    setShowSuggestions(true)
+    setLoadingSuggestions(true)
+
+    try {
+      const sugg = await onSuggestionsRequest(value)
+      setSuggestions(sugg || [])
+    } catch (error) {
+      console.error("Error getting suggestions:", error)
+      setSuggestions([])
+    } finally {
+      setLoadingSuggestions(false)
     }
   }
 
@@ -62,9 +63,21 @@ export default function EditableField({
 
   return (
     <div className="mb-4">
-      <label className="block text-sm font-semibold text-white mb-2">
-        {label}
-      </label>
+      <div className="flex items-center justify-between mb-2">
+        <label className="block text-sm font-semibold text-white">
+          {label}
+        </label>
+        {onSuggestionsRequest && value.trim() && (
+          <button
+            onClick={handleRequestSuggestions}
+            disabled={loadingSuggestions}
+            className="text-lg hover:scale-110 transition disabled:opacity-50"
+            title="Get AI suggestions"
+          >
+            {loadingSuggestions ? "✨" : "✨"}
+          </button>
+        )}
+      </div>
 
       {type === "select" ? (
         <select
