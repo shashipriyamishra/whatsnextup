@@ -85,16 +85,22 @@ Respond with ONLY the category name."""
             if category is None:
                 category = self.analyze_and_categorize(message)
             
-            # Save to Firestore
-            memory_id = self.memory_db.save_memory(
+            # Save to Firestore using the correct format
+            from firestore.client import FirestoreMemory
+            memory_db = FirestoreMemory()
+            memory_id = memory_db.save_memory(
                 user_id=self.user_id,
+                title="",
                 content=message,
                 category=category,
                 tags=tags or []
             )
             
             # Add to vector store for semantic search
-            add_document(message)
+            try:
+                add_document(message)
+            except:
+                pass  # Vector store optional
             
             print(f"✅ Memory saved: {memory_id} (category: {category})")
             

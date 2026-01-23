@@ -968,9 +968,10 @@ async def chat_with_agent(
         can_send = await increment_usage(uid)
         if not can_send:
             usage_stats = await get_usage_stats(uid)
+            limit = usage_stats.get('limit', 15)  # Default limit is 15
             raise HTTPException(
                 status_code=429,
-                detail=f"Daily message limit reached ({usage_stats['limit']} messages). Upgrade to Plus for unlimited messages!"
+                detail=f"Daily message limit reached ({limit} messages). Upgrade to Plus for unlimited messages!"
             )
         
         from agents.agent_registry import agent_registry
