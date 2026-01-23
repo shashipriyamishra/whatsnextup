@@ -2,18 +2,23 @@
 
 import { cn } from "@/lib/utils"
 
-// Define gradient variants for different agents
+// Define gradient variants for different agents (lighter, more vibrant)
 const gradients = [
-  "from-purple-500/30 via-pink-500/20 to-purple-600/10", // Purple-Pink
-  "from-blue-500/30 via-cyan-500/20 to-blue-600/10", // Blue-Cyan
-  "from-green-500/30 via-teal-500/20 to-green-600/10", // Green-Teal
-  "from-orange-500/30 via-amber-500/20 to-orange-600/10", // Orange-Amber
-  "from-rose-500/30 via-pink-500/20 to-rose-600/10", // Rose-Pink
-  "from-indigo-500/30 via-purple-500/20 to-indigo-600/10", // Indigo-Purple
-  "from-cyan-500/30 via-blue-500/20 to-cyan-600/10", // Cyan-Blue
-  "from-lime-500/30 via-green-500/20 to-lime-600/10", // Lime-Green
-  "from-fuchsia-500/30 via-purple-500/20 to-fuchsia-600/10", // Fuchsia-Purple
-  "from-violet-500/30 via-purple-500/20 to-violet-600/10", // Violet-Purple
+  "from-purple-400/25 via-pink-400/15 to-purple-500/5", // Purple-Pink
+  "from-blue-400/25 via-cyan-400/15 to-blue-500/5", // Blue-Cyan
+  "from-green-400/25 via-emerald-400/15 to-green-500/5", // Green-Emerald
+  "from-orange-400/25 via-amber-400/15 to-orange-500/5", // Orange-Amber
+  "from-rose-400/25 via-pink-400/15 to-rose-500/5", // Rose-Pink
+  "from-indigo-400/25 via-violet-400/15 to-indigo-500/5", // Indigo-Violet
+  "from-cyan-400/25 via-sky-400/15 to-cyan-500/5", // Cyan-Sky
+  "from-lime-400/25 via-green-400/15 to-lime-500/5", // Lime-Green
+  "from-fuchsia-400/25 via-purple-400/15 to-fuchsia-500/5", // Fuchsia-Purple
+  "from-violet-400/25 via-purple-400/15 to-violet-500/5", // Violet-Purple
+  "from-teal-400/25 via-cyan-400/15 to-teal-500/5", // Teal-Cyan
+  "from-amber-400/25 via-yellow-400/15 to-amber-500/5", // Amber-Yellow
+  "from-red-400/25 via-rose-400/15 to-red-500/5", // Red-Rose
+  "from-emerald-400/25 via-teal-400/15 to-emerald-500/5", // Emerald-Teal
+  "from-sky-400/25 via-blue-400/15 to-sky-500/5", // Sky-Blue
 ]
 
 interface AgentCardProps {
@@ -51,10 +56,10 @@ export function AgentCard({
         className,
       )}
     >
-      {/* Gradient Background with varied colors */}
+      {/* Gradient Background with varied colors - lighter opacity */}
       <div
         className={cn(
-          "absolute inset-0 bg-gradient-to-br opacity-60 group-hover:opacity-100 transition-opacity duration-300",
+          "absolute inset-0 bg-gradient-to-br opacity-40 group-hover:opacity-70 transition-opacity duration-300",
           gradient,
         )}
       ></div>
