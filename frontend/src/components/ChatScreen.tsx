@@ -89,7 +89,7 @@ export default function ChatScreen() {
             </div>
           </Link>
           <nav className="flex items-center gap-2 md:gap-3">
-            {user && (
+            {user?.uid && (
               <>
                 <Link
                   href="/memories"
