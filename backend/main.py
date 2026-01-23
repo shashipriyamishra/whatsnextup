@@ -423,7 +423,7 @@ def get_plan(
         from firestore.client import FirestorePlan
         plans_db = FirestorePlan()
         
-        plan = plans_db.get_plan(uid, plan_id)
+        plan = plans_db.get_plan_by_id(uid, plan_id)
         
         if not plan:
             raise HTTPException(status_code=404, detail="Plan not found")

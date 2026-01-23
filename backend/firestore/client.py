@@ -121,13 +121,14 @@ class FirestoreMemory:
     """Memory (conversations) storage"""
     
     @staticmethod
-    def save_memory(user_id: str, content: str, category: str = "chat", tags: List[str] = None) -> str:
-        """Save a memory/message"""
+    def save_memory(user_id: str, title: str = "", content: str = "", category: str = "insight", tags: List[str] = None) -> str:
+        """Save a memory with title, content, category and tags"""
         try:
             db = get_firestore_client()
             memory_data = {
+                "title": title,
                 "content": content,
-                "category": category,  # chat, habit, goal, fact, preference
+                "category": category,  # learning, achievement, challenge, insight
                 "tags": tags or [],
                 "createdAt": datetime.utcnow(),
                 "relevanceScore": 1.0
@@ -272,13 +273,14 @@ class FirestoreReflection:
     """Daily/Weekly reflection storage"""
     
     @staticmethod
-    def save_reflection(user_id: str, title: str, content: str, analysis: Dict = None, mood: str = "thoughtful") -> str:
-        """Save a reflection"""
+    def save_reflection(user_id: str, title: str = "", content: str = "", type: str = "daily", analysis: Dict = None, mood: str = "thoughtful") -> str:
+        """Save a reflection with type, title, content and analysis"""
         try:
             db = get_firestore_client()
             reflection_data = {
                 "title": title,
                 "content": content,
+                "type": type,  # daily, weekly, monthly, goal-review
                 "analysis": analysis or {},
                 "mood": mood,
                 "createdAt": datetime.utcnow()
