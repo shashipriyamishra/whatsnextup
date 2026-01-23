@@ -27,15 +27,26 @@ export default function SuggestionBox({
       <div className="space-y-1">
         {Array.isArray(suggestions) ? (
           suggestions.map((suggestion, idx) => {
-            const text =
-              typeof suggestion === "string"
-                ? suggestion
-                : suggestion?.toString() || ""
+            // Extract text properly from different formats
+            let text = ""
+            if (typeof suggestion === "string") {
+              text = suggestion
+            } else if (suggestion && typeof suggestion === "object") {
+              // Handle objects with text/value/content properties
+              text =
+                suggestion.text ||
+                suggestion.value ||
+                suggestion.content ||
+                JSON.stringify(suggestion)
+            } else {
+              text = String(suggestion || "")
+            }
+
             return (
               <button
                 key={idx}
-                onClick={() => onApply?.(suggestion)}
-                className="block w-full text-left text-sm p-2 rounded hover:bg-white/10 text-purple-200 hover:text-white transition"
+                onClick={() => onApply?.(text)}
+                className="block w-full text-left text-sm p-2 rounded hover:bg-white/10 text-purple-200 hover:text-white transition cursor-pointer"
               >
                 <span className="text-xs opacity-60">✓</span> {text}
               </button>

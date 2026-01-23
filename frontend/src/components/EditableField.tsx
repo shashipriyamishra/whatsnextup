@@ -73,19 +73,16 @@ export default function EditableField({
         <label className="block text-sm font-semibold text-white">
           {label}
         </label>
-        {onSuggestionsRequest &&
-          value &&
-          typeof value === "string" &&
-          value.trim() && (
-            <button
-              onClick={handleRequestSuggestions}
-              disabled={loadingSuggestions}
-              className="text-lg hover:scale-110 transition disabled:opacity-50"
-              title="Get AI suggestions"
-            >
-              {loadingSuggestions ? "✨" : "✨"}
-            </button>
-          )}
+        {onSuggestionsRequest && (
+          <button
+            onClick={handleRequestSuggestions}
+            disabled={loadingSuggestions}
+            className="text-xl hover:scale-150 transition-transform duration-200 disabled:opacity-50 cursor-pointer"
+            title="Get AI suggestions"
+          >
+            {loadingSuggestions ? "⏳" : "✨"}
+          </button>
+        )}
       </div>
 
       {type === "select" ? (

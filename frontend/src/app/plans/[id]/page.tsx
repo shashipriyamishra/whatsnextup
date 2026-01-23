@@ -40,6 +40,7 @@ export default function PlanDetailPage({
   const [suggestions, setSuggestions] = useState<Record<string, string[]>>({})
   const [error, setError] = useState("")
   const [planId, setPlanId] = useState<string | null>(null)
+  const [expandedStep, setExpandedStep] = useState<number | null>(null)
 
   // Unwrap params Promise
   useEffect(() => {
@@ -290,22 +291,55 @@ export default function PlanDetailPage({
                 {plan.steps.map((step) => (
                   <div
                     key={step.step}
-                    className="p-4 rounded-lg bg-white/5 border border-white/10"
+                    onClick={() =>
+                      setExpandedStep(
+                        expandedStep === step.step ? null : step.step,
+                      )
+                    }
+                    className="p-5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all cursor-pointer"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
-                        <span className="text-white font-bold">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                        <span className="text-white font-bold text-lg">
                           {step.step}
                         </span>
                       </div>
                       <div className="flex-1">
-                        <p className="text-white font-semibold mb-2">
+                        <p className="text-white font-semibold mb-3 text-lg">
                           {step.action}
                         </p>
-                        <div className="flex gap-4 text-sm text-white/60">
-                          <span>📅 {step.deadline}</span>
-                          <span>⚡ {step.effort} effort</span>
+                        <div className="flex gap-6 text-sm">
+                          <span className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300">
+                            📅 {step.deadline}
+                          </span>
+                          <span
+                            className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+                              step.effort === "high"
+                                ? "bg-red-500/20 text-red-300"
+                                : step.effort === "medium"
+                                  ? "bg-yellow-500/20 text-yellow-300"
+                                  : "bg-green-500/20 text-green-300"
+                            }`}
+                          >
+                            ⚡ {step.effort} effort
+                          </span>
                         </div>
+                        {expandedStep === step.step && (
+                          <div className="mt-4 pt-4 border-t border-white/10">
+                            <p className="text-white/70 text-sm leading-relaxed">
+                              <span className="font-semibold text-white">
+                                Details:
+                              </span>{" "}
+                              This step involves {step.action.toLowerCase()}.
+                              Estimated effort level is {step.effort}, with a
+                              target deadline of {step.deadline}. Click to
+                              collapse this view.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-shrink-0 text-white/40">
+                        {expandedStep === step.step ? "▼" : "▶"}
                       </div>
                     </div>
                   </div>

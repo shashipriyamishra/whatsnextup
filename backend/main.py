@@ -498,50 +498,77 @@ def get_plan_suggestions(
         current_value = request.get("currentValue", "")
         context = request.get("context", {})
         
-        print(f"💡 Getting suggestions for field '{field}'")
+        print(f"💡 Getting suggestions for field '{field}', value: '{current_value}'")
         
         from agents.llm import call_llm
         
-        prompts = {
-            "goal": f"""User is refining their goal. Current goal: {current_value}
-            
-Generate 3 better, more specific goal statements. Each should be clear and actionable.
-Return as JSON: ["goal 1", "goal 2", "goal 3"]""",
-            
-            "timeframe": f"""User's goal: {context.get('goal', '')}
-Current timeframe estimate: {current_value}
-
-Suggest 3 realistic timeframe options. Consider complexity.
-Return as JSON: ["timeframe 1", "timeframe 2", "timeframe 3"]""",
-            
-            "priority": f"""Suggest priority level (high/medium/low) for: {context.get('goal', '')}
-Reasoning: {context.get('complexity', '')}
-Return as JSON: {{"priority": "high", "reasoning": "..."}}""",
-            
-            "steps": f"""Goal: {context.get('goal', '')}
-Timeframe: {context.get('timeframe', '')}
-
-Suggest 3 different step breakdowns (each is a complete list of steps).
-Return as JSON: [[step1, step2, step3], [...], [...]]"""
-        }
+        # Build context-aware prompts
+        goal = context.get("goal", "")
         
-        prompt = prompts.get(field, f"Generate suggestions for {field}")
+        # If no current value, suggest initial values based on label and goal
+        if not current_value or not current_value.strip():
+            prompts = {
+                "goal": f"""Based on the user's high-level goal: {goal}
+                
+Generate 3 specific, actionable goal statements.
+Return as JSON array: ["goal 1", "goal 2", "goal 3"]""",
+                
+                "timeframe": f"""For the goal: {goal}
+
+Suggest 3 realistic timeframe options.
+Return as JSON array: ["2 weeks", "1 month", "3 months"]""",
+                
+                "success_metric": f"""For the goal: {goal}
+
+Suggest 3 measurable success metrics.
+Return as JSON array: ["metric 1", "metric 2", "metric 3"]""",
+            }
+        else:
+            # If there's a value, refine it with context
+            prompts = {
+                "goal": f"""User's overall goal: {goal}
+Current input for {field}: {current_value}
+
+Generate 3 refined, more specific versions.
+Return as JSON array: ["refined 1", "refined 2", "refined 3"]""",
+                
+                "timeframe": f"""Goal: {goal}
+Current timeframe: {current_value}
+
+Suggest 3 alternative realistic timeframes.
+Return as JSON array: ["option 1", "option 2", "option 3"]""",
+                
+                "success_metric": f"""Goal: {goal}
+Current metric: {current_value}
+
+Suggest 3 better measurable success metrics.
+Return as JSON array: ["metric 1", "metric 2", "metric 3"]""",
+            }
+        
+        prompt = prompts.get(field, f"Generate 3 suggestions for {field} related to goal: {goal}")
         suggestions = call_llm(prompt)
         
         try:
             suggestions_json = json.loads(suggestions)
-        except:
-            suggestions_json = {"error": "Could not parse suggestions"}
+            if not isinstance(suggestions_json, list):
+                # If it's not a list, try to extract it
+                if isinstance(suggestions_json, dict) and "suggestions" in suggestions_json:
+                    suggestions_json = suggestions_json["suggestions"]
+                else:
+                    # Wrap in list if single item
+                    suggestions_json = [suggestions_json]
+        except json.JSONDecodeError as e:
+            print(f"⚠️ Failed to parse LLM response as JSON: {suggestions}")
+            raise HTTPException(status_code=500, detail=f"Failed to parse AI suggestions: {str(e)}")
         
-        print(f"💡 Suggestions generated")
+        print(f"💡 Suggestions generated: {suggestions_json}")
         return {"field": field, "suggestions": suggestions_json}
         
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"❌ Error getting suggestions: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-
-
 
 
 @app.get("/api/reflections")
