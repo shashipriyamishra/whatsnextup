@@ -1,10 +1,10 @@
 "use client"
 
-import { useAuth } from "../../lib/AuthContext"
+import { useAuth } from "@/lib/AuthContext"
 import { useRouter } from "next/navigation"
 import { useState, useState as useState2 } from "react"
 import Link from "next/link"
-import { getApiUrl } from "../../lib/api"
+import { getApiUrl } from "@/lib/api"
 import EditableField from "../../components/EditableField"
 import SuggestionBox from "../../components/SuggestionBox"
 

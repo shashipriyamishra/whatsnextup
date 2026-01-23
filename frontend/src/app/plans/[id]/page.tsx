@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { useAuth } from "../../../lib/AuthContext"
-import { getApiUrl } from "../../../lib/api"
+import { useAuth } from "@/lib/AuthContext"
+import { getApiUrl } from "@/lib/api"
 import EditableField from "../../../components/EditableField"
 import SuggestionBox from "../../../components/SuggestionBox"
 

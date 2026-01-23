@@ -2,10 +2,10 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { useAuth } from "../../../lib/AuthContext"
-import { getApiUrl } from "../../../lib/api"
-import SuggestionBox from "../../../components/SuggestionBox"
-import EditableField from "../../../components/EditableField"
+import { useAuth } from "@/lib/AuthContext"
+import { getApiUrl } from "@/lib/api"
+import SuggestionBox from "@/components/SuggestionBox"
+import EditableField from "@/components/EditableField"
 
 interface MemoryDraft {
   title: string
