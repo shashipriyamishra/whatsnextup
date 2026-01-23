@@ -66,6 +66,12 @@ class ChatRequest(BaseModel):
 class PlanRequest(BaseModel):
     goal: str
 
+class RefineRequest(BaseModel):
+    draft_id: str
+    field: str
+    value: str
+    plan_data: dict
+
 class ReflectionRequest(BaseModel):
     content: str
     mood: str = "thoughtful"
@@ -150,6 +156,76 @@ def get_memories(user: dict = Depends(get_current_user)):
 
 
 # ============ PLANS ENDPOINTS ============
+
+@app.post("/api/plans/draft")
+def create_draft_plan(
+    request: PlanRequest,
+    user: dict = Depends(get_current_user)
+):
+    """Create an initial plan draft for interactive refinement"""
+    try:
+        uid = user.get("uid")
+        print(f"📝 Creating plan draft for user: {uid}")
+        
+        from agents.draft_manager import DraftManager
+        draft_mgr = DraftManager(uid)
+        
+        draft = draft_mgr.create_draft(request.goal)
+        
+        if "error" in draft:
+            raise HTTPException(status_code=400, detail=draft["error"])
+        
+        return {
+            "draft": draft,
+            "hints": draft_mgr.get_refinement_hints(draft),
+            "message": "Here's your initial plan! Review and refine each section."
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error creating draft: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/plans/refine")
+def refine_plan_draft(
+    request: RefineRequest,
+    user: dict = Depends(get_current_user)
+):
+    """Refine a specific field in a plan draft"""
+    try:
+        uid = user.get("uid")
+        print(f"🔄 Refining draft field: {request.field}")
+        
+        from agents.draft_manager import DraftManager
+        draft_mgr = DraftManager(uid)
+        
+        # Refine the draft
+        refined_plan = draft_mgr.refine_draft(
+            request.draft_id,
+            request.field,
+            request.value,
+            request.plan_data
+        )
+        
+        # Get suggestions for this field
+        suggestions = draft_mgr.get_field_suggestions(
+            request.field,
+            request.value,
+            refined_plan
+        )
+        
+        return {
+            "plan": refined_plan,
+            "field": request.field,
+            "suggestions": suggestions,
+            "hints": draft_mgr.get_refinement_hints(refined_plan),
+            "message": f"Updated {request.field}. Review suggestions below."
+        }
+    except Exception as e:
+        print(f"❌ Error refining draft: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/api/plans")
 def get_plans(user: dict = Depends(get_current_user)):
