@@ -27,7 +27,7 @@ interface Plan {
   success_metric?: string
 }
 
-export default function PlanDetailPage({ params }: { params: { id: string } }) {
+export default function PlanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { user, loading } = useAuth()
   const [plan, setPlan] = useState<Plan | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -35,14 +35,22 @@ export default function PlanDetailPage({ params }: { params: { id: string } }) {
   const [isSaving, setIsSaving] = useState(false)
   const [suggestions, setSuggestions] = useState<Record<string, string[]>>({})
   const [error, setError] = useState("")
+  const [planId, setPlanId] = useState<string | null>(null)
+
+  // Unwrap params Promise
+  useEffect(() => {
+    params.then((p) => setPlanId(p.id))
+  }, [params])
 
   useEffect(() => {
-    if (user && !loading && params.id) {
+    if (user && !loading && planId) {
       fetchPlan()
     }
-  }, [user, loading, params.id])
+  }, [user, loading, planId])
 
   const fetchPlan = async () => {
+    if (!planId) return
+    
     try {
       setIsLoading(true)
       const token = await user?.getIdToken()
@@ -52,7 +60,7 @@ export default function PlanDetailPage({ params }: { params: { id: string } }) {
         return
       }
 
-      const response = await fetch(`${getApiUrl()}/api/plans/${params.id}`, {
+      const response = await fetch(`${getApiUrl()}/api/plans/${planId}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
