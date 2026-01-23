@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "../../lib/AuthContext"
-import PlanCard from "../../components/PlanCard"
+import { getApiUrl } from "../../lib/api"
 
 interface PlanStep {
   step: number
@@ -54,15 +54,12 @@ export default function PlansPage() {
         return
       }
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/api/plans`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await fetch(`${getApiUrl()}/api/plans`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      )
+      })
 
       if (response.ok) {
         const data = await response.json()
@@ -87,17 +84,14 @@ export default function PlansPage() {
         return
       }
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/api/plans`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ goal: newGoal }),
+      const response = await fetch(`${getApiUrl()}/api/plans`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      )
+        body: JSON.stringify({ goal: newGoal }),
+      })
 
       if (response.ok) {
         const data = await response.json()
@@ -289,15 +283,70 @@ export default function PlansPage() {
         ) : (
           <div className="space-y-4">
             {filteredPlans.map((plan) => (
-              <PlanCard
+              <div
                 key={plan.id}
-                plan={plan}
-                onUpdateStatus={handleUpdateStatus}
-                onDeletePlan={handleDeletePlan}
-                onCreateSubPlan={handleCreateSubPlan}
-                onGetNextSteps={() => fetchPlans()}
-                onRefresh={fetchPlans}
-              />
+                className="p-6 rounded-lg bg-white/10 backdrop-blur border border-white/20 hover:border-white/40 transition"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 className="text-white font-semibold text-lg">
+                      {plan.goal}
+                    </h3>
+                    <p className="text-white/60 text-sm mt-1">
+                      Timeframe: {plan.timeframe}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs px-3 py-1 rounded-full bg-gradient-to-r ${
+                        plan.priority === "high"
+                          ? "from-red-500"
+                          : plan.priority === "medium"
+                            ? "from-yellow-500"
+                            : "from-green-500"
+                      } to-pink-500 text-white font-semibold capitalize`}
+                    >
+                      {plan.priority}
+                    </span>
+                    <span
+                      className={`text-xs px-3 py-1 rounded-full bg-gradient-to-r ${
+                        plan.status === "active"
+                          ? "from-blue-500"
+                          : plan.status === "completed"
+                            ? "from-green-500"
+                            : "from-gray-500"
+                      } to-pink-500 text-white font-semibold capitalize`}
+                    >
+                      {plan.status}
+                    </span>
+                  </div>
+                </div>
+
+                {plan.steps && plan.steps.length > 0 && (
+                  <div className="space-y-2 mb-4">
+                    <p className="text-white/80 text-sm font-semibold">
+                      Steps:
+                    </p>
+                    {plan.steps.map((step, idx) => (
+                      <div
+                        key={idx}
+                        className="pl-4 py-2 border-l-2 border-white/20 text-white/80 text-sm"
+                      >
+                        <div className="font-medium">
+                          {step.step}. {step.action}
+                        </div>
+                        <div className="text-white/50 text-xs mt-1">
+                          Deadline: {step.deadline} • Effort: {step.effort}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="text-xs text-white/50 mt-4 pt-4 border-t border-white/10">
+                  Created: {new Date(plan.created_at).toLocaleDateString()}
+                </div>
+              </div>
             ))}
           </div>
         )}

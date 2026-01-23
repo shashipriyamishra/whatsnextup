@@ -20,11 +20,11 @@ try:
     print(f"✅ Vertex AI initialized successfully")
     
     # IMPORTANT: use EXACT model name from Vertex AI Studio
-    # CHANGED: Using gemini-1.5-pro for better quality responses
-    # Compared models: gemini-2.5-flash (fast/vague) vs gemini-1.5-pro (quality/balanced)
+    # CHANGED: Using gemini-2.0-flash (best balance - available everywhere, quality responses)
+    # Note: gemini-1.5-pro not available in whatsnextup-d2415 project
     try:
-        model = GenerativeModel("gemini-1.5-pro")
-        print(f"✅ Gemini 1.5 Pro model loaded successfully")
+        model = GenerativeModel("gemini-2.0-flash")
+        print(f"✅ Gemini 2.0 Flash model loaded successfully")
     except Exception as e:
         print(f"❌ Failed to load Gemini model: {e}")
         print(f"⚠️  LLM features will be disabled")

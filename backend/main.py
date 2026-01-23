@@ -287,102 +287,62 @@ def delete_plan(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/api/plans/{plan_id}/subplans")
-def create_subplan(
-    plan_id: str,
-    subplan_data: dict,
+@app.post("/api/plans/suggestions")
+def get_plan_suggestions(
+    request: dict,
     user: dict = Depends(get_current_user)
 ):
-    """Create a sub-plan from a main plan step"""
+    """Get AI suggestions for plan fields"""
     try:
         uid = user.get("uid")
-        print(f"📋 Creating sub-plan from plan {plan_id}")
+        field = request.get("field", "")
+        current_value = request.get("currentValue", "")
+        context = request.get("context", {})
         
-        planning_agent = PlanningAgent(uid)
-        
-        # Extract the step to break down
-        step_to_break = subplan_data.get("step", "")
-        
-        # Break down the task
-        subtasks = planning_agent.break_down_task(step_to_break)
-        
-        # Create subplan structure
-        subplan = {
-            "parent_plan_id": plan_id,
-            "parent_step": step_to_break,
-            "goal": f"Break down: {step_to_break}",
-            "steps": subtasks,
-            "status": "active"
-        }
-        
-        # Save to Firestore
-        from firestore.client import FirestorePlan
-        plans_db = FirestorePlan()
-        subplan_id = plans_db.save_plan(uid, step_to_break, subplan)
-        
-        print(f"✅ Sub-plan {subplan_id} created")
-        return {
-            "id": subplan_id,
-            "parent_plan_id": plan_id,
-            "steps": subtasks,
-            "message": "Sub-plan created! Now dive into these specific tasks."
-        }
-    except Exception as e:
-        print(f"❌ Error creating sub-plan: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/api/plans/{plan_id}/next-steps")
-def get_next_steps(
-    plan_id: str,
-    user: dict = Depends(get_current_user)
-):
-    """Generate next action steps for a plan"""
-    try:
-        uid = user.get("uid")
-        print(f"📋 Generating next steps for plan {plan_id}")
-        
-        # Get the plan
-        from firestore.client import FirestorePlan
-        plans_db = FirestorePlan()
-        plan = plans_db.get_plan_by_id(uid, plan_id)
-        
-        if not plan:
-            raise HTTPException(status_code=404, detail="Plan not found")
-        
-        planning_agent = PlanningAgent(uid)
-        
-        # Suggest next actions based on the plan
-        prompt = f"""Based on this plan for {plan.get('goal')}:
-        
-Current steps: {plan.get('steps', [])}
-Already completed: {len([s for s in plan.get('steps', []) if s.get('status') == 'done'])} steps
-
-What are the next 3 immediate actions the user should take right now?
-Be specific and actionable.
-
-Return as JSON:
-["action 1", "action 2", "action 3"]"""
+        print(f"💡 Getting suggestions for field '{field}'")
         
         from agents.llm import call_llm
-        response = call_llm(prompt)
+        
+        prompts = {
+            "goal": f"""User is refining their goal. Current goal: {current_value}
+            
+Generate 3 better, more specific goal statements. Each should be clear and actionable.
+Return as JSON: ["goal 1", "goal 2", "goal 3"]""",
+            
+            "timeframe": f"""User's goal: {context.get('goal', '')}
+Current timeframe estimate: {current_value}
+
+Suggest 3 realistic timeframe options. Consider complexity.
+Return as JSON: ["timeframe 1", "timeframe 2", "timeframe 3"]""",
+            
+            "priority": f"""Suggest priority level (high/medium/low) for: {context.get('goal', '')}
+Reasoning: {context.get('complexity', '')}
+Return as JSON: {{"priority": "high", "reasoning": "..."}}""",
+            
+            "steps": f"""Goal: {context.get('goal', '')}
+Timeframe: {context.get('timeframe', '')}
+
+Suggest 3 different step breakdowns (each is a complete list of steps).
+Return as JSON: [[step1, step2, step3], [...], [...]]"""
+        }
+        
+        prompt = prompts.get(field, f"Generate suggestions for {field}")
+        suggestions = call_llm(prompt)
         
         try:
-            next_actions = json.loads(response)
+            suggestions_json = json.loads(suggestions)
         except:
-            next_actions = ["Review plan", "Start first step", "Track progress"]
+            suggestions_json = {"error": "Could not parse suggestions"}
         
-        print(f"✅ Generated next steps for plan {plan_id}")
-        return {
-            "plan_id": plan_id,
-            "next_actions": next_actions,
-            "message": "Here's what to focus on next!"
-        }
-    except HTTPException:
-        raise
+        print(f"💡 Suggestions generated")
+        return {"field": field, "suggestions": suggestions_json}
+        
     except Exception as e:
-        print(f"❌ Error getting next steps: {e}")
+        print(f"❌ Error getting suggestions: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
 
 
 @app.get("/api/reflections")
