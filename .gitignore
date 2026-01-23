@@ -16,9 +16,29 @@ __pycache__/
 .env
 .env.local
 .env.production
+.env.development
 .env.*.local
 
 # Databases
 *.db
+
 # Firebase/GCP secrets (IMPORTANT - NEVER COMMIT)
 service-account-key.json
+firebase-adminsdk-*.json
+*secret*.json
+
+# API Keys & Secrets (NEVER COMMIT)
+*.key
+*.pem
+*.crt
+config/secrets.*
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Build outputs
+dist/
+build/

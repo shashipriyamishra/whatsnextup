@@ -6,6 +6,7 @@ print("🔥 MAIN.PY LOADED 🔥")
 print("✅ Backend deployment: CI/CD pipeline active")
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional
 import json
 
 from agents.orchestrator import handle_user_message
@@ -21,9 +22,10 @@ from fastapi.responses import JSONResponse
 import time
 from auth.deps import get_current_user
 from datetime import datetime
+from usage.tracking import increment_usage, get_usage_stats, can_access_feature, update_user_tier
 
 REQUESTS = {}
-MAX_REQUESTS = 10   # per IP
+MAX_REQUESTS = 100   # per IP (increased for development)
 WINDOW = 60         # seconds
 app = FastAPI(title="whatsnextup Backend")
 
@@ -119,6 +121,11 @@ def chat(
 @app.middleware("http")
 async def rate_limit(request: Request, call_next):
     ip = request.client.host
+    
+    # Skip rate limiting for localhost/development
+    if ip in ["127.0.0.1", "localhost", "::1"]:
+        return await call_next(request)
+    
     now = time.time()
 
     REQUESTS.setdefault(ip, [])
@@ -957,6 +964,15 @@ async def chat_with_agent(
         if not message.strip():
             raise HTTPException(status_code=400, detail="Message cannot be empty")
         
+        # Check usage limits
+        can_send = await increment_usage(uid)
+        if not can_send:
+            usage_stats = await get_usage_stats(uid)
+            raise HTTPException(
+                status_code=429,
+                detail=f"Daily message limit reached ({usage_stats['limit']} messages). Upgrade to Plus for unlimited messages!"
+            )
+        
         from agents.agent_registry import agent_registry
         from agents.specialized import get_all_specialized_agents
         
@@ -976,6 +992,15 @@ async def chat_with_agent(
         # Process the message
         response = await agent.process_message(message, uid, context=request.get("context"))
         
+        # Save conversation to history (only for Plus and Pro users)
+        can_save = await can_access_feature(uid, "conversations_history")
+        if can_save:
+            try:
+                from conversations.store import save_conversation_message
+                await save_conversation_message(uid, agent_id_normalized, message, response)
+            except Exception as conv_error:
+                print(f"⚠️  Failed to save conversation: {conv_error}")
+        
         return {
             "agent": agent.name,
             "response": response,
@@ -987,4 +1012,205 @@ async def chat_with_agent(
         print(f"❌ Error chatting with agent: {e}")
         import traceback
         traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================================================
+# CONVERSATION HISTORY ENDPOINTS
+# ============================================================================
+
+@app.get("/api/conversations")
+async def get_conversations(
+    agent_id: Optional[str] = None,
+    limit: int = 50,
+    user: dict = Depends(get_current_user)
+):
+    """Get conversation history for the user"""
+    try:
+        from conversations.store import get_conversation_history
+        uid = user.get("uid")
+        
+        conversations = await get_conversation_history(uid, agent_id, limit)
+        return {"conversations": conversations}
+    except Exception as e:
+        print(f"❌ Error fetching conversations: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/conversations/search")
+async def search_user_conversations(
+    q: str,
+    limit: int = 20,
+    user: dict = Depends(get_current_user)
+):
+    """Search conversations"""
+    try:
+        from conversations.store import search_conversations
+        uid = user.get("uid")
+        
+        conversations = await search_conversations(uid, q, limit)
+        return {"conversations": conversations, "query": q}
+    except Exception as e:
+        print(f"❌ Error searching conversations: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/conversations/{conversation_id}")
+async def delete_user_conversation(
+    conversation_id: str,
+    user: dict = Depends(get_current_user)
+):
+    """Delete a specific conversation"""
+    try:
+        from conversations.store import delete_conversation
+        uid = user.get("uid")
+        
+        success = await delete_conversation(uid, conversation_id)
+        if success:
+            return {"message": "Conversation deleted"}
+        else:
+            raise HTTPException(status_code=404, detail="Conversation not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error deleting conversation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/conversations/stats")
+async def get_user_conversation_stats(user: dict = Depends(get_current_user)):
+    """Get conversation statistics"""
+    try:
+        from conversations.store import get_conversation_stats
+        uid = user.get("uid")
+        
+        stats = await get_conversation_stats(uid)
+        return stats
+    except Exception as e:
+        print(f"❌ Error fetching stats: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================================================
+# TRENDING & SOCIAL MEDIA ENDPOINTS (No auth required)
+# ============================================================================
+
+@app.get("/api/trending/reddit")
+async def get_trending_reddit(subreddit: str = "popular", limit: int = 10):
+    """Get trending Reddit posts"""
+    try:
+        from trending.api_integrations import get_reddit_trending
+        posts = await get_reddit_trending(subreddit, limit)
+        return {"subreddit": subreddit, "posts": posts}
+    except Exception as e:
+        print(f"❌ Error fetching Reddit trending: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/trending/youtube")
+async def get_trending_youtube(region: str = "US", category: str = "0", limit: int = 10):
+    """Get trending YouTube videos"""
+    try:
+        from trending.api_integrations import get_youtube_trending
+        videos = await get_youtube_trending(region, category, limit)
+        return {"region": region, "videos": videos}
+    except Exception as e:
+        print(f"❌ Error fetching YouTube trending: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/trending/news")
+async def get_trending_news(country: str = "us", category: str = "general", limit: int = 10):
+    """Get top news headlines"""
+    try:
+        from trending.api_integrations import get_top_news
+        articles = await get_top_news(country, category, limit)
+        return {"country": country, "category": category, "articles": articles}
+    except Exception as e:
+        print(f"❌ Error fetching news: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/trending/weather")
+async def get_current_weather(city: str = "New York", country: str = "US"):
+    """Get current weather"""
+    try:
+        from trending.api_integrations import get_weather
+        weather = await get_weather(city, country)
+        return {"weather": weather}
+    except Exception as e:
+        print(f"❌ Error fetching weather: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/trending/hackernews")
+async def get_trending_hackernews(limit: int = 10):
+    """Get top Hacker News stories"""
+    try:
+        from trending.api_integrations import get_hackernews_top
+        stories = await get_hackernews_top(limit)
+        return {"stories": stories}
+    except Exception as e:
+        print(f"❌ Error fetching Hacker News: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/trending/github")
+async def get_trending_github(language: str = "", since: str = "daily"):
+    """Get trending GitHub repositories"""
+    try:
+        from trending.api_integrations import get_github_trending
+        repos = await get_github_trending(language, since)
+        return {"language": language, "since": since, "repositories": repos}
+    except Exception as e:
+        print(f"❌ Error fetching GitHub trending: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/trending/feed")
+async def get_personalized_trending_feed(
+    city: Optional[str] = None,
+    country: Optional[str] = None
+):
+    """Get aggregated personalized feed from multiple sources"""
+    try:
+        from trending.api_integrations import get_personalized_feed
+        
+        user_location = None
+        if city and country:
+            user_location = {"city": city, "country_code": country}
+        
+        feed = await get_personalized_feed(user_location)
+        return {"feed": feed}
+    except Exception as e:
+        print(f"❌ Error fetching personalized feed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# USAGE & SUBSCRIPTION MANAGEMENT ENDPOINTS
+# ============================================================================
+
+@app.get("/api/usage/stats")
+async def get_user_usage_stats(user: dict = Depends(get_current_user)):
+    """Get current user's usage statistics"""
+    try:
+        uid = user.get("uid")
+        stats = await get_usage_stats(uid)
+        return stats
+    except Exception as e:
+        print(f"❌ Error fetching usage stats: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/subscription/upgrade")
+async def upgrade_subscription(
+    request: dict,
+    user: dict = Depends(get_current_user)
+):
+    """Upgrade user's subscription tier (called after successful payment)"""
+    try:
+        uid = user.get("uid")
+        new_tier = request.get("tier", "free")
+        
+        if new_tier not in ["free", "plus", "pro"]:
+            raise HTTPException(status_code=400, detail="Invalid tier")
+        
+        success = await update_user_tier(uid, new_tier)
+        if not success:
+            raise HTTPException(status_code=500, detail="Failed to update tier")
+        
+        return {"success": True, "tier": new_tier}
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error upgrading subscription: {e}")
         raise HTTPException(status_code=500, detail=str(e))

@@ -7,6 +7,7 @@ import { auth } from "./firebase"
 interface AuthContextType {
   user: User | null
   loading: boolean
+  token: string | null
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -15,11 +16,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null)
+  const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser)
+      if (currentUser) {
+        const idToken = await currentUser.getIdToken()
+        setToken(idToken)
+      } else {
+        setToken(null)
+      }
       setLoading(false)
     })
 
@@ -27,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ user, loading, token }}>
       {children}
     </AuthContext.Provider>
   )

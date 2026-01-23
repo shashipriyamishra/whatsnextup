@@ -6,6 +6,8 @@ const API_BASE =
     ? "https://whatsnextup-api-214675476458.us-central1.run.app"
     : "http://localhost:8000")
 
+export const API_URL = API_BASE
+
 export function getApiUrl(): string {
   return API_BASE
 }
