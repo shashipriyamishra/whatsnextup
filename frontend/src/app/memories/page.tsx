@@ -7,12 +7,20 @@ import { getApiUrl } from "@/lib/api"
 
 interface Memory {
   id: string
-  title: string
-  content: string
-  category: "learning" | "achievement" | "challenge" | "insight"
-  tags: string[]
-  date: string
-  status: "active" | "archived"
+  title?: string
+  text?: string
+  content?: string
+  category:
+    | "learning"
+    | "achievement"
+    | "challenge"
+    | "insight"
+    | "preference"
+    | "decision"
+    | "chat"
+  tags?: string[]
+  date?: string
+  status?: "active" | "archived"
   created_at: string
 }
 
@@ -62,6 +70,9 @@ export default function MemoriesPage() {
       achievement: "bg-green-500/20 border-green-400/50 text-green-300",
       challenge: "bg-orange-500/20 border-orange-400/50 text-orange-300",
       insight: "bg-purple-500/20 border-purple-400/50 text-purple-300",
+      preference: "bg-pink-500/20 border-pink-400/50 text-pink-300",
+      decision: "bg-cyan-500/20 border-cyan-400/50 text-cyan-300",
+      chat: "bg-gray-500/20 border-gray-400/50 text-gray-300",
     }
     return colors[category] || colors.learning
   }
@@ -72,6 +83,9 @@ export default function MemoriesPage() {
       achievement: "🎉",
       challenge: "💪",
       insight: "💡",
+      preference: "❤️",
+      decision: "🎯",
+      chat: "💬",
     }
     return emojis[category] || "📝"
   }
@@ -222,7 +236,11 @@ export default function MemoriesPage() {
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
-                    <h3 className="text-white font-semibold">{memory.title}</h3>
+                    {memory.title && (
+                      <h3 className="text-white font-semibold mb-1">
+                        {memory.title}
+                      </h3>
+                    )}
                     <p className="text-white/60 text-xs">
                       {new Date(memory.created_at).toLocaleDateString()}
                     </p>
@@ -232,8 +250,8 @@ export default function MemoriesPage() {
                   </span>
                 </div>
 
-                <p className="text-white/80 text-sm mb-3 line-clamp-2">
-                  {memory.content}
+                <p className="text-white/80 text-sm mb-3 line-clamp-3">
+                  {memory.text || memory.content || "No content"}
                 </p>
 
                 {memory.tags && memory.tags.length > 0 && (

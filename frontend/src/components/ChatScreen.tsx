@@ -115,29 +115,25 @@ export default function ChatScreen() {
                   <span className="hidden sm:inline">💭 Reflect</span>
                   <span className="sm:hidden">💭</span>
                 </Link>
+                <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/10 rounded-xl border border-white/20 backdrop-blur-sm">
+                  {user.photoURL && (
+                    <img
+                      src={user.photoURL}
+                      alt="Profile"
+                      className="w-7 h-7 rounded-full border-2 border-pink-400"
+                    />
+                  )}
+                  <span className="text-xs font-semibold text-white">
+                    {user.displayName?.split(" ")[0]}
+                  </span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="text-xs px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg hover:shadow-pink-500/50 transition-all duration-200 font-bold cursor-pointer transform hover:scale-105"
+                >
+                  Sign out
+                </button>
               </>
-            )}
-            {user && (
-              <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/10 rounded-xl border border-white/20 backdrop-blur-sm">
-                {user?.photoURL && (
-                  <img
-                    src={user.photoURL}
-                    alt="Profile"
-                    className="w-7 h-7 rounded-full border-2 border-pink-400"
-                  />
-                )}
-                <span className="text-xs font-semibold text-white">
-                  {user?.displayName?.split(" ")[0]}
-                </span>
-              </div>
-            )}
-            {user && (
-              <button
-                onClick={handleLogout}
-                className="text-xs px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg hover:shadow-pink-500/50 transition-all duration-200 font-bold cursor-pointer transform hover:scale-105"
-              >
-                Sign out
-              </button>
             )}
           </nav>
         </div>
