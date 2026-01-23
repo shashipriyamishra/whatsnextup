@@ -315,10 +315,17 @@ class FirestorePlan:
     """Plans storage"""
     
     @staticmethod
+    @staticmethod
     def save_plan(user_id: str, goal: str, plan_data: Dict) -> str:
         """Save a plan"""
         try:
+            print(f"📝 Attempting to save plan for user: {user_id}")
             db = get_firestore_client()
+            
+            if db is None:
+                print("❌ Firestore client is None!")
+                raise Exception("Firestore not available")
+            
             plan_document = {
                 "goal": goal,
                 "timeframe": plan_data.get("timeframe", ""),
@@ -331,10 +338,23 @@ class FirestorePlan:
                 "createdAt": datetime.utcnow()
             }
             
-            doc_ref = db.collection("users").document(user_id).collection("plans").add(plan_document)
-            return doc_ref[1].id
+            print(f"📝 Plan document: {plan_document}")
+            result = db.collection("users").document(user_id).collection("plans").add(plan_document)
+            print(f"📝 Add result: {result}")
+            
+            # result is a tuple (doc_ref, doc_id) 
+            if result and len(result) > 1:
+                plan_id = result[1]
+                print(f"✅ Plan saved successfully with ID: {plan_id}")
+                return plan_id
+            else:
+                print(f"⚠️ Unexpected result format: {result}")
+                return str(result)
+                
         except Exception as e:
             print(f"❌ Error saving plan: {e}")
+            import traceback
+            traceback.print_exc()
             raise
 
     @staticmethod
