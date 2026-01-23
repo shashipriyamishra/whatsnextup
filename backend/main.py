@@ -965,8 +965,11 @@ async def chat_with_agent(
             for agent in get_all_specialized_agents():
                 agent_registry.register(agent)
         
+        # Convert hyphenated agent_id to underscored (e.g., "budget-tracker" -> "budget_tracker")
+        agent_id_normalized = agent_id.replace("-", "_")
+        
         # Get the agent
-        agent = agent_registry.get(agent_id)
+        agent = agent_registry.get(agent_id_normalized)
         if not agent:
             raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found")
         
