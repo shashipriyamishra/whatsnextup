@@ -1,7 +1,7 @@
 "use client"
 
-import { CategoryCard } from "../glass/CategoryCard"
-import { Button } from "../ui/button"
+import { CategoryCard } from "@/components/glass/CategoryCard"
+import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 

@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import * as React from "react"
 import { getEntertainmentSuggestions } from "@/lib/discovery"
 import {
   Card,
@@ -16,22 +15,37 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
+interface Suggestion {
+  title: string
+  description?: string
+  rating?: number
+  year?: string
+}
+
 export default function EntertainmentPage() {
-  const [suggestions, setSuggestions] = useState<any[]>([])
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [loading, setLoading] = useState(true)
   const [category, setCategory] = useState<"movies" | "tv">("movies")
   const router = useRouter()
 
-  const loadSuggestions = React.useCallback(async (cat: "movies" | "tv") => {
-    setLoading(true)
-    const data = await getEntertainmentSuggestions(cat)
-    setSuggestions(data.suggestions || [])
-    setLoading(false)
-  }, [])
-
   useEffect(() => {
-    loadSuggestions(category)
-  }, [category, loadSuggestions])
+    let mounted = true
+
+    async function loadData() {
+      setLoading(true)
+      const data = await getEntertainmentSuggestions(category)
+      if (mounted) {
+        setSuggestions(data.suggestions || [])
+        setLoading(false)
+      }
+    }
+
+    loadData()
+
+    return () => {
+      mounted = false
+    }
+  }, [category])
 
   return (
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">

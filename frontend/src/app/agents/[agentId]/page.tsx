@@ -33,19 +33,27 @@ export default function AgentChatPage({
     }
 
     if (user) {
-      loadAgent()
+      let mounted = true
+
+      async function loadData() {
+        const agents = await getAllAgents()
+        if (!mounted) return
+
+        const foundAgent = agents.find((a) => a.id === resolvedParams.agentId)
+        if (foundAgent) {
+          setAgent(foundAgent)
+        } else {
+          router.push("/agents")
+        }
+      }
+
+      loadData()
+
+      return () => {
+        mounted = false
+      }
     }
   }, [user, authLoading, router, resolvedParams.agentId])
-
-  const loadAgent = async () => {
-    const agents = await getAllAgents()
-    const foundAgent = agents.find((a) => a.id === resolvedParams.agentId)
-    if (foundAgent) {
-      setAgent(foundAgent)
-    } else {
-      router.push("/agents")
-    }
-  }
 
   const handleSend = async () => {
     if (!input.trim() || !user || !agent) return

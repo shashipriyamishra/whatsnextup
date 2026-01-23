@@ -15,13 +15,6 @@ export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([])
   const [loading, setLoading] = useState(true)
 
-  const loadAgents = React.useCallback(async () => {
-    setLoading(true)
-    const agentList = await getAllAgents()
-    setAgents(agentList)
-    setLoading(false)
-  }, [])
-
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login")
@@ -29,9 +22,24 @@ export default function AgentsPage() {
     }
 
     if (user) {
-      loadAgents()
+      let mounted = true
+
+      async function loadData() {
+        setLoading(true)
+        const agentList = await getAllAgents()
+        if (mounted) {
+          setAgents(agentList)
+          setLoading(false)
+        }
+      }
+
+      loadData()
+
+      return () => {
+        mounted = false
+      }
     }
-  }, [user, authLoading, router, loadAgents])
+  }, [user, authLoading, router])
 
   if (authLoading || loading) {
     return (
