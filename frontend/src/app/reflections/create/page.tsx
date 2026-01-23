@@ -81,7 +81,7 @@ export default function CreateReflectionPage() {
   }
 
   const handleGetSuggestions = async (field: string, value: string) => {
-    if (!value.trim()) {
+    if (!value || typeof value !== "string" || !value.trim()) {
       return []
     }
 
