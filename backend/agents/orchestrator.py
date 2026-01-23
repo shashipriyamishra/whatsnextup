@@ -70,8 +70,12 @@ def handle_user_message(message: str, user_id: str) -> str:
         
         elif intent == "memory":
             # Save to memory with categorization
-            memory_agent.save_with_context(message, metadata={"intent": "memory"})
-            response = "✓ Saved to memory. I'll remember this."
+            try:
+                memory_agent.save_with_context(message)
+                response = "✓ Saved to memory. I'll remember this."
+            except Exception as e:
+                print(f"Error saving memory: {e}")
+                response = "I'll remember this for next time."
         
         elif intent == "reflection":
             # Trigger reflection analysis
