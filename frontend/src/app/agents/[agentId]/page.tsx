@@ -131,7 +131,7 @@ export default function AgentChatPage({
             </div>
           </Link>
           <Link href="/agents">
-            <Button variant="glass" size="sm">
+            <Button variant="glass" size="sm" className="cursor-pointer">
               ← All Agents
             </Button>
           </Link>
@@ -211,7 +211,11 @@ export default function AgentChatPage({
               placeholder={`Chat with ${agent.name}...`}
               className="flex-1"
             />
-            <Button onClick={handleSend} disabled={loading || !input.trim()}>
+            <Button
+              onClick={handleSend}
+              disabled={loading || !input.trim()}
+              className="cursor-pointer"
+            >
               Send
             </Button>
           </div>
