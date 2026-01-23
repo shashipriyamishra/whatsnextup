@@ -85,12 +85,12 @@ export default function DiscoveryHub() {
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/50 rounded-full blur-3xl animate-blob"></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/50 rounded-full blur-3xl animate-pulse"></div>
         <div
-          className="absolute -bottom-40 -left-40 w-96 h-96 bg-pink-600/40 rounded-full blur-3xl animate-blob"
-          style={{ animationDelay: "2s" }}
+          className="absolute -bottom-40 -left-40 w-96 h-96 bg-pink-600/40 rounded-full blur-3xl animate-pulse"
+          style={{ animationDelay: "1s", animationDuration: "3s" }}
         ></div>
-        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl opacity-40"></div>
       </div>
 
       {/* Header */}
@@ -170,28 +170,6 @@ export default function DiscoveryHub() {
           </Link>
         </div>
       </section>
-
-      <style jsx>{`
-        @keyframes blob {
-          0%,
-          100% {
-            transform: translate(0, 0) scale(1);
-          }
-          25% {
-            transform: translate(20px, -50px) scale(1.1);
-          }
-          50% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-          75% {
-            transform: translate(50px, 50px) scale(1.05);
-          }
-        }
-
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-      `}</style>
     </div>
   )
 }
