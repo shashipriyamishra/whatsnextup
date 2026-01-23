@@ -83,8 +83,45 @@ export default function MemoriesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 flex items-center justify-center">
-        <div className="text-white/50">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950">
+        <nav className="sticky top-0 z-50 bg-gray-900/80 backdrop-blur border-b border-white/10">
+          <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-white hover:text-pink-400 transition"
+            >
+              <span className="text-xl">✨</span>
+              <span className="font-bold">whatsnextup</span>
+            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                href="/"
+                className="text-white/70 hover:text-white transition"
+                title="Chat"
+              >
+                💬
+              </Link>
+              <Link
+                href="/plans"
+                className="text-white/70 hover:text-white transition"
+                title="Plans"
+              >
+                📋
+              </Link>
+              <Link
+                href="/reflections"
+                className="text-white/70 hover:text-white transition"
+                title="Reflections"
+              >
+                💭
+              </Link>
+              <span className="text-white font-bold">🧠</span>
+            </div>
+          </div>
+        </nav>
+        <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
+          <div className="text-white">Loading...</div>
+        </div>
       </div>
     )
   }
@@ -94,15 +131,15 @@ export default function MemoriesPage() {
       <nav className="sticky top-0 z-50 bg-gray-900/80 backdrop-blur border-b border-white/10">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link
-            href="/chat"
+            href="/"
             className="flex items-center gap-2 text-white hover:text-pink-400 transition"
           >
-            <span className="text-2xl">🚀</span>
+            <span className="text-xl">✨</span>
             <span className="font-bold">whatsnextup</span>
           </Link>
           <div className="flex items-center gap-4">
             <Link
-              href="/chat"
+              href="/"
               className="text-white/70 hover:text-white transition"
               title="Chat"
             >
@@ -122,7 +159,7 @@ export default function MemoriesPage() {
             >
               💭
             </Link>
-            <span className="text-white/70">🧠</span>
+            <span className="text-white font-bold">🧠</span>
           </div>
         </div>
       </nav>
