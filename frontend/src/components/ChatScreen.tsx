@@ -28,7 +28,7 @@ export default function ChatScreen() {
 
     async function fetchTier() {
       try {
-        const token = await user.getIdToken()
+        const token = await (user as any).getIdToken()
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/usage/stats`,
           {
