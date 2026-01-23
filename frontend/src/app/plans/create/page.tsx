@@ -111,7 +111,8 @@ export default function CreatePlanPage() {
   }
 
   const getSuggestionsForField = async (field: string, value: string) => {
-    if (!draft || !value.trim()) return []
+    if (!draft || !value || typeof value !== "string" || !value.trim())
+      return []
 
     try {
       const token = await user?.getIdToken()
