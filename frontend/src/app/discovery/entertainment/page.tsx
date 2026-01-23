@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import * as React from "react"
 import { getEntertainmentSuggestions } from "@/lib/discovery"
 import {
   Card,
@@ -25,12 +26,12 @@ export default function EntertainmentPage() {
     loadSuggestions(category)
   }, [category])
 
-  const loadSuggestions = async (cat: "movies" | "tv") => {
+  const loadSuggestions = React.useCallback(async (cat: "movies" | "tv") => {
     setLoading(true)
     const data = await getEntertainmentSuggestions(cat)
     setSuggestions(data.suggestions || [])
     setLoading(false)
-  }
+  }, [])
 
   return (
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import * as React from "react"
 import { useAuth } from "@/lib/AuthContext"
 import { useRouter } from "next/navigation"
 import { getAllAgents, Agent } from "@/lib/agents"
@@ -25,12 +26,12 @@ export default function AgentsPage() {
     }
   }, [user, authLoading, router])
 
-  const loadAgents = async () => {
+  const loadAgents = React.useCallback(async () => {
     setLoading(true)
     const agentList = await getAllAgents()
     setAgents(agentList)
     setLoading(false)
-  }
+  }, [])
 
   if (authLoading || loading) {
     return (

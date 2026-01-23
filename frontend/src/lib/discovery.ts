@@ -3,17 +3,20 @@ import { getApiUrl } from "./api"
 
 const API_URL = getApiUrl()
 
-export async function getDiscoverySuggestions(category: string, params?: Record<string, string>) {
+export async function getDiscoverySuggestions(
+  category: string,
+  params?: Record<string, string>,
+) {
   try {
     const queryParams = new URLSearchParams(params || {}).toString()
     const url = `${API_URL}/api/discovery/${category}${queryParams ? `?${queryParams}` : ""}`
-    
+
     const response = await fetch(url)
-    
+
     if (!response.ok) {
       throw new Error(`Discovery API failed: ${response.statusText}`)
     }
-    
+
     return await response.json()
   } catch (error) {
     console.error(`Error fetching ${category} suggestions:`, error)
@@ -21,7 +24,9 @@ export async function getDiscoverySuggestions(category: string, params?: Record<
   }
 }
 
-export async function getEntertainmentSuggestions(category: "movies" | "tv" = "movies") {
+export async function getEntertainmentSuggestions(
+  category: "movies" | "tv" = "movies",
+) {
   return getDiscoverySuggestions("entertainment", { category })
 }
 
@@ -29,7 +34,7 @@ export async function getFoodSuggestions(cuisine?: string) {
   return getDiscoverySuggestions("food", cuisine ? { cuisine } : {})
 }
 
-export async function getLearning Suggestions(topic?: string) {
+export async function getLearningSuggestions(topic?: string) {
   return getDiscoverySuggestions("learning", topic ? { topic } : {})
 }
 
