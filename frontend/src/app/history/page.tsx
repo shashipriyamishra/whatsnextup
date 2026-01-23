@@ -41,8 +41,8 @@ export default function HistoryPage() {
       setLoading(true)
       try {
         const [historyData, statsData] = await Promise.all([
-          getConversationHistory(token, selectedAgent),
-          getConversationStats(token),
+          getConversationHistory(token as string, selectedAgent),
+          getConversationStats(token as string),
         ])
 
         if (mounted) {
