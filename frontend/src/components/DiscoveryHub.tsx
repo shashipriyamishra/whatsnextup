@@ -96,7 +96,10 @@ export default function DiscoveryHub() {
       {/* Header */}
       <header className="relative z-10 px-4 md:px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-4">
+          <div
+            className="flex items-center gap-4 cursor-pointer hover:opacity-80"
+            onClick={() => router.push("/")}
+          >
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-pink-500/30">
               <span className="text-xl">✨</span>
             </div>
@@ -106,7 +109,7 @@ export default function DiscoveryHub() {
             </div>
           </div>
           <Link href="/login">
-            <Button variant="default" size="sm">
+            <Button variant="default" size="sm" className="cursor-pointer">
               Sign In
             </Button>
           </Link>
@@ -160,7 +163,7 @@ export default function DiscoveryHub() {
             get personalized recommendations.
           </p>
           <Link href="/login">
-            <Button variant="default" size="lg">
+            <Button variant="default" size="lg" className="cursor-pointer">
               Get Started Free
             </Button>
           </Link>

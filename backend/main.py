@@ -719,7 +719,7 @@ def create_reflection(
 async def discovery_entertainment(category: str = "movies"):
     """Get entertainment suggestions (movies, TV shows, etc.)"""
     try:
-        from discovery import get_entertainment_suggestions
+        from discovery.service import get_entertainment_suggestions
         suggestions = await get_entertainment_suggestions(category)
         return {"suggestions": suggestions, "category": category}
     except Exception as e:
@@ -731,7 +731,7 @@ async def discovery_entertainment(category: str = "movies"):
 async def discovery_food(cuisine: str = None):
     """Get food and recipe suggestions"""
     try:
-        from discovery import get_food_suggestions
+        from discovery.service import get_food_suggestions
         suggestions = await get_food_suggestions(cuisine)
         return {"suggestions": suggestions, "cuisine": cuisine}
     except Exception as e:
@@ -743,7 +743,7 @@ async def discovery_food(cuisine: str = None):
 async def discovery_learning(topic: str = None):
     """Get learning suggestions"""
     try:
-        from discovery import get_learning_suggestions
+        from discovery.service import get_learning_suggestions
         suggestions = await get_learning_suggestions(topic)
         return {"suggestions": suggestions, "topic": topic}
     except Exception as e:
@@ -755,7 +755,7 @@ async def discovery_learning(topic: str = None):
 async def discovery_travel(location: str = None):
     """Get travel suggestions"""
     try:
-        from discovery import get_travel_suggestions
+        from discovery.service import get_travel_suggestions
         suggestions = await get_travel_suggestions(location)
         return {"suggestions": suggestions, "location": location}
     except Exception as e:
@@ -767,7 +767,7 @@ async def discovery_travel(location: str = None):
 async def discovery_wellness(focus: str = None):
     """Get wellness suggestions"""
     try:
-        from discovery import get_wellness_suggestions
+        from discovery.service import get_wellness_suggestions
         suggestions = await get_wellness_suggestions(focus)
         return {"suggestions": suggestions, "focus": focus}
     except Exception as e:
@@ -779,7 +779,7 @@ async def discovery_wellness(focus: str = None):
 async def discovery_shopping(category: str = None):
     """Get shopping suggestions"""
     try:
-        from discovery import get_shopping_suggestions
+        from discovery.service import get_shopping_suggestions
         suggestions = await get_shopping_suggestions(category)
         return {"suggestions": suggestions, "category": category}
     except Exception as e:
@@ -791,7 +791,7 @@ async def discovery_shopping(category: str = None):
 async def discovery_hobbies(interest: str = None):
     """Get hobby suggestions"""
     try:
-        from discovery import get_hobbies_suggestions
+        from discovery.service import get_hobbies_suggestions
         suggestions = await get_hobbies_suggestions(interest)
         return {"suggestions": suggestions, "interest": interest}
     except Exception as e:
@@ -815,7 +815,7 @@ async def discovery_home(room: str = None):
 async def discovery_career(field: str = None):
     """Get career development suggestions"""
     try:
-        from discovery import get_career_suggestions
+        from discovery.service import get_career_suggestions
         suggestions = await get_career_suggestions(field)
         return {"suggestions": suggestions, "field": field}
     except Exception as e:
@@ -827,7 +827,7 @@ async def discovery_career(field: str = None):
 async def discovery_events(location: str = None):
     """Get event suggestions"""
     try:
-        from discovery import get_events_suggestions
+        from discovery.service import get_events_suggestions
         suggestions = await get_events_suggestions(location)
         return {"suggestions": suggestions, "location": location}
     except Exception as e:
@@ -886,10 +886,10 @@ def get_all_agents():
                 "icon": "⚡"
             },
             {
-                "id": "relationship-coach",
-                "name": "Relationship Coach",
-                "description": "Improve your relationships and communication skills",
-                "icon": "❤️"
+                "id": "mindfulness-mentor",
+                "name": "Mindfulness Mentor",
+                "description": "Practice mindfulness and reduce stress",
+                "icon": "🧘"
             },
             {
                 "id": "creative-writer",

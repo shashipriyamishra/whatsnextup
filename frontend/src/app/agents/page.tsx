@@ -148,7 +148,9 @@ export default function AgentsPage() {
               every aspect of your life.
             </p>
             <Link href="/">
-              <Button variant="default">Back to Chat</Button>
+              <Button variant="default" className="cursor-pointer">
+                Back to Chat
+              </Button>
             </Link>
           </div>
         </div>

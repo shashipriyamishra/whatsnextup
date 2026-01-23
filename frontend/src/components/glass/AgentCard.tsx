@@ -25,18 +25,20 @@ export function AgentCard({
     <div
       onClick={onClick}
       className={cn(
-        "group relative rounded-2xl bg-white/10 border backdrop-blur-sm p-6 cursor-pointer transition-all duration-300",
+        "group relative rounded-2xl backdrop-blur-sm p-6 cursor-pointer transition-all duration-300 overflow-hidden",
         active
-          ? "border-pink-400 bg-white/15 shadow-lg shadow-pink-500/30"
-          : "border-white/20",
-        "hover:bg-white/15 hover:border-pink-400 hover:shadow-xl hover:shadow-pink-500/20 hover:-translate-y-1",
+          ? "border-pink-400 shadow-lg shadow-pink-500/30"
+          : "border border-white/20",
+        "hover:border-pink-400 hover:shadow-xl hover:shadow-pink-500/20 hover:-translate-y-1",
         className,
       )}
     >
-      <div className="flex items-start gap-4">
-        <div className="text-3xl group-hover:scale-110 transition-transform duration-300">
-          {icon}
-        </div>
+      {/* Gradient Background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-pink-600/10 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+      {/* Content */}
+      <div className="relative flex items-start gap-4">
+        <div className="text-3xl animate-pulse">{icon}</div>
         <div className="flex-1">
           <h3 className="text-lg font-bold text-white mb-1">{name}</h3>
           <p className="text-sm text-white/70 mb-2">{description}</p>
