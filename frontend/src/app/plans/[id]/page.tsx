@@ -220,7 +220,7 @@ export default function PlanDetailPage({
             href="/plans"
             className="flex items-center gap-2 text-white hover:text-pink-400 transition"
           >
-            <span className="text-2xl">🚀</span>
+            <span className="text-xl">✨</span>
             <span className="font-bold">whatsnextup</span>
           </Link>
           {isEditing && (

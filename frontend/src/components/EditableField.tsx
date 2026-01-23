@@ -37,7 +37,13 @@ export default function EditableField({
   }
 
   const handleRequestSuggestions = async () => {
-    if (!onSuggestionsRequest || !value.trim()) return
+    if (
+      !onSuggestionsRequest ||
+      !value ||
+      typeof value !== "string" ||
+      !value.trim()
+    )
+      return
 
     setShowSuggestions(true)
     setLoadingSuggestions(true)
@@ -67,16 +73,19 @@ export default function EditableField({
         <label className="block text-sm font-semibold text-white">
           {label}
         </label>
-        {onSuggestionsRequest && value.trim() && (
-          <button
-            onClick={handleRequestSuggestions}
-            disabled={loadingSuggestions}
-            className="text-lg hover:scale-110 transition disabled:opacity-50"
-            title="Get AI suggestions"
-          >
-            {loadingSuggestions ? "✨" : "✨"}
-          </button>
-        )}
+        {onSuggestionsRequest &&
+          value &&
+          typeof value === "string" &&
+          value.trim() && (
+            <button
+              onClick={handleRequestSuggestions}
+              disabled={loadingSuggestions}
+              className="text-lg hover:scale-110 transition disabled:opacity-50"
+              title="Get AI suggestions"
+            >
+              {loadingSuggestions ? "✨" : "✨"}
+            </button>
+          )}
       </div>
 
       {type === "select" ? (
