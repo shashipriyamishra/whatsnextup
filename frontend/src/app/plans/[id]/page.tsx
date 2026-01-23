@@ -74,7 +74,7 @@ export default function PlanDetailPage({ params }: { params: { id: string } }) {
   }
 
   const handleGetSuggestions = async (field: string, value: string) => {
-    if (!value.trim()) {
+    if (!value || typeof value !== "string" || !value.trim()) {
       setSuggestions((prev) => ({ ...prev, [field]: [] }))
       return
     }
