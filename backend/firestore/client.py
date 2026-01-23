@@ -401,3 +401,43 @@ class FirestorePlan:
         except Exception as e:
             print(f"❌ Error updating plan status: {e}")
             return False
+
+    @staticmethod
+    def update_plan(user_id: str, plan_id: str, updates: Dict) -> bool:
+        """Update plan with custom updates"""
+        try:
+            db = get_firestore_client()
+            updates["updatedAt"] = datetime.utcnow()
+            db.collection("users").document(user_id).collection("plans").document(plan_id).update(updates)
+            print(f"✅ Plan {plan_id} updated")
+            return True
+        except Exception as e:
+            print(f"❌ Error updating plan: {e}")
+            return False
+
+    @staticmethod
+    def delete_plan(user_id: str, plan_id: str) -> bool:
+        """Delete a plan"""
+        try:
+            db = get_firestore_client()
+            db.collection("users").document(user_id).collection("plans").document(plan_id).delete()
+            print(f"✅ Plan {plan_id} deleted")
+            return True
+        except Exception as e:
+            print(f"❌ Error deleting plan: {e}")
+            return False
+
+    @staticmethod
+    def get_plan_by_id(user_id: str, plan_id: str) -> Dict:
+        """Get a specific plan by ID"""
+        try:
+            db = get_firestore_client()
+            doc = db.collection("users").document(user_id).collection("plans").document(plan_id).get()
+            if doc.exists:
+                data = doc.to_dict()
+                data['id'] = doc.id
+                return data
+            return None
+        except Exception as e:
+            print(f"❌ Error getting plan: {e}")
+            return None

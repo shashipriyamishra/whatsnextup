@@ -4,6 +4,7 @@ from firestore.client import FirestoreMemory, FirestoreUser
 from vector_memory.store import embed_text, search_similar, add_document
 from typing import List, Dict, Any
 from datetime import datetime
+from agents.llm import call_llm
 
 class MemoryAgent:
     """
@@ -16,6 +17,7 @@ class MemoryAgent:
     - fact: Important facts about user
     - preference: User preferences
     - decision: Important decisions made
+    - insight: Key insights and learnings
     """
     
     def __init__(self, user_id: str):
@@ -23,34 +25,56 @@ class MemoryAgent:
         self.memory_db = FirestoreMemory()
         self.user_db = FirestoreUser()
     
-    def analyze_and_categorize(self, text: str, default_category: str = "chat") -> str:
+    def analyze_and_categorize(self, text: str, use_ai: bool = True) -> str:
         """
-        Simple heuristic to categorize incoming message.
-        In production, could use LLM for better categorization.
+        Categorize incoming message using both heuristics and AI.
+        Falls back to heuristics if AI fails.
         """
+        # Try AI categorization first
+        if use_ai:
+            try:
+                prompt = f"""Categorize this memory into ONE category only.
+Categories: habit, goal, fact, preference, decision, insight, chat
+
+Memory: {text[:200]}
+
+Respond with ONLY the category name."""
+                category = call_llm(prompt).strip().lower()
+                valid_categories = ["habit", "goal", "fact", "preference", "decision", "insight", "chat"]
+                if category in valid_categories:
+                    print(f"🧠 AI categorized as: {category}")
+                    return category
+            except Exception as e:
+                print(f"⚠️  AI categorization failed, using heuristics: {e}")
+        
+        # Fallback to heuristics
         text_lower = text.lower()
+        
+        # Insight patterns
+        if any(word in text_lower for word in ["learned", "discovered", "realized", "understand", "noticed", "insight", "key takeaway"]):
+            return "insight"
         
         # Habit patterns
         if any(word in text_lower for word in ["usually", "always", "everyday", "every day", "morning", "evening", "routine", "habit"]):
             return "habit"
         
         # Goal patterns
-        if any(word in text_lower for word in ["goal", "want to", "want", "aim", "target", "achieve", "accomplish"]):
+        if any(word in text_lower for word in ["goal", "want to", "want", "aim", "target", "achieve", "accomplish", "learn", "build"]):
             return "goal"
         
         # Preference patterns
-        if any(word in text_lower for word in ["prefer", "like", "love", "hate", "dislike", "favorite", "favourite"]):
+        if any(word in text_lower for word in ["prefer", "like", "love", "hate", "dislike", "favorite", "favourite", "enjoy"]):
             return "preference"
         
         # Decision patterns
-        if any(word in text_lower for word in ["decided", "choice", "chose", "picked", "selected", "decided to"]):
+        if any(word in text_lower for word in ["decided", "choice", "chose", "picked", "selected", "decided to", "going to"]):
             return "decision"
         
         # Fact patterns
-        if any(word in text_lower for word in ["i am", "i'm", "my name", "age", "work", "live", "from", "located"]):
+        if any(word in text_lower for word in ["i am", "i'm", "my name", "age", "work", "live", "from", "located", "years old"]):
             return "fact"
         
-        return default_category
+        return "chat"
     
     def save_with_context(self, message: str, category: str = None, tags: List[str] = None, metadata: Dict = None) -> Dict[str, Any]:
         """

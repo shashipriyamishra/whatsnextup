@@ -6,6 +6,7 @@ print("🔥 MAIN.PY LOADED 🔥")
 print("✅ Backend deployment: CI/CD pipeline active")
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import json
 
 from agents.orchestrator import handle_user_message
 from agents.planning_agent import PlanningAgent
@@ -201,13 +202,33 @@ def create_plan(
             "potential_challenges": plan.get("potential_challenges", []),
             "resources_needed": plan.get("resources_needed", []),
             "success_metric": plan.get("success_metric", ""),
+            "status": "active",
             "created_at": datetime.now().isoformat()
         }
         
         print(f"📋 Returning response: {response_plan}")
         
+        # Generate AI follow-up suggestion (non-blocking)
+        followup = ""
+        try:
+            from agents.llm import call_llm
+            followup_prompt = f"""Given this goal: {request.goal}
+
+Generate ONE enthusiastic and actionable next step for the user to take immediately.
+Keep it to 1-2 sentences. Be specific and encouraging."""
+            followup = call_llm(followup_prompt)
+            print(f"📋 AI Follow-up: {followup}")
+        except Exception as e:
+            print(f"⚠️  Couldn't generate follow-up: {e}")
+        
         return {
             "plan": response_plan,
+            "followUp": followup,
+            "suggestedActions": [
+                {"id": "track", "label": "Track Progress", "icon": "📊"},
+                {"id": "subplan", "label": "Create Sub-Plan", "icon": "➕"},
+                {"id": "remind", "label": "Set Reminders", "icon": "🔔"}
+            ],
             "created_at": datetime.now().isoformat()
         }
     except Exception as e:
@@ -218,6 +239,151 @@ def create_plan(
 
 
 # ============ REFLECTIONS ENDPOINTS ============
+
+@app.put("/api/plans/{plan_id}")
+def update_plan(
+    plan_id: str,
+    updates: dict,
+    user: dict = Depends(get_current_user)
+):
+    """Update plan (status, notes, etc.)"""
+    try:
+        uid = user.get("uid")
+        print(f"📋 Updating plan {plan_id} for user {uid}: {updates}")
+        
+        from firestore.client import FirestorePlan
+        plans_db = FirestorePlan()
+        
+        # Update the plan
+        plans_db.update_plan(uid, plan_id, updates)
+        
+        print(f"✅ Plan {plan_id} updated successfully")
+        return {"id": plan_id, "updated": True, "updates": updates}
+    except Exception as e:
+        print(f"❌ Error updating plan: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.delete("/api/plans/{plan_id}")
+def delete_plan(
+    plan_id: str,
+    user: dict = Depends(get_current_user)
+):
+    """Delete a plan"""
+    try:
+        uid = user.get("uid")
+        print(f"📋 Deleting plan {plan_id} for user {uid}")
+        
+        from firestore.client import FirestorePlan
+        plans_db = FirestorePlan()
+        
+        # Delete the plan
+        plans_db.delete_plan(uid, plan_id)
+        
+        print(f"✅ Plan {plan_id} deleted successfully")
+        return {"id": plan_id, "deleted": True}
+    except Exception as e:
+        print(f"❌ Error deleting plan: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/plans/{plan_id}/subplans")
+def create_subplan(
+    plan_id: str,
+    subplan_data: dict,
+    user: dict = Depends(get_current_user)
+):
+    """Create a sub-plan from a main plan step"""
+    try:
+        uid = user.get("uid")
+        print(f"📋 Creating sub-plan from plan {plan_id}")
+        
+        planning_agent = PlanningAgent(uid)
+        
+        # Extract the step to break down
+        step_to_break = subplan_data.get("step", "")
+        
+        # Break down the task
+        subtasks = planning_agent.break_down_task(step_to_break)
+        
+        # Create subplan structure
+        subplan = {
+            "parent_plan_id": plan_id,
+            "parent_step": step_to_break,
+            "goal": f"Break down: {step_to_break}",
+            "steps": subtasks,
+            "status": "active"
+        }
+        
+        # Save to Firestore
+        from firestore.client import FirestorePlan
+        plans_db = FirestorePlan()
+        subplan_id = plans_db.save_plan(uid, step_to_break, subplan)
+        
+        print(f"✅ Sub-plan {subplan_id} created")
+        return {
+            "id": subplan_id,
+            "parent_plan_id": plan_id,
+            "steps": subtasks,
+            "message": "Sub-plan created! Now dive into these specific tasks."
+        }
+    except Exception as e:
+        print(f"❌ Error creating sub-plan: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/plans/{plan_id}/next-steps")
+def get_next_steps(
+    plan_id: str,
+    user: dict = Depends(get_current_user)
+):
+    """Generate next action steps for a plan"""
+    try:
+        uid = user.get("uid")
+        print(f"📋 Generating next steps for plan {plan_id}")
+        
+        # Get the plan
+        from firestore.client import FirestorePlan
+        plans_db = FirestorePlan()
+        plan = plans_db.get_plan_by_id(uid, plan_id)
+        
+        if not plan:
+            raise HTTPException(status_code=404, detail="Plan not found")
+        
+        planning_agent = PlanningAgent(uid)
+        
+        # Suggest next actions based on the plan
+        prompt = f"""Based on this plan for {plan.get('goal')}:
+        
+Current steps: {plan.get('steps', [])}
+Already completed: {len([s for s in plan.get('steps', []) if s.get('status') == 'done'])} steps
+
+What are the next 3 immediate actions the user should take right now?
+Be specific and actionable.
+
+Return as JSON:
+["action 1", "action 2", "action 3"]"""
+        
+        from agents.llm import call_llm
+        response = call_llm(prompt)
+        
+        try:
+            next_actions = json.loads(response)
+        except:
+            next_actions = ["Review plan", "Start first step", "Track progress"]
+        
+        print(f"✅ Generated next steps for plan {plan_id}")
+        return {
+            "plan_id": plan_id,
+            "next_actions": next_actions,
+            "message": "Here's what to focus on next!"
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error getting next steps: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/api/reflections")
 def get_reflections(user: dict = Depends(get_current_user)):
