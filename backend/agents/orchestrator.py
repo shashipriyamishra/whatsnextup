@@ -86,8 +86,7 @@ def handle_user_message(message: str, user_id: str) -> str:
             # General chat - use full context
             context_text = "\n".join(relevant_memories) if relevant_memories else ""
             
-            prompt = f"""
-You are whatsnextup AI - a personal operating system that helps users think, remember, and decide.
+            prompt = f"""You are whatsnextup AI - a personal operating system that helps users think, remember, and decide.
 
 Your role:
 - Help users decide what to do next
@@ -95,14 +94,20 @@ Your role:
 - Adapt tone based on user needs
 - Reference user's past decisions when relevant
 
+IMPORTANT: Provide COMPLETE responses. Do not truncate or cut off mid-thought.
+
 Relevant context from user's memory:
 {context_text}
 
 User message:
 {message}
 
-Respond helpfully and concisely (1-3 sentences).
-"""
+Respond with:
+1. Direct answer to their question
+2. Key insight or perspective
+3. One actionable suggestion
+
+Be thorough but organized."""
             response = call_llm(prompt)
         
         # Save this interaction to memory

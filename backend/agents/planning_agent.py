@@ -21,35 +21,64 @@ class PlanningAgent:
         try:
             context_text = self._format_context(context)
             
-            prompt = f"""
-You are a planning assistant. Convert the user's goal into a structured plan.
+            prompt = f"""You are an expert planning assistant. Create a detailed, actionable plan.
 
 User Context:
 {context_text}
 
-User Goal:
-{goal}
+Goal: {goal}
 
-Create a JSON response with this exact structure (no markdown, just JSON):
+IMPORTANT: Create a COMPLETE plan with specific details. Be thorough.
+
+Return ONLY valid JSON (no markdown):
 {{
-  "goal": "clear statement of goal",
-  "timeframe": "estimated timeframe (e.g., 1 week, 2 months)",
+  "goal": "specific restatement of goal",
+  "timeframe": "realistic timeframe with reasoning",
   "priority": "high/medium/low",
   "steps": [
     {{
       "step": 1,
-      "action": "specific action",
-      "deadline": "relative deadline (e.g., Day 1, Week 1)",
-      "effort": "effort estimate (low/medium/high)"
+      "action": "specific, concrete first action",
+      "deadline": "Day 1, Week 1, etc",
+      "effort": "low/medium/high"
+    }},
+    {{
+      "step": 2,
+      "action": "detailed second action",
+      "deadline": "Day 3, Week 2",
+      "effort": "medium"
+    }},
+    {{
+      "step": 3,
+      "action": "thorough third action",
+      "deadline": "Week 3",
+      "effort": "high"
+    }},
+    {{
+      "step": 4,
+      "action": "implementation/verification step",
+      "deadline": "Week 4",
+      "effort": "medium"
+    }},
+    {{
+      "step": 5,
+      "action": "review and adjust",
+      "deadline": "End of month",
+      "effort": "low"
     }}
   ],
-  "potential_challenges": ["challenge 1", "challenge 2"],
-  "resources_needed": ["resource 1", "resource 2"],
-  "success_metric": "how to measure success"
-}}
-
-Respond with ONLY valid JSON, no other text.
-"""
+  "potential_challenges": [
+    "realistic obstacle 1 with why it matters",
+    "realistic obstacle 2 with mitigation",
+    "realistic obstacle 3"
+  ],
+  "resources_needed": [
+    "specific tool/resource 1 with reason",
+    "specific tool/resource 2",
+    "skill or person needed"
+  ],
+  "success_metric": "specific, measurable way to know goal is achieved"
+}}"""
             
             response = self.llm(prompt)
             

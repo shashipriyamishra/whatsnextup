@@ -20,9 +20,11 @@ try:
     print(f"✅ Vertex AI initialized successfully")
     
     # IMPORTANT: use EXACT model name from Vertex AI Studio
+    # CHANGED: Using gemini-1.5-pro for better quality responses
+    # Compared models: gemini-2.5-flash (fast/vague) vs gemini-1.5-pro (quality/balanced)
     try:
-        model = GenerativeModel("gemini-2.5-flash")
-        print(f"✅ Gemini model loaded successfully")
+        model = GenerativeModel("gemini-1.5-pro")
+        print(f"✅ Gemini 1.5 Pro model loaded successfully")
     except Exception as e:
         print(f"❌ Failed to load Gemini model: {e}")
         print(f"⚠️  LLM features will be disabled")
@@ -43,7 +45,7 @@ def call_llm(prompt: str) -> str:
             prompt,
             generation_config={
                 "temperature": 0.4,
-                "max_output_tokens": 256,
+                "max_output_tokens": 1024,  # INCREASED from 256 for complete responses
             }
         )
         return response.text
@@ -52,5 +54,4 @@ def call_llm(prompt: str) -> str:
         return "AI service is temporarily unavailable. Please try again."
     except Exception as e:
         print(f"❌ Unexpected error in call_llm: {e}")
-        return "AI service encountered an error. Please try again."
         return "AI service encountered an error. Please try again."
