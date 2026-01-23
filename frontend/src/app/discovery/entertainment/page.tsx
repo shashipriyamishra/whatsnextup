@@ -22,16 +22,16 @@ export default function EntertainmentPage() {
   const [category, setCategory] = useState<"movies" | "tv">("movies")
   const router = useRouter()
 
-  useEffect(() => {
-    loadSuggestions(category)
-  }, [category])
-
   const loadSuggestions = React.useCallback(async (cat: "movies" | "tv") => {
     setLoading(true)
     const data = await getEntertainmentSuggestions(cat)
     setSuggestions(data.suggestions || [])
     setLoading(false)
   }, [])
+
+  useEffect(() => {
+    loadSuggestions(category)
+  }, [category, loadSuggestions])
 
   return (
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">
