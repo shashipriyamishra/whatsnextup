@@ -43,7 +43,9 @@ export default function SuggestionBox({
           })
         ) : (
           <div className="text-sm text-purple-200 p-2">
-            {suggestions?.toString()}
+            {typeof suggestions === "string"
+              ? suggestions
+              : JSON.stringify(suggestions)}
           </div>
         )}
       </div>
