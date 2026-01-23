@@ -216,10 +216,10 @@ export default function CreatePlanPage() {
       <nav className="sticky top-0 z-50 bg-gray-900/80 backdrop-blur border-b border-white/10">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link
-            href="/chat"
+            href="/plans"
             className="text-white font-bold text-lg hover:text-pink-400"
           >
-            whatsnextup
+            ✨ whatsnextup
           </Link>
           <div className="text-white/60">Create Plan</div>
         </div>
@@ -306,8 +306,8 @@ export default function CreatePlanPage() {
                 label="Goal"
                 value={draft.goal}
                 onChange={(val) => handleFieldChange("goal", val)}
-                onSuggestionsRequest={() =>
-                  getSuggestionsForField("goal", draft.goal)
+                onSuggestionsRequest={(val) =>
+                  getSuggestionsForField("goal", val)
                 }
                 placeholder="Your main goal"
               />
@@ -316,8 +316,8 @@ export default function CreatePlanPage() {
                 label="Timeframe"
                 value={draft.timeframe}
                 onChange={(val) => handleFieldChange("timeframe", val)}
-                onSuggestionsRequest={() =>
-                  getSuggestionsForField("timeframe", draft.timeframe)
+                onSuggestionsRequest={(val) =>
+                  getSuggestionsForField("timeframe", val)
                 }
                 placeholder="E.g., 4 weeks, 3 months"
               />
@@ -338,8 +338,8 @@ export default function CreatePlanPage() {
                 label="Success Metric"
                 value={draft.success_metric}
                 onChange={(val) => handleFieldChange("success_metric", val)}
-                onSuggestionsRequest={() =>
-                  getSuggestionsForField("success_metric", draft.success_metric)
+                onSuggestionsRequest={(val) =>
+                  getSuggestionsForField("success_metric", val)
                 }
                 placeholder="How will you know you've succeeded?"
                 multiline

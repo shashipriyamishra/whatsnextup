@@ -27,7 +27,11 @@ interface Plan {
   success_metric?: string
 }
 
-export default function PlanDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function PlanDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
   const { user, loading } = useAuth()
   const [plan, setPlan] = useState<Plan | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -50,7 +54,7 @@ export default function PlanDetailPage({ params }: { params: Promise<{ id: strin
 
   const fetchPlan = async () => {
     if (!planId) return
-    
+
     try {
       setIsLoading(true)
       const token = await user?.getIdToken()
