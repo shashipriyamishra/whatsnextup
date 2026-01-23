@@ -139,12 +139,13 @@ export default function DiscoveryHub() {
       <section className="relative z-10 px-4 md:px-6 pb-16 flex-1">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-            {categories.map((category) => (
+            {categories.map((category, index) => (
               <CategoryCard
                 key={category.id}
                 icon={category.icon}
                 title={category.title}
                 description={category.description}
+                gradientIndex={index}
                 onClick={() => router.push(category.path)}
               />
             ))}
