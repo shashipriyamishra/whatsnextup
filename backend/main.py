@@ -177,24 +177,43 @@ def create_plan(
     """Create a new plan from a goal"""
     try:
         uid = user.get("uid")
+        print(f"📋 Creating plan for user: {uid}")
         
         planning_agent = PlanningAgent(uid)
         plan = planning_agent.create_plan_from_goal(request.goal)
+        
+        print(f"📋 Plan generated: {plan}")
         
         # Save to Firestore
         from firestore.client import FirestorePlan
         plans_db = FirestorePlan()
         plan_id = plans_db.save_plan(uid, request.goal, plan)
         
-        plan['id'] = plan_id
-        plan['created_at'] = datetime.now().isoformat()
+        print(f"✅ Plan saved with ID: {plan_id}")
+        
+        # Return only serializable data
+        response_plan = {
+            "id": plan_id,
+            "goal": plan.get("goal", request.goal),
+            "timeframe": plan.get("timeframe", ""),
+            "priority": plan.get("priority", "medium"),
+            "steps": plan.get("steps", []),
+            "potential_challenges": plan.get("potential_challenges", []),
+            "resources_needed": plan.get("resources_needed", []),
+            "success_metric": plan.get("success_metric", ""),
+            "created_at": datetime.now().isoformat()
+        }
+        
+        print(f"📋 Returning response: {response_plan}")
         
         return {
-            "plan": plan,
+            "plan": response_plan,
             "created_at": datetime.now().isoformat()
         }
     except Exception as e:
         print(f"❌ Error creating plan: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -239,9 +258,12 @@ def create_reflection(
     """Create a new reflection"""
     try:
         uid = user.get("uid")
+        print(f"💭 Creating reflection for user: {uid}")
         
         reflection_agent = ReflectionAgent(uid)
         analysis = reflection_agent.analyze_reflection(request.content)
+        
+        print(f"💭 Analysis: {analysis}")
         
         # Save to Firestore
         from firestore.client import FirestoreReflection
@@ -254,17 +276,23 @@ def create_reflection(
             mood=analysis.get("mood", request.mood)
         )
         
+        print(f"✅ Reflection saved with ID: {reflection_id}")
+        
+        # Return only serializable data
+        response_reflection = {
+            "id": reflection_id,
+            "title": analysis.get("title", "Reflection"),
+            "content": request.content,
+            "insights": analysis.get("key_insights", []),
+            "mood": analysis.get("mood", request.mood),
+            "created_at": datetime.now().isoformat()
+        }
+        
         return {
-            "reflection": {
-                "id": reflection_id,
-                "title": analysis.get("title", "Reflection"),
-                "content": request.content,
-                "insights": analysis.get("key_insights", []),
-                "mood": analysis.get("mood", request.mood),
-                "analysis": analysis,
-                "created_at": datetime.now().isoformat()
-            }
+            "reflection": response_reflection
         }
     except Exception as e:
         print(f"❌ Error creating reflection: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
