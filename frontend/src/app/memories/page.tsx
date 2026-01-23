@@ -5,30 +5,30 @@ import Link from "next/link"
 import { useAuth } from "../../lib/AuthContext"
 import { getApiUrl } from "../../lib/api"
 
-interface Reflection {
+interface Memory {
   id: string
   title: string
   content: string
-  type: "daily" | "weekly" | "monthly" | "goal-review"
-  insights: string[]
-  next_actions: string[]
+  category: "learning" | "achievement" | "challenge" | "insight"
+  tags: string[]
   date: string
+  status: "active" | "archived"
   created_at: string
 }
 
-export default function ReflectionsPage() {
+export default function MemoriesPage() {
   const { user, loading } = useAuth()
-  const [reflections, setReflections] = useState<Reflection[]>([])
-  const [selectedType, setSelectedType] = useState<string>("all")
+  const [memories, setMemories] = useState<Memory[]>([])
+  const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (user && !loading) {
-      fetchReflections()
+      fetchMemories()
     }
   }, [user, loading])
 
-  const fetchReflections = async () => {
+  const fetchMemories = async () => {
     try {
       setIsLoading(true)
       const token = await user?.getIdToken()
@@ -38,7 +38,7 @@ export default function ReflectionsPage() {
         return
       }
 
-      const response = await fetch(`${getApiUrl()}/api/reflections`, {
+      const response = await fetch(`${getApiUrl()}/api/memories`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -47,39 +47,39 @@ export default function ReflectionsPage() {
 
       if (response.ok) {
         const data = await response.json()
-        setReflections(data.reflections || [])
+        setMemories(data.memories || [])
       }
     } catch (error) {
-      console.error("Failed to fetch reflections:", error)
+      console.error("Failed to fetch memories:", error)
     } finally {
       setIsLoading(false)
     }
   }
 
-  const getTypeColor = (type: string) => {
+  const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      daily: "bg-yellow-500/20 border-yellow-400/50 text-yellow-300",
-      weekly: "bg-purple-500/20 border-purple-400/50 text-purple-300",
-      monthly: "bg-indigo-500/20 border-indigo-400/50 text-indigo-300",
-      "goal-review": "bg-pink-500/20 border-pink-400/50 text-pink-300",
+      learning: "bg-blue-500/20 border-blue-400/50 text-blue-300",
+      achievement: "bg-green-500/20 border-green-400/50 text-green-300",
+      challenge: "bg-orange-500/20 border-orange-400/50 text-orange-300",
+      insight: "bg-purple-500/20 border-purple-400/50 text-purple-300",
     }
-    return colors[type] || colors.daily
+    return colors[category] || colors.learning
   }
 
-  const getTypeEmoji = (type: string) => {
+  const getCategoryEmoji = (category: string) => {
     const emojis: Record<string, string> = {
-      daily: "📅",
-      weekly: "📊",
-      monthly: "📈",
-      "goal-review": "🎯",
+      learning: "📚",
+      achievement: "🎉",
+      challenge: "💪",
+      insight: "💡",
     }
-    return emojis[type] || "💭"
+    return emojis[category] || "📝"
   }
 
-  const filteredReflections =
-    selectedType === "all"
-      ? reflections
-      : reflections.filter((r) => r.type === selectedType)
+  const filteredMemories =
+    selectedCategory === "all"
+      ? memories
+      : memories.filter((m) => m.category === selectedCategory)
 
   if (loading) {
     return (
@@ -115,50 +115,49 @@ export default function ReflectionsPage() {
             >
               📋
             </Link>
-            <span className="text-white/70">💭</span>
             <Link
-              href="/memories"
+              href="/reflections"
               className="text-white/70 hover:text-white transition"
-              title="Memories"
+              title="Reflections"
             >
-              🧠
+              💭
             </Link>
+            <span className="text-white/70">🧠</span>
           </div>
         </div>
       </nav>
 
       <main className="max-w-5xl mx-auto px-4 pt-32 pb-8">
-        {/* Create new reflection button */}
+        {/* Create new memory button */}
         <div className="mb-8">
-          <Link href="/reflections/create" className="block">
-            <button className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:opacity-90 transition">
-              + Add New Reflection with AI
+          <Link href="/memories/create" className="block">
+            <button className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold hover:opacity-90 transition">
+              + Add New Memory with AI
             </button>
           </Link>
         </div>
 
-        {/* Type filters */}
+        {/* Category filters */}
         <div className="mb-8">
           <h2 className="text-white text-sm font-semibold mb-4">
-            Filter by type:
+            Filter by category:
           </h2>
           <div className="flex flex-wrap gap-2">
-            {["all", "daily", "weekly", "monthly", "goal-review"].map(
-              (type) => (
+            {["all", "learning", "achievement", "challenge", "insight"].map(
+              (category) => (
                 <button
-                  key={type}
-                  onClick={() => setSelectedType(type)}
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
                   className={`px-4 py-2 rounded-lg transition ${
-                    selectedType === type
-                      ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                    selectedCategory === category
+                      ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
                       : "bg-white/10 hover:bg-white/20 text-white/70"
                   }`}
                 >
-                  {type === "all"
-                    ? "All Reflections"
-                    : `${getTypeEmoji(type)} ${
-                        type.charAt(0).toUpperCase() +
-                        type.slice(1).replace("-", " ")
+                  {category === "all"
+                    ? "All Memories"
+                    : `${getCategoryEmoji(category)} ${
+                        category.charAt(0).toUpperCase() + category.slice(1)
                       }`}
                 </button>
               ),
@@ -166,53 +165,50 @@ export default function ReflectionsPage() {
           </div>
         </div>
 
-        {/* Reflections grid */}
+        {/* Memories grid */}
         <div className="grid gap-4 md:grid-cols-2">
-          {filteredReflections.length === 0 ? (
+          {filteredMemories.length === 0 ? (
             <div className="col-span-full text-center py-12">
-              <p className="text-white/50 mb-4">No reflections yet</p>
+              <p className="text-white/50 mb-4">No memories yet</p>
               <p className="text-white/30 text-sm">
-                Start reflecting on your progress, learnings, and goals!
+                Start capturing your learning moments, achievements, and
+                insights!
               </p>
             </div>
           ) : (
-            filteredReflections.map((reflection) => (
+            filteredMemories.map((memory) => (
               <div
-                key={reflection.id}
-                className={`p-4 rounded-lg border transition hover:shadow-lg ${getTypeColor(
-                  reflection.type,
+                key={memory.id}
+                className={`p-4 rounded-lg border transition hover:shadow-lg ${getCategoryColor(
+                  memory.category,
                 )}`}
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
-                    <h3 className="text-white font-semibold">
-                      {reflection.title}
-                    </h3>
+                    <h3 className="text-white font-semibold">{memory.title}</h3>
                     <p className="text-white/60 text-xs">
-                      {new Date(reflection.created_at).toLocaleDateString()}
+                      {new Date(memory.created_at).toLocaleDateString()}
                     </p>
                   </div>
                   <span className="text-2xl ml-2">
-                    {getTypeEmoji(reflection.type)}
+                    {getCategoryEmoji(memory.category)}
                   </span>
                 </div>
 
                 <p className="text-white/80 text-sm mb-3 line-clamp-2">
-                  {reflection.content}
+                  {memory.content}
                 </p>
 
-                {reflection.insights && reflection.insights.length > 0 && (
-                  <div className="mb-3 p-2 rounded bg-white/5">
-                    <p className="text-white/70 text-xs font-semibold mb-1">
-                      Key Insights:
-                    </p>
-                    <ul className="space-y-1">
-                      {reflection.insights.slice(0, 2).map((insight, idx) => (
-                        <li key={idx} className="text-white/60 text-xs">
-                          • {insight}
-                        </li>
-                      ))}
-                    </ul>
+                {memory.tags && memory.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mb-3">
+                    {memory.tags.slice(0, 3).map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="px-2 py-1 text-xs rounded bg-white/10 text-white/70"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
                   </div>
                 )}
 
