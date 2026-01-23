@@ -155,6 +155,102 @@ def get_memories(user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/api/memories/draft")
+def create_memory_draft(
+    request: dict,
+    user: dict = Depends(get_current_user)
+):
+    """Create an initial memory draft for interactive refinement"""
+    try:
+        uid = user.get("uid")
+        print(f"📝 Creating memory draft for user: {uid}")
+        
+        from agents.memory_draft_manager import MemoryDraftManager
+        draft_mgr = MemoryDraftManager(uid)
+        
+        draft = draft_mgr.create_draft(
+            request.get("title", ""),
+            request.get("content", "")
+        )
+        
+        if "error" in draft:
+            raise HTTPException(status_code=400, detail=draft["error"])
+        
+        return {
+            "draft": draft,
+            "hints": draft_mgr.get_refinement_hints(draft),
+            "message": "Here's your memory! Review and refine each section."
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error creating memory draft: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/memories/suggestions")
+def get_memory_suggestions(
+    request: dict,
+    user: dict = Depends(get_current_user)
+):
+    """Get AI suggestions for memory fields"""
+    try:
+        uid = user.get("uid")
+        field = request.get("field", "")
+        value = request.get("value", "")
+        context = request.get("context", {})
+        
+        from agents.memory_draft_manager import MemoryDraftManager
+        draft_mgr = MemoryDraftManager(uid)
+        
+        suggestions = draft_mgr.get_field_suggestions(field, value, context)
+        
+        print(f"💡 Suggestions generated for field: {field}")
+        return {"field": field, "suggestions": suggestions}
+        
+    except Exception as e:
+        print(f"❌ Error getting suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/memories")
+def create_memory(
+    request: dict,
+    user: dict = Depends(get_current_user)
+):
+    """Create a new memory"""
+    try:
+        uid = user.get("uid")
+        print(f"💾 Creating memory for user: {uid}")
+        
+        memory_agent = MemoryAgent(uid)
+        
+        # Save memory to Firestore
+        from firestore.client import FirestoreMemory
+        memory_db = FirestoreMemory()
+        memory_id = memory_db.save_memory(
+            uid,
+            title=request.get("title", ""),
+            content=request.get("content", ""),
+            category=request.get("category", "insight"),
+            tags=request.get("tags", [])
+        )
+        
+        print(f"✅ Memory saved with ID: {memory_id}")
+        
+        return {
+            "id": memory_id,
+            "title": request.get("title", ""),
+            "content": request.get("content", ""),
+            "category": request.get("category", "insight"),
+            "tags": request.get("tags", []),
+            "created_at": datetime.now().isoformat()
+        }
+    except Exception as e:
+        print(f"❌ Error creating memory: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ============ PLANS ENDPOINTS ============
 
 @app.post("/api/plans/draft")
@@ -314,6 +410,33 @@ Keep it to 1-2 sentences. Be specific and encouraging."""
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.get("/api/plans/{plan_id}")
+def get_plan(
+    plan_id: str,
+    user: dict = Depends(get_current_user)
+):
+    """Get a specific plan by ID"""
+    try:
+        uid = user.get("uid")
+        print(f"📋 Fetching plan {plan_id} for user {uid}")
+        
+        from firestore.client import FirestorePlan
+        plans_db = FirestorePlan()
+        
+        plan = plans_db.get_plan(uid, plan_id)
+        
+        if not plan:
+            raise HTTPException(status_code=404, detail="Plan not found")
+        
+        print(f"✅ Plan retrieved: {plan_id}")
+        return plan
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error fetching plan: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ============ REFLECTIONS ENDPOINTS ============
 
 @app.put("/api/plans/{plan_id}")
@@ -438,8 +561,9 @@ def get_reflections(user: dict = Depends(get_current_user)):
                 "id": r.get("id", ""),
                 "title": r.get("title", "Reflection"),
                 "content": r.get("content", ""),
+                "type": r.get("type", "daily"),
                 "insights": r.get("analysis", {}).get("key_insights", []),
-                "mood": r.get("mood", "thoughtful"),
+                "next_actions": r.get("analysis", {}).get("next_actions", []),
                 "created_at": r.get("createdAt", datetime.now()).isoformat() if isinstance(r.get("createdAt"), datetime) else str(r.get("createdAt", ""))
             })
         
@@ -452,9 +576,67 @@ def get_reflections(user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/api/reflections/draft")
+def create_reflection_draft(
+    request: dict,
+    user: dict = Depends(get_current_user)
+):
+    """Create an initial reflection draft for interactive refinement"""
+    try:
+        uid = user.get("uid")
+        print(f"📝 Creating reflection draft for user: {uid}")
+        
+        from agents.reflection_draft_manager import ReflectionDraftManager
+        draft_mgr = ReflectionDraftManager(uid)
+        
+        draft = draft_mgr.create_draft(
+            request.get("title", ""),
+            request.get("content", "")
+        )
+        
+        if "error" in draft:
+            raise HTTPException(status_code=400, detail=draft["error"])
+        
+        return {
+            "draft": draft,
+            "hints": draft_mgr.get_refinement_hints(draft),
+            "message": "Here's your reflection! Review and refine the insights and actions."
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error creating reflection draft: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/reflections/suggestions")
+def get_reflection_suggestions(
+    request: dict,
+    user: dict = Depends(get_current_user)
+):
+    """Get AI suggestions for reflection fields"""
+    try:
+        uid = user.get("uid")
+        field = request.get("field", "")
+        value = request.get("value", "")
+        context = request.get("context", {})
+        
+        from agents.reflection_draft_manager import ReflectionDraftManager
+        draft_mgr = ReflectionDraftManager(uid)
+        
+        suggestions = draft_mgr.get_field_suggestions(field, value, context)
+        
+        print(f"💡 Suggestions generated for field: {field}")
+        return {"field": field, "suggestions": suggestions}
+        
+    except Exception as e:
+        print(f"❌ Error getting suggestions: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/api/reflections")
 def create_reflection(
-    request: ReflectionRequest,
+    request: dict,
     user: dict = Depends(get_current_user)
 ):
     """Create a new reflection"""
@@ -462,36 +644,30 @@ def create_reflection(
         uid = user.get("uid")
         print(f"💭 Creating reflection for user: {uid}")
         
-        reflection_agent = ReflectionAgent(uid)
-        analysis = reflection_agent.analyze_reflection(request.content)
-        
-        print(f"💭 Analysis: {analysis}")
-        
         # Save to Firestore
         from firestore.client import FirestoreReflection
         reflections_db = FirestoreReflection()
         reflection_id = reflections_db.save_reflection(
             uid,
-            title=analysis.get("title", "Reflection"),
-            content=request.content,
-            analysis=analysis,
-            mood=analysis.get("mood", request.mood)
+            title=request.get("title", "Reflection"),
+            content=request.get("content", ""),
+            type=request.get("type", "daily"),
+            analysis={
+                "key_insights": request.get("insights", []),
+                "next_actions": request.get("next_actions", [])
+            }
         )
         
         print(f"✅ Reflection saved with ID: {reflection_id}")
         
-        # Return only serializable data
-        response_reflection = {
-            "id": reflection_id,
-            "title": analysis.get("title", "Reflection"),
-            "content": request.content,
-            "insights": analysis.get("key_insights", []),
-            "mood": analysis.get("mood", request.mood),
-            "created_at": datetime.now().isoformat()
-        }
-        
         return {
-            "reflection": response_reflection
+            "id": reflection_id,
+            "title": request.get("title", "Reflection"),
+            "content": request.get("content", ""),
+            "type": request.get("type", "daily"),
+            "insights": request.get("insights", []),
+            "next_actions": request.get("next_actions", []),
+            "created_at": datetime.now().isoformat()
         }
     except Exception as e:
         print(f"❌ Error creating reflection: {e}")
