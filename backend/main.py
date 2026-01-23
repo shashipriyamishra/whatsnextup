@@ -548,8 +548,18 @@ Return as JSON array: ["metric 1", "metric 2", "metric 3"]""",
         prompt = prompts.get(field, f"Generate 3 suggestions for {field} related to goal: {goal}")
         suggestions = call_llm(prompt)
         
+        # Clean up markdown code blocks if present
+        suggestions_clean = suggestions.strip()
+        if suggestions_clean.startswith("```json"):
+            suggestions_clean = suggestions_clean[7:]  # Remove ```json
+        if suggestions_clean.startswith("```"):
+            suggestions_clean = suggestions_clean[3:]  # Remove ```
+        if suggestions_clean.endswith("```"):
+            suggestions_clean = suggestions_clean[:-3]  # Remove trailing ```
+        suggestions_clean = suggestions_clean.strip()
+        
         try:
-            suggestions_json = json.loads(suggestions)
+            suggestions_json = json.loads(suggestions_clean)
             if not isinstance(suggestions_json, list):
                 # If it's not a list, try to extract it
                 if isinstance(suggestions_json, dict) and "suggestions" in suggestions_json:
@@ -558,7 +568,7 @@ Return as JSON array: ["metric 1", "metric 2", "metric 3"]""",
                     # Wrap in list if single item
                     suggestions_json = [suggestions_json]
         except json.JSONDecodeError as e:
-            print(f"⚠️ Failed to parse LLM response as JSON: {suggestions}")
+            print(f"⚠️ Failed to parse LLM response as JSON: {suggestions_clean}")
             raise HTTPException(status_code=500, detail=f"Failed to parse AI suggestions: {str(e)}")
         
         print(f"💡 Suggestions generated: {suggestions_json}")

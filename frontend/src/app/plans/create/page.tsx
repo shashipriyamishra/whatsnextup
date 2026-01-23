@@ -349,19 +349,54 @@ export default function CreatePlanPage() {
 
             {/* Steps Preview */}
             {draft.steps && draft.steps.length > 0 && (
-              <div className="bg-white/5 p-6 rounded-lg border border-white/10">
-                <h3 className="text-white font-semibold mb-3">Steps:</h3>
-                <div className="space-y-2">
+              <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 p-6 rounded-xl border border-purple-400/30 shadow-lg">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                    <span className="text-xl">📋</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Action Steps</h3>
+                  <span className="ml-auto px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-sm font-semibold">
+                    {draft.steps.length} steps
+                  </span>
+                </div>
+                <div className="space-y-3">
                   {draft.steps.map((step, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded bg-white/5 border border-white/10"
+                      className="group relative p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-400/50 transition-all duration-200"
                     >
-                      <div className="font-medium text-white">
-                        {step.step}. {step.action}
-                      </div>
-                      <div className="text-xs text-white/60 mt-1">
-                        {step.deadline} • Effort: {step.effort}
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center font-bold text-white shadow-md">
+                          {step.step}
+                        </div>
+                        <div className="flex-1">
+                          <div className="font-semibold text-white mb-2 leading-relaxed">
+                            {step.action}
+                          </div>
+                          <div className="flex flex-wrap gap-3 text-sm">
+                            <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30">
+                              <span>📅</span>
+                              <span>{step.deadline}</span>
+                            </span>
+                            <span
+                              className={`flex items-center gap-1.5 px-3 py-1 rounded-full border ${
+                                step.effort === "high"
+                                  ? "bg-red-500/20 text-red-300 border-red-400/30"
+                                  : step.effort === "medium"
+                                    ? "bg-yellow-500/20 text-yellow-300 border-yellow-400/30"
+                                    : "bg-green-500/20 text-green-300 border-green-400/30"
+                              }`}
+                            >
+                              <span>⚡</span>
+                              <span className="capitalize">
+                                {step.effort} effort
+                              </span>
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex-shrink-0 text-purple-400/50 group-hover:text-purple-400 transition-colors">
+                          →
+                        </div>
                       </div>
                     </div>
                   ))}

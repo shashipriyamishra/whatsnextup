@@ -37,20 +37,29 @@ export default function EditableField({
   }
 
   const handleRequestSuggestions = async () => {
-    if (
-      !onSuggestionsRequest ||
-      !value ||
-      typeof value !== "string" ||
-      !value.trim()
-    )
-      return
+    if (!onSuggestionsRequest) return
 
     setShowSuggestions(true)
     setLoadingSuggestions(true)
 
     try {
-      const sugg = await onSuggestionsRequest(value)
+      const sugg = await onSuggestionsRequest(value || "")
       setSuggestions(sugg || [])
+
+      // Auto-apply first suggestion if input is empty
+      if ((!value || !value.trim()) && sugg && sugg.length > 0) {
+        const firstSuggestion = sugg[0]
+        const text =
+          typeof firstSuggestion === "string"
+            ? firstSuggestion
+            : firstSuggestion?.text ||
+              firstSuggestion?.value ||
+              firstSuggestion?.content ||
+              String(firstSuggestion || "")
+        onChange(text)
+        setSuggestions([])
+        setShowSuggestions(false)
+      }
     } catch (error) {
       console.error("Error getting suggestions:", error)
       setSuggestions([])
