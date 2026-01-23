@@ -2,6 +2,20 @@
 
 import { cn } from "@/lib/utils"
 
+// Define gradient variants for different agents
+const gradients = [
+  "from-purple-500/30 via-pink-500/20 to-purple-600/10", // Purple-Pink
+  "from-blue-500/30 via-cyan-500/20 to-blue-600/10", // Blue-Cyan
+  "from-green-500/30 via-teal-500/20 to-green-600/10", // Green-Teal
+  "from-orange-500/30 via-amber-500/20 to-orange-600/10", // Orange-Amber
+  "from-rose-500/30 via-pink-500/20 to-rose-600/10", // Rose-Pink
+  "from-indigo-500/30 via-purple-500/20 to-indigo-600/10", // Indigo-Purple
+  "from-cyan-500/30 via-blue-500/20 to-cyan-600/10", // Cyan-Blue
+  "from-lime-500/30 via-green-500/20 to-lime-600/10", // Lime-Green
+  "from-fuchsia-500/30 via-purple-500/20 to-fuchsia-600/10", // Fuchsia-Purple
+  "from-violet-500/30 via-purple-500/20 to-violet-600/10", // Violet-Purple
+]
+
 interface AgentCardProps {
   icon: string
   name: string
@@ -10,6 +24,7 @@ interface AgentCardProps {
   active?: boolean
   onClick?: () => void
   className?: string
+  gradientIndex?: number // Index to select gradient variant
 }
 
 export function AgentCard({
@@ -20,7 +35,10 @@ export function AgentCard({
   active,
   onClick,
   className,
+  gradientIndex = 0,
 }: AgentCardProps) {
+  const gradient = gradients[gradientIndex % gradients.length]
+
   return (
     <div
       onClick={onClick}
@@ -33,8 +51,13 @@ export function AgentCard({
         className,
       )}
     >
-      {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-pink-600/10 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-300"></div>
+      {/* Gradient Background with varied colors */}
+      <div
+        className={cn(
+          "absolute inset-0 bg-gradient-to-br opacity-60 group-hover:opacity-100 transition-opacity duration-300",
+          gradient,
+        )}
+      ></div>
 
       {/* Content */}
       <div className="relative flex items-start gap-4">

@@ -55,3 +55,17 @@ def call_llm(prompt: str) -> str:
     except Exception as e:
         print(f"❌ Unexpected error in call_llm: {e}")
         return "AI service encountered an error. Please try again."
+
+# Async wrapper for generate_response (used by agents and discovery)
+async def generate_response(prompt: str, context: str = "") -> str:
+    """
+    Async wrapper around call_llm for use in async contexts.
+    
+    Args:
+        prompt: The prompt to send to the LLM
+        context: Additional context (currently not used but kept for compatibility)
+    
+    Returns:
+        str: The LLM response
+    """
+    return call_llm(prompt)
