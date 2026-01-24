@@ -114,8 +114,12 @@ Respond with:
 Be thorough but organized."""
             response = call_llm(prompt)
         
-        # Save this interaction to memory
-        save_memory(message)
+        # Save this interaction to memory using the memory agent
+        try:
+            memory_agent = MemoryAgent(user_id)
+            memory_agent.save_with_context(message)
+        except Exception as e:
+            print(f"⚠️  Warning: Failed to save memory: {e}")
         
         return response
     

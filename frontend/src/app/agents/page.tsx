@@ -8,6 +8,7 @@ import { getAllAgents, Agent } from "@/lib/agents"
 import { AgentCard } from "@/components/glass/AgentCard"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { Header } from "@/components/Header"
 
 export default function AgentsPage() {
   const { user, loading: authLoading } = useAuth()
@@ -63,7 +64,7 @@ export default function AgentsPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">
-      {/* Animated Background */}
+      <Header />
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/50 rounded-full blur-3xl animate-blob"></div>
         <div
@@ -71,42 +72,6 @@ export default function AgentsPage() {
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
-
-      {/* Header */}
-      <header className="relative z-10 px-4 md:px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <Link
-            href="/"
-            className="flex items-center gap-4 cursor-pointer hover:opacity-80"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-pink-500/30">
-              <span className="text-xl">✨</span>
-            </div>
-            <div>
-              <h1 className="font-bold text-lg text-white">What's Next Up</h1>
-              <p className="text-xs text-white/50">Your AI Agents</p>
-            </div>
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link href="/memories">
-              <Button variant="glass" size="sm">
-                🧠 Memories
-              </Button>
-            </Link>
-            <Link href="/plans">
-              <Button variant="glass" size="sm">
-                📋 Plans
-              </Button>
-            </Link>
-            <Link href="/reflections">
-              <Button variant="glass" size="sm">
-                💭 Reflect
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
       {/* Content */}
       <main className="relative z-10 px-4 md:px-6 py-8 flex-1">
         <div className="max-w-7xl mx-auto">

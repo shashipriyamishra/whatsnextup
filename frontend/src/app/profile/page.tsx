@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { API_URL } from "@/lib/api"
+import { Header } from "@/components/Header"
 
 interface UsageStats {
   messages_today: number
@@ -111,7 +112,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">
-      {/* Animated Background */}
+      <Header />
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/50 rounded-full blur-3xl animate-blob"></div>
         <div
@@ -119,24 +120,6 @@ export default function ProfilePage() {
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
-
-      {/* Header */}
-      <header className="relative z-10 px-4 md:px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <button
-            onClick={() => router.push("/")}
-            className="flex items-center gap-4 cursor-pointer hover:opacity-80"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-pink-500/30">
-              <span className="text-xl">👤</span>
-            </div>
-            <div>
-              <h1 className="font-bold text-lg text-white">My Profile</h1>
-              <p className="text-xs text-white/50">
-                Account settings & information
-              </p>
-            </div>
-          </button>
           <Link href="/">
             <Button variant="glass" size="sm" className="cursor-pointer">
               ← Back

@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
+import { Header } from "@/components/Header"
 
 export default function HistoryPage() {
   const router = useRouter()
@@ -122,6 +123,7 @@ export default function HistoryPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">
+      <Header />
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/50 rounded-full blur-3xl animate-blob"></div>

@@ -2,12 +2,23 @@
 
 import { loginWithGoogle } from "../lib/auth"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function LoginScreen() {
   const [isHovering, setIsHovering] = useState(false)
+  const router = useRouter()
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-black/90 px-4 relative overflow-hidden">
+      {/* Back Button */}
+      <button
+        onClick={() => router.push("/")}
+        className="absolute top-6 left-6 z-50 flex items-center gap-2 text-white/70 hover:text-white transition"
+      >
+        <span>←</span>
+        <span className="text-sm">Back to Home</span>
+      </button>
+
       {/* Animated Gradient Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/40 rounded-full blur-3xl animate-pulse"></div>

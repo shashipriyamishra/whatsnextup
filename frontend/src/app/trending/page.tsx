@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { Header } from "@/components/Header"
 
 export default function TrendingPage() {
   const [feed, setFeed] = useState<PersonalizedFeed>({})
@@ -54,7 +55,7 @@ export default function TrendingPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">
-      {/* Animated Background */}
+      <Header />
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/50 rounded-full blur-3xl animate-blob"></div>
         <div

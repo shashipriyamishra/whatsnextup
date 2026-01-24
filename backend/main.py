@@ -111,7 +111,11 @@ def chat(
         uid = "anonymous"
 
     # Use user_id for context in orchestrator
-    response = handle_user_message(request.message, uid)
+    try:
+        response = handle_user_message(request.message, uid)
+    except Exception as e:
+        print(f"❌ Chat orchestrator error: {e}")
+        raise HTTPException(status_code=500, detail=f"Error processing chat: {str(e)}")
 
     return {
         "user": name,
