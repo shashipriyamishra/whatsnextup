@@ -40,7 +40,9 @@ class ApiClient {
       // Add authorization header if required
       const finalHeaders: Record<string, string> = {
         "Content-Type": "application/json",
-        ...headers,
+        ...(typeof headers === "object" && headers !== null
+          ? (headers as Record<string, string>)
+          : {}),
       }
 
       if (authRequired) {
