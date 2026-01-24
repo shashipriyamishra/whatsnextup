@@ -70,7 +70,7 @@ export function Header() {
           )}
           <button
             onClick={() => router.push("/")}
-            className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition cursor-pointer"
+            className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition cursor-pointer ml-4"
           >
             ✨ What&apos;s Next Up
           </button>

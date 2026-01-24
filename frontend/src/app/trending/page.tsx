@@ -64,31 +64,6 @@ export default function TrendingPage() {
         ></div>
       </div>
 
-      {/* Header */}
-      <header className="relative z-10 px-4 md:px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <button
-            onClick={() => router.push("/")}
-            className="flex items-center gap-4 cursor-pointer hover:opacity-80"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-pink-500/30">
-              <span className="text-xl">🔥</span>
-            </div>
-            <div>
-              <h1 className="font-bold text-lg text-white">What's Trending</h1>
-              <p className="text-xs text-white/50">
-                Stay informed & entertained
-              </p>
-            </div>
-          </button>
-          <Link href="/login">
-            <Button variant="default" size="sm" className="cursor-pointer">
-              Sign In
-            </Button>
-          </Link>
-        </div>
-      </header>
-
       {/* Content */}
       <main className="relative z-10 px-4 md:px-6 py-8 flex-1">
         <div className="max-w-7xl mx-auto">
@@ -279,14 +254,14 @@ export default function TrendingPage() {
                       key={idx}
                       className={`hover:scale-105 transition-transform ${
                         [
-                          "bg-red-50 border-red-200 hover:bg-red-100",
-                          "bg-blue-50 border-blue-200 hover:bg-blue-100",
-                          "bg-orange-50 border-orange-200 hover:bg-orange-100",
+                          "bg-red-900/30 border-red-700/50 hover:bg-red-900/40",
+                          "bg-blue-900/30 border-blue-700/50 hover:bg-blue-900/40",
+                          "bg-orange-900/30 border-orange-700/50 hover:bg-orange-900/40",
                         ][idx % 3]
                       }`}
                     >
                       <CardHeader>
-                        <CardTitle className="text-gray-900 text-base">
+                        <CardTitle className="text-white text-base">
                           {post.title}
                         </CardTitle>
                       </CardHeader>
@@ -299,7 +274,7 @@ export default function TrendingPage() {
                           href={post.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 text-sm hover:text-blue-800 font-semibold"
+                          className="text-cyan-400 text-sm hover:text-cyan-300 font-semibold"
                         >
                           View →
                         </a>
@@ -318,14 +293,14 @@ export default function TrendingPage() {
                       key={idx}
                       className={`hover:scale-105 transition-transform ${
                         [
-                          "bg-yellow-50 border-yellow-200 hover:bg-yellow-100",
-                          "bg-purple-50 border-purple-200 hover:bg-purple-100",
-                          "bg-green-50 border-green-200 hover:bg-green-100",
+                          "bg-orange-900/30 border-orange-700/50 hover:bg-orange-900/40",
+                          "bg-yellow-900/30 border-yellow-700/50 hover:bg-yellow-900/40",
+                          "bg-amber-900/30 border-amber-700/50 hover:bg-amber-900/40",
                         ][idx % 3]
                       }`}
                     >
                       <CardHeader>
-                        <CardTitle className="text-gray-900 text-base">
+                        <CardTitle className="text-white text-base">
                           {story.title}
                         </CardTitle>
                       </CardHeader>
@@ -338,7 +313,7 @@ export default function TrendingPage() {
                           href={story.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-600 text-sm hover:text-blue-800 font-semibold"
+                          className="text-pink-400 text-sm hover:text-pink-300 font-semibold"
                         >
                           Read →
                         </a>
@@ -357,19 +332,19 @@ export default function TrendingPage() {
                       key={idx}
                       className={`hover:scale-105 transition-transform ${
                         [
-                          "bg-gray-100 border-gray-300 hover:bg-gray-200",
-                          "bg-slate-100 border-slate-300 hover:bg-slate-200",
-                          "bg-zinc-100 border-zinc-300 hover:bg-zinc-200",
+                          "bg-slate-900/50 border-slate-700/50 hover:bg-slate-900/60",
+                          "bg-gray-900/50 border-gray-700/50 hover:bg-gray-900/60",
+                          "bg-zinc-900/50 border-zinc-700/50 hover:bg-zinc-900/60",
                         ][idx % 3]
                       }`}
                     >
                       <CardHeader>
-                        <CardTitle className="text-gray-900 text-base">
+                        <CardTitle className="text-white text-base">
                           {repo.full_name}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-gray-700 text-sm mb-2 line-clamp-2">
+                        <p className="text-white/70 text-sm mb-2 line-clamp-2">
                           {repo.description}
                         </p>
                         <div className="flex gap-2">
@@ -393,9 +368,9 @@ export default function TrendingPage() {
                       key={idx}
                       className={`hover:scale-105 transition-transform overflow-hidden ${
                         [
-                          "bg-red-50 border-red-200 hover:bg-red-100",
-                          "bg-rose-50 border-rose-200 hover:bg-rose-100",
-                          "bg-pink-50 border-pink-200 hover:bg-pink-100",
+                          "bg-red-900/30 border-red-700/50 hover:bg-red-900/40",
+                          "bg-rose-900/30 border-rose-700/50 hover:bg-rose-900/40",
+                          "bg-pink-900/30 border-pink-700/50 hover:bg-pink-900/40",
                         ][idx % 3]
                       }`}
                     >
@@ -409,12 +384,12 @@ export default function TrendingPage() {
                         </div>
                       )}
                       <CardHeader>
-                        <CardTitle className="text-gray-900 text-base line-clamp-2">
+                        <CardTitle className="text-white text-base line-clamp-2">
                           {video.title}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-gray-700 text-sm mb-2">
+                        <p className="text-white/70 text-sm mb-2">
                           {video.channel}
                         </p>
                         <div className="flex gap-2 mb-2">
@@ -429,7 +404,7 @@ export default function TrendingPage() {
                           href={video.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-red-600 text-sm hover:text-red-800 font-semibold"
+                          className="text-red-400 text-sm hover:text-red-300 font-semibold"
                         >
                           Watch on YouTube →
                         </a>
