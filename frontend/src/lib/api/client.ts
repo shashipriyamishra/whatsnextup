@@ -203,16 +203,49 @@ class ApiClient {
 export const apiClient = new ApiClient()
 
 /**
- * Export API URL configuration
+ * Get API URL from environment or throw error
+ * CRITICAL: This must be set in production via NEXT_PUBLIC_API_URL
  */
-export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+function resolveApiUrl(): string {
+  const url = process.env.NEXT_PUBLIC_API_URL
+
+  // In development, allow localhost
+  if (typeof window === "undefined" || !url) {
+    // Server-side or no env var
+    if (process.env.NODE_ENV === "production") {
+      console.error("CRITICAL: NEXT_PUBLIC_API_URL not set in production!")
+      // Don't throw - just log and return a placeholder
+      // Frontend will fail with clear API errors
+      return ""
+    }
+    return "http://localhost:8000"
+  }
+
+  return url
+}
+
+/**
+ * Export API URL configuration
+ * NOTE: Must be set via NEXT_PUBLIC_API_URL environment variable
+ */
+export const API_URL = resolveApiUrl()
 
 /**
  * Helper function to get API URL
+ * Used by direct fetch calls (should migrate to apiClient instead)
  */
 export function getApiUrl(): string {
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+  const url = process.env.NEXT_PUBLIC_API_URL
+  if (
+    !url &&
+    typeof window !== "undefined" &&
+    process.env.NODE_ENV === "production"
+  ) {
+    console.error(
+      "CRITICAL: NEXT_PUBLIC_API_URL not configured for production API calls",
+    )
+  }
+  return url || "http://localhost:8000"
 }
 
 /**

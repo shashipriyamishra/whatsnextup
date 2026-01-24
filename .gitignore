@@ -28,6 +28,14 @@ firebase-adminsdk-*.json
 *secret*.json
 
 # API Keys & Secrets (NEVER COMMIT)
+.env*.json
+*.key
+*.pem
+
+# Local Documentation (not for repo)
+PR_REVIEW_CHECKLIST.md
+PRODUCTION_ISSUES_AUDIT.md
+*.local.md
 *.key
 *.pem
 *.crt
