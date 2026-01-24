@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { useAuth } from "@/lib/AuthContext"
+import { useAuth } from "@/components/contexts"
 import { getApiUrl } from "@/lib/api"
 import SuggestionBox from "@/components/SuggestionBox"
 import EditableField from "@/components/EditableField"

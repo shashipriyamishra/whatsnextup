@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/lib/AuthContext"
+import { useAuth } from "@/components/contexts"
 import { logout } from "@/lib/auth"
 import { Button } from "./ui/button"
 import { API_URL } from "@/lib/api"

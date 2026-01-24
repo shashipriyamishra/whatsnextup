@@ -1,112 +1,61 @@
 "use client"
 
-import { useAuth } from "../lib/AuthContext"
-import { sendMessage } from "../lib/chat"
-import { logout } from "../lib/auth"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { useEffect, useRef, useState } from "react"
-import UsageBar from "./UsageBar"
-import Sidebar from "./Sidebar"
+/**
+ * ChatScreen Component (Refactored)
+ * Main chat interface using extracted sub-components
+ * Manages state and orchestrates chat flow
+ * 
+ * Components:
+ * - ChatHeader: Navigation and user info
+ * - ChatMessages: Message display list
+ * - ChatInput: Input form
+ * - Sidebar: Navigation sidebar
+ * - UsageBar: Usage statistics
+ */
 
-interface Message {
-  role: "user" | "ai"
-  text: string
-}
+import { useAuth } from "@/components/contexts"
+import { useRouter } from "next/navigation"
+import { auth } from "@/lib/firebase"
+import { useEffect, useState } from "react"
+import { useChat } from "@/lib/hooks"
+import type { Message } from "@/lib/hooks/useChat"
+import { ChatHeader, ChatMessages, ChatInput } from "@/components/chat"
+import Sidebar from "./Sidebar"
+import UsageBar from "./UsageBar"
+import { apiClient } from "@/lib/api"
 
 export default function ChatScreen() {
   const { user } = useAuth()
   const router = useRouter()
-  const [input, setInput] = useState("")
-  const [messages, setMessages] = useState<Message[]>([])
-  const [loading, setLoading] = useState(false)
   const [userTier, setUserTier] = useState<string>("free")
-  const containerRef = useRef<HTMLDivElement>(null)
 
+  // Use custom hook for all chat logic
+  const { messages, input, setInput, loading, error, handleSend, containerRef } = useChat()
+
+  // Fetch user tier on mount
   useEffect(() => {
     if (!user) return
 
     async function fetchTier() {
       try {
-        const token = await (user as any).getIdToken()
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/usage/stats`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        )
-        if (response.ok) {
-          const data = await response.json()
-          setUserTier(data.tier || "free")
-        }
-      } catch (error) {
-        console.error("Failed to fetch tier:", error)
+        const tierValue = await apiClient.getUserTier()
+        setUserTier(tierValue)
+      } catch (err) {
+        console.error("Failed to fetch tier:", err)
       }
     }
 
     fetchTier()
   }, [user])
 
-  async function handleLogout() {
-    await logout()
-    router.push("/")
-  }
-
-  async function handleSend() {
-    if (!input.trim()) return
-
-    setLoading(true)
-    setMessages([...messages, { role: "user", text: input }])
-    setInput("")
-
-    const res = await sendMessage(input)
-    setMessages((m) => [...m, { role: "ai", text: res.reply }])
-
-    // Refresh usage stats after message sent
-    if (user) {
-      try {
-        const token = await (user as any).getIdToken()
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/usage/stats`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        )
-        if (response.ok) {
-          const data = await response.json()
-          setUserTier(data.tier || "free")
-        }
-      } catch (error) {
-        console.error("Failed to refresh usage stats:", error)
-      }
-    }
-
-    setLoading(false)
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
+  const handleLogout = async () => {
+    try {
+      await auth.signOut()
+      router.replace("/")
+    } catch (err) {
+      console.error("Sign out failed:", err)
     }
   }
-
-  useEffect(() => {
-    // Scroll to bottom when messages change or loading state changes
-    const scrollToBottom = () => {
-      if (containerRef.current) {
-        const scrollElement = containerRef.current
-        // Scroll to the very bottom
-        scrollElement.scrollTop =
-          scrollElement.scrollHeight - scrollElement.clientHeight
-      }
-    }
-
-    // Use requestAnimationFrame for better performance and ensure layout is done
-    requestAnimationFrame(() => {
-      requestAnimationFrame(scrollToBottom)
-    })
-  }, [messages, loading])
 
   return (
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">
@@ -123,245 +72,23 @@ export default function ChatScreen() {
         <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl"></div>
       </div>
 
-      {/* Header - Fixed */}
-      <header className="fixed top-0 left-0 right-0 z-30 px-4 md:px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          {/* Logo - Only on Desktop */}
-          <Link
-            href="/"
-            className="hidden md:flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-500 flex items-center justify-center shadow-lg shadow-pink-500/30">
-              <span className="text-lg">✨</span>
-            </div>
-            <div>
-              <h1 className="font-bold text-base text-white">
-                What&apos;s Next Up
-              </h1>
-            </div>
-          </Link>
+      {/* Header */}
+      <ChatHeader user={user} userTier={userTier} onLogout={handleLogout} />
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-2">
-            {user && (
-              <>
-                <Link
-                  href="/agents"
-                  className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold cursor-pointer"
-                >
-                  🤖 Agents
-                </Link>
-                <Link
-                  href="/trending"
-                  className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold cursor-pointer"
-                >
-                  🔥 Trending
-                </Link>
-                <Link
-                  href="/history"
-                  className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold cursor-pointer"
-                >
-                  💬 History
-                </Link>
-                <Link
-                  href="/memories"
-                  className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold cursor-pointer"
-                >
-                  🧠 Memories
-                </Link>
-                <Link
-                  href="/plans"
-                  className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold cursor-pointer"
-                >
-                  📋 Plans
-                </Link>
-                <Link
-                  href="/reflections"
-                  className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold cursor-pointer"
-                >
-                  💭 Reflect
-                </Link>
-                <Link
-                  href="/pricing"
-                  className="text-xs px-3 py-2 rounded-lg bg-gradient-to-r from-purple-600/20 to-pink-600/20 hover:from-purple-600/30 hover:to-pink-600/30 text-pink-400 border border-pink-500/30 transition font-bold cursor-pointer"
-                >
-                  {userTier === "free" ? "💎 Upgrade" : "📊 Manage Plan"}
-                </Link>
-                <Link
-                  href="/profile"
-                  className="text-xs px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition font-semibold cursor-pointer"
-                >
-                  👤 Profile
-                </Link>
-              </>
-            )}
-          </nav>
+      {/* Messages Container */}
+      <ChatMessages messages={messages} loading={loading} containerRef={containerRef} />
 
-          {/* User Info & Sign Out */}
-          <div className="flex items-center gap-2 ml-auto">
-            {user?.photoURL && (
-              <>
-                <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-white/10 rounded-lg border border-white/20">
-                  <img
-                    src={user.photoURL}
-                    alt="Profile"
-                    className="w-6 h-6 rounded-full border-2 border-pink-400"
-                  />
-                  <span className="text-xs font-semibold text-white">
-                    {user.displayName?.split(" ")[0]}
-                  </span>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="text-xs px-3 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg hover:shadow-pink-500/50 transition-all font-bold cursor-pointer whitespace-nowrap"
-                >
-                  Sign out
-                </button>
-              </>
-            )}
-          </div>
+      {/* Input Area */}
+      <ChatInput value={input} onChange={setInput} onSend={handleSend} loading={loading} />
+
+      {/* Error Display */}
+      {error && (
+        <div className="fixed top-20 right-4 bg-red-600/80 text-white px-4 py-2 rounded-lg text-sm">
+          {error.message}
         </div>
-      </header>
-
-      {/* Messages Container - Scrollable in middle only */}
-      <div
-        ref={containerRef}
-        className="flex-1 overflow-y-auto px-4 md:px-6 py-6 relative z-10 mt-20 mb-28 scroll-smooth"
-        data-messages
-      >
-        <div className="max-w-3xl mx-auto w-full space-y-4">
-          <UsageBar />
-          {messages.length === 0 && (
-            <div className="flex flex-col items-center justify-center h-full py-16 text-center">
-              <div className="mb-8">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl mb-8 shadow-xl bg-gradient-to-br from-purple-600/40 to-pink-600/30 border border-white/20 backdrop-blur-sm">
-                  <span className="text-4xl">🚀</span>
-                </div>
-                <h2 className="text-4xl font-black text-white mb-3">
-                  What's Your Next Move?
-                </h2>
-                <p className="text-base text-white/70 max-w-lg leading-relaxed font-medium">
-                  Tell me about your goals, challenges, or decisions. I'll help
-                  you think through them with clarity and confidence.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-10 w-full max-w-2xl">
-                {[
-                  {
-                    title: "Plan Tomorrow",
-                    description: "Help me plan my day",
-                    icon: "📅",
-                  },
-                  {
-                    title: "Prioritize",
-                    description: "Which tasks matter most?",
-                    icon: "🎯",
-                  },
-                  {
-                    title: "New Ideas",
-                    description: "I want to try something new",
-                    icon: "💭",
-                  },
-                ].map((item, i) => (
-                  <button
-                    key={i}
-                    onClick={() => {
-                      setInput(item.description)
-                      document.querySelector("textarea")?.focus()
-                    }}
-                    className="group p-5 rounded-2xl bg-white/10 border border-white/20 hover:border-white/40 hover:bg-white/15 hover:shadow-lg hover:shadow-pink-500/20 transition-all duration-300 text-left cursor-pointer backdrop-blur-sm"
-                  >
-                    <div className="text-3xl mb-3 group-hover:scale-110 transition-transform duration-300 origin-center">
-                      {item.icon}
-                    </div>
-                    <div className="font-bold text-white text-sm">
-                      {item.title}
-                    </div>
-                    <p className="text-xs text-white/60 font-medium">
-                      {item.description}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {messages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-message-in`}
-            >
-              <div
-                className={`max-w-xs md:max-w-md px-5 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap shadow-lg transition-all ${
-                  msg.role === "user"
-                    ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-br-none shadow-pink-500/40"
-                    : "bg-white/15 text-white border border-white/20 rounded-bl-none backdrop-blur-sm"
-                }`}
-              >
-                {msg.text}
-              </div>
-            </div>
-          ))}
-
-          {loading && (
-            <div className="flex justify-start">
-              <div className="bg-white/15 text-white border border-white/20 px-4 py-3 rounded-2xl rounded-bl-none shadow-lg backdrop-blur-sm">
-                <div className="flex gap-2 items-center">
-                  <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"></div>
-                  <div
-                    className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"
-                    style={{ animationDelay: "0.2s" }}
-                  ></div>
-                  <div
-                    className="w-2 h-2 bg-pink-400 rounded-full animate-bounce"
-                    style={{ animationDelay: "0.4s" }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Input Area - Fixed at bottom */}
-      <footer className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-white/5 backdrop-blur-2xl px-4 md:px-6 py-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex gap-3">
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="What should I do next? Share your thoughts..."
-              className="flex-1 border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none bg-white/10 text-white placeholder-white/40 text-sm font-medium backdrop-blur-sm transition-all"
-              rows={2}
-            />
-            <button
-              onClick={handleSend}
-              disabled={loading || !input.trim()}
-              className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold hover:shadow-lg hover:shadow-pink-500/70 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer text-sm whitespace-nowrap transform hover:scale-105 active:scale-95"
-            >
-              Send
-            </button>
-          </div>
-          <p className="text-xs text-white/50 mt-2">
-            💡 Press Enter to send • Shift+Enter for new line
-          </p>
-        </div>
-      </footer>
+      )}
 
       <style jsx>{`
-        @keyframes message-in {
-          from {
-            opacity: 0;
-            transform: translateY(10px) scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-
         @keyframes blob {
           0%,
           100% {
@@ -378,36 +105,11 @@ export default function ChatScreen() {
           }
         }
 
-        .animate-message-in {
-          animation: message-in 0.3s ease-out;
-        }
-
         .animate-blob {
           animation: blob 7s infinite;
-        }
-
-        .scroll-smooth {
-          scroll-behavior: smooth;
-        }
-
-        /* Smooth scrollbar */
-        [data-messages]::-webkit-scrollbar {
-          width: 6px;
-        }
-
-        [data-messages]::-webkit-scrollbar-track {
-          background: transparent;
-        }
-
-        [data-messages]::-webkit-scrollbar-thumb {
-          background: rgba(168, 85, 247, 0.4);
-          border-radius: 3px;
-        }
-
-        [data-messages]::-webkit-scrollbar-thumb:hover {
-          background: rgba(168, 85, 247, 0.6);
         }
       `}</style>
     </div>
   )
 }
+

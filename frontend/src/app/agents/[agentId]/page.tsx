@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, use } from "react"
-import { useAuth } from "@/lib/AuthContext"
+import { useAuth } from "@/components/contexts"
 import { useRouter } from "next/navigation"
 import { chatWithAgent, getAllAgents, Agent } from "@/lib/agents"
 import { Button } from "@/components/ui/button"

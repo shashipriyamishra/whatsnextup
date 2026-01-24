@@ -1,84 +1,64 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useAuth } from "@/lib/AuthContext"
+/**
+ * UsageBar Component
+ * Displays user's API usage statistics and tier information
+ * Memoized to prevent unnecessary re-renders
+ */
+
+import React from "react"
+import { useStats } from "@/lib/hooks"
 import { Button } from "./ui/button"
 import Link from "next/link"
-import { API_URL } from "@/lib/api"
 
-interface UsageStats {
-  messages_today: number
-  messages_remaining: number
-  tier: string
-  limit: number
-  reset_at: string
-}
+const UsageBarContent = React.memo(function UsageBarContent() {
+  const { stats, loading } = useStats()
 
-export default function UsageBar() {
-  const { token, user } = useAuth()
-  const [stats, setStats] = useState<UsageStats | null>(null)
-  const [loading, setLoading] = useState(true)
+  if (loading || !stats) return null
 
-  useEffect(() => {
-    if (!token || !user) return
-
-    async function fetchUsageStats() {
-      try {
-        const response = await fetch(`${API_URL}/api/usage/stats`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-
-        if (response.ok) {
-          const data = await response.json()
-          setStats(data)
-        }
-      } catch (error) {
-        console.error("Failed to fetch usage stats:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchUsageStats()
-  }, [token, user])
-
-  if (loading || !stats || !user) return null
-
-  const { messages_today, messages_remaining, tier, limit } = stats
-  const percentage = limit > 0 ? (messages_today / limit) * 100 : 0
+  const { messages_used = 0, messages_limit = 10, tier = "free" } = stats
+  const percentage = messages_limit > 0 ? (messages_used / messages_limit) * 100 : 0
   const isNearLimit = percentage >= 80
-  const isAtLimit = messages_remaining === 0
-
-  if (tier !== "free") return null // Only show for free tier
+  const isAtLimit = percentage >= 100
 
   return (
-    <div className="flex items-center justify-between px-2 py-3">
-      <div className="flex items-center gap-3">
-        <span className="text-2xl">⚡</span>
-        <div>
-          <p className="text-white/90 text-sm">
-            <span className="font-bold text-lg bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-              {messages_remaining}
-            </span>
-            <span className="text-white/70 ml-1">free messages left today</span>
-          </p>
-          <p className="text-white/50 text-xs mt-0.5">
-            {messages_today} of {limit} used • Resets daily
-          </p>
-        </div>
+    <div className="px-4 py-3 rounded-lg bg-white/5 border border-white/20 backdrop-blur-sm">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs font-semibold text-white/70">
+          {tier.toUpperCase()} - Usage {messages_used}/{messages_limit}
+        </span>
+        {isAtLimit && (
+          <span className="text-xs font-bold text-red-400">LIMIT REACHED</span>
+        )}
       </div>
-      {isNearLimit && (
-        <Link href="/pricing">
-          <Button
-            size="sm"
-            className="cursor-pointer bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-lg hover:shadow-pink-500/50"
-          >
-            Upgrade
-          </Button>
-        </Link>
-      )}
+      <div className="flex gap-2 items-center">
+        <div className="flex-1 h-2 rounded-full bg-white/10 overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-300 ${
+              isAtLimit
+                ? "bg-red-500"
+                : isNearLimit
+                  ? "bg-yellow-500"
+                  : "bg-gradient-to-r from-purple-500 to-pink-500"
+            }`}
+            style={{ width: `${Math.min(percentage, 100)}%` }}
+          />
+        </div>
+        {isNearLimit && (
+          <Link href="/pricing">
+            <Button
+              size="sm"
+              className="cursor-pointer bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-lg hover:shadow-pink-500/50"
+            >
+              Upgrade
+            </Button>
+          </Link>
+        )}
+      </div>
     </div>
   )
-}
+})
+
+UsageBarContent.displayName = "UsageBar"
+
+export default UsageBarContent

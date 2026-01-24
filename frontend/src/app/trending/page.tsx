@@ -148,16 +148,16 @@ export default function TrendingPage() {
                           key={idx}
                           className={`hover:scale-105 transition-transform cursor-pointer ${
                             [
-                              "bg-red-50 border-red-200 hover:bg-red-100",
-                              "bg-blue-50 border-blue-200 hover:bg-blue-100",
-                              "bg-orange-50 border-orange-200 hover:bg-orange-100",
-                              "bg-pink-50 border-pink-200 hover:bg-pink-100",
+                              "bg-red-900/30 border-red-700/50 hover:bg-red-900/40",
+                              "bg-blue-900/30 border-blue-700/50 hover:bg-blue-900/40",
+                              "bg-orange-900/30 border-orange-700/50 hover:bg-orange-900/40",
+                              "bg-pink-900/30 border-pink-700/50 hover:bg-pink-900/40",
                             ][idx % 4]
                           }`}
                         >
                           <CardHeader>
                             <div className="flex justify-between items-start">
-                              <CardTitle className="text-gray-900 text-base">
+                              <CardTitle className="text-white text-base">
                                 {post.title}
                               </CardTitle>
                             </div>
@@ -172,7 +172,7 @@ export default function TrendingPage() {
                               href={post.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-pink-400 text-sm hover:underline"
+                              className="text-cyan-400 text-sm hover:text-cyan-300"
                             >
                               View on Reddit →
                             </a>
@@ -418,8 +418,12 @@ export default function TrendingPage() {
                           {video.channel}
                         </p>
                         <div className="flex gap-2 mb-2">
-                          <Badge variant="glass">👁️ {video.views.toLocaleString()}</Badge>
-                          <Badge variant="glass">👍 {video.likes.toLocaleString()}</Badge>
+                          <Badge variant="glass">
+                            👁️ {video.views.toLocaleString()}
+                          </Badge>
+                          <Badge variant="glass">
+                            👍 {video.likes.toLocaleString()}
+                          </Badge>
                         </div>
                         <a
                           href={video.url}

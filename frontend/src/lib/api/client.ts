@@ -1,0 +1,205 @@
+/**
+ * Centralized API Client
+ * Single source of truth for all API communication
+ * 
+ * Usage:
+ *   const tier = await apiClient.getUserTier()
+ *   const stats = await apiClient.getUsageStats()
+ */
+
+import { RequestOptions, UsageStats, UserTierResponse, ChatResponse } from "./types"
+import { ApiException, parseError, getUserFriendlyErrorMessage } from "./errors"
+import { auth } from "@/lib/firebase"
+
+class ApiClient {
+  private baseUrl: string
+
+  constructor() {
+    this.baseUrl =
+      process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+  }
+
+  /**
+   * Core request method - all API calls go through here
+   */
+  async request<T>(
+    endpoint: string,
+    options: RequestOptions = {}
+  ): Promise<T> {
+    const {
+      authRequired = true,
+      timeout = 10000,
+      headers = {},
+      ...fetchOptions
+    } = options
+
+    try {
+      // Add authorization header if required
+      const finalHeaders: Record<string, string> = {
+        "Content-Type": "application/json",
+        ...headers,
+      }
+
+      if (authRequired) {
+        const token = await this.getAuthToken()
+        finalHeaders.Authorization = `Bearer ${token}`
+      }
+
+      const url = `${this.baseUrl}${endpoint}`
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+      const response = await fetch(url, {
+        ...fetchOptions,
+        headers: finalHeaders,
+        signal: controller.signal,
+      })
+
+      clearTimeout(timeoutId)
+
+      if (!response.ok) {
+        throw await parseError(response)
+      }
+
+      const data = await response.json()
+      return data as T
+    } catch (error) {
+      if (error instanceof ApiException) {
+        throw error
+      }
+
+      // Handle AbortError (timeout)
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw new ApiException(
+          408,
+          "Request timeout. Please try again.",
+          { originalError: error.message }
+        )
+      }
+
+      // Handle network errors
+      if (error instanceof TypeError) {
+        throw new ApiException(
+          0,
+          "Network error. Please check your connection.",
+          { originalError: error.message }
+        )
+      }
+
+      // Re-throw if already ApiException
+      throw error
+    }
+  }
+
+  /**
+   * Retry logic for failed requests
+   */
+  async requestWithRetry<T>(
+    endpoint: string,
+    options: RequestOptions = {},
+    maxRetries: number = 3
+  ): Promise<T> {
+    let lastError: any
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        return await this.request<T>(endpoint, options)
+      } catch (error) {
+        lastError = error
+
+        // Don't retry on auth errors
+        if (error instanceof ApiException && error.status === 401) {
+          throw error
+        }
+
+        // Wait before retrying (exponential backoff)
+        if (attempt < maxRetries - 1) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, Math.pow(2, attempt) * 1000)
+          )
+        }
+      }
+    }
+
+    throw lastError
+  }
+
+  /**
+   * Get authentication token from Firebase
+   */
+  private async getAuthToken(): Promise<string> {
+    const currentUser = auth.currentUser
+
+    if (!currentUser) {
+      throw new ApiException(401, "User not authenticated")
+    }
+
+    return await currentUser.getIdToken()
+  }
+
+  /**
+   * USER TIER API CALLS
+   */
+
+  async getUserTier(): Promise<string> {
+    try {
+      const data = await this.request<UserTierResponse>("/api/user/tier")
+      return data.tier || "free"
+    } catch (error) {
+      console.error("Failed to fetch user tier:", error)
+      throw error
+    }
+  }
+
+  /**
+   * USAGE STATS API CALLS
+   */
+
+  async getUsageStats(): Promise<UsageStats> {
+    try {
+      return await this.request<UsageStats>("/api/usage/stats")
+    } catch (error) {
+      console.error("Failed to fetch usage stats:", error)
+      throw error
+    }
+  }
+
+  /**
+   * CHAT API CALLS
+   */
+
+  async sendChatMessage(message: string): Promise<ChatResponse> {
+    try {
+      return await this.request<ChatResponse>("/api/chat", {
+        method: "POST",
+        body: JSON.stringify({ message }),
+      })
+    } catch (error) {
+      console.error("Failed to send chat message:", error)
+      throw error
+    }
+  }
+
+  /**
+   * HEALTH CHECK
+   */
+
+  async healthCheck(): Promise<{ status: string }> {
+    try {
+      return await this.request<{ status: string }>("/health", {
+        authRequired: false,
+      })
+    } catch (error) {
+      console.error("Health check failed:", error)
+      throw error
+    }
+  }
+}
+
+// Export singleton instance
+export const apiClient = new ApiClient()
+
+/**
+ * Export utility for error handling
+ */
+export { getUserFriendlyErrorMessage, ApiException }

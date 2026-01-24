@@ -1,7 +1,7 @@
 "use client"
 
 // ✅ Frontend deployment: CI/CD pipeline active
-import { useAuth } from "@/lib/AuthContext"
+import { useAuth } from "@/components/contexts"
 import DiscoveryHub from "@/components/DiscoveryHub"
 import ChatScreen from "@/components/ChatScreen"
 

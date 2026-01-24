@@ -2,41 +2,48 @@
 
 import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
-import { useAuth } from "@/lib/AuthContext"
+import { useAuth } from "@/components/contexts"
 import { auth } from "@/lib/firebase"
+import { apiClient } from "@/lib/api"
 
 export function Header() {
   const router = useRouter()
   const pathname = usePathname()
   const { user } = useAuth()
   const [tier, setTier] = useState("free")
+  const [isSigningOut, setIsSigningOut] = useState(false)
 
   useEffect(() => {
-    if (user) {
-      const fetchTier = async () => {
-        try {
-          const token = await user.getIdToken()
-          const res = await fetch("/api/user/tier", {
-            headers: { authorization: `Bearer ${token}` },
-          })
-          if (res.ok) {
-            const data = await res.json()
-            setTier(data.tier || "free")
-          }
-        } catch (err) {
-          console.error("Failed to fetch tier:", err)
+    // Skip if signing out to prevent re-renders
+    if (!user || isSigningOut) return
+
+    let mounted = true
+    const fetchTier = async () => {
+      try {
+        const tierValue = await apiClient.getUserTier()
+        if (mounted) {
+          setTier(tierValue)
         }
+      } catch (err) {
+        if (mounted) console.error("Failed to fetch tier:", err)
       }
-      fetchTier()
     }
-  }, [user])
+    fetchTier()
+
+    return () => {
+      mounted = false
+    }
+  }, [user, isSigningOut])
 
   const handleSignOut = async () => {
     try {
+      setIsSigningOut(true)
       await auth.signOut()
-      router.push("/")
+      // Use replace to avoid back button issues and prevent re-renders
+      router.replace("/")
     } catch (err) {
       console.error("Sign out failed:", err)
+      setIsSigningOut(false)
     }
   }
 

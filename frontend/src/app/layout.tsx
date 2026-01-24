@@ -1,5 +1,5 @@
 import "./globals.css"
-import { AuthProvider } from "../lib/AuthContext"
+import { AuthProvider } from "@/components/contexts"
 
 export const metadata = {
   title: "What's Next Up - AI Planning Companion",

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import * as React from "react"
-import { useAuth } from "@/lib/AuthContext"
+import { useAuth } from "@/components/contexts"
 import { useRouter } from "next/navigation"
 import { getAllAgents, Agent } from "@/lib/agents"
 import { AgentCard } from "@/components/glass/AgentCard"
