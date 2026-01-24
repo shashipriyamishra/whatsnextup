@@ -25,7 +25,7 @@ interface UseChatResult {
   error: Error | null
   handleSend: () => Promise<void>
   clearMessages: () => void
-  containerRef: React.RefObject<HTMLDivElement>
+  containerRef: React.RefObject<HTMLDivElement | null>
 }
 
 export function useChat(): UseChatResult {
