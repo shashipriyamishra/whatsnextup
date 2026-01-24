@@ -1,3 +1,5 @@
+"use client"
+
 import { signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth"
 import { auth } from "./firebase"
 

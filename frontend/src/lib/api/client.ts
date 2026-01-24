@@ -1,3 +1,5 @@
+"use client"
+
 /**
  * Centralized API Client
  * Single source of truth for all API communication
