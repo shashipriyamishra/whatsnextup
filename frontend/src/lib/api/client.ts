@@ -22,7 +22,26 @@ class ApiClient {
   private baseUrl: string
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+    // CRITICAL: NEXT_PUBLIC_API_URL must be set in production
+    // If not set, this will cause API calls to fail with clear errors
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL
+
+    if (!apiUrl) {
+      if (
+        typeof window !== "undefined" &&
+        process.env.NODE_ENV === "production"
+      ) {
+        console.error(
+          "CRITICAL: NEXT_PUBLIC_API_URL environment variable is not set in production! " +
+            "API calls will fail. Please configure this in your deployment settings.",
+        )
+      }
+      // Only fallback to localhost in development
+      this.baseUrl =
+        process.env.NODE_ENV === "development" ? "http://localhost:8000" : ""
+    } else {
+      this.baseUrl = apiUrl
+    }
   }
 
   /**
@@ -203,21 +222,23 @@ class ApiClient {
 export const apiClient = new ApiClient()
 
 /**
- * Get API URL from environment or throw error
- * CRITICAL: This must be set in production via NEXT_PUBLIC_API_URL
+ * Get API URL from environment variable
+ * CRITICAL: NEXT_PUBLIC_API_URL must be set in production
  */
 function resolveApiUrl(): string {
   const url = process.env.NEXT_PUBLIC_API_URL
 
-  // In development, allow localhost
-  if (typeof window === "undefined" || !url) {
-    // Server-side or no env var
+  if (!url) {
+    // In production, missing env var is a critical error
     if (process.env.NODE_ENV === "production") {
-      console.error("CRITICAL: NEXT_PUBLIC_API_URL not set in production!")
-      // Don't throw - just log and return a placeholder
-      // Frontend will fail with clear API errors
+      console.error(
+        "CRITICAL: NEXT_PUBLIC_API_URL not configured!\\n" +
+          "API calls will fail. This must be set in your deployment platform.\\n" +
+          "Set to your Cloud Run backend URL, e.g.: https://whatsnextup-api-xxx.run.app",
+      )
       return ""
     }
+    // Development: use localhost
     return "http://localhost:8000"
   }
 
@@ -236,16 +257,19 @@ export const API_URL = resolveApiUrl()
  */
 export function getApiUrl(): string {
   const url = process.env.NEXT_PUBLIC_API_URL
-  if (
-    !url &&
-    typeof window !== "undefined" &&
-    process.env.NODE_ENV === "production"
-  ) {
-    console.error(
-      "CRITICAL: NEXT_PUBLIC_API_URL not configured for production API calls",
-    )
+
+  if (!url) {
+    if (process.env.NODE_ENV === "production") {
+      console.error(
+        "CRITICAL: NEXT_PUBLIC_API_URL not configured for production API calls.\\n" +
+          "Set this environment variable in your deployment platform.",
+      )
+      return ""
+    }
+    return "http://localhost:8000"
   }
-  return url || "http://localhost:8000"
+
+  return url
 }
 
 /**
