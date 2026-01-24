@@ -13,7 +13,7 @@ import { ChatMessage, MessageProps } from "./ChatMessage"
 interface ChatMessagesProps {
   messages: MessageProps[]
   loading: boolean
-  containerRef: React.RefObject<HTMLDivElement>
+  containerRef: React.RefObject<HTMLDivElement | null>
 }
 
 export const ChatMessages = React.memo(function ChatMessages({
