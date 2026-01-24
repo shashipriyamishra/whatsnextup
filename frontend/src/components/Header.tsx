@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/AuthContext"
+import { auth } from "@/lib/firebase"
 
 export function Header() {
   const router = useRouter()
@@ -30,6 +31,15 @@ export function Header() {
     }
   }, [user])
 
+  const handleSignOut = async () => {
+    try {
+      await auth.signOut()
+      router.push("/")
+    } catch (err) {
+      console.error("Sign out failed:", err)
+    }
+  }
+
   const isHomePage = pathname === "/"
   const isLoginPage = pathname === "/login"
   const isLandingPage = pathname === "/"
@@ -45,15 +55,15 @@ export function Header() {
           {!isLandingPage && (
             <button
               onClick={() => router.push("/")}
-              className="text-gray-600 hover:text-gray-900 text-xl"
-              title="Home"
+              className="text-gray-600 hover:text-gray-900 text-xl cursor-pointer transition hover:scale-110"
+              title="Back to home"
             >
               ←
             </button>
           )}
           <button
             onClick={() => router.push("/")}
-            className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition"
+            className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition cursor-pointer"
           >
             ✨ What&apos;s Next Up
           </button>
@@ -64,7 +74,7 @@ export function Header() {
           <nav className="hidden md:flex items-center gap-6">
             <button
               onClick={() => router.push("/trending")}
-              className={`text-sm transition ${
+              className={`text-sm transition cursor-pointer ${
                 pathname === "/trending"
                   ? "text-purple-600 font-semibold"
                   : "text-gray-600 hover:text-gray-900"
@@ -74,7 +84,7 @@ export function Header() {
             </button>
             <button
               onClick={() => router.push("/agents")}
-              className={`text-sm transition ${
+              className={`text-sm transition cursor-pointer ${
                 pathname === "/agents"
                   ? "text-purple-600 font-semibold"
                   : "text-gray-600 hover:text-gray-900"
@@ -84,7 +94,7 @@ export function Header() {
             </button>
             <button
               onClick={() => router.push("/history")}
-              className={`text-sm transition ${
+              className={`text-sm transition cursor-pointer ${
                 pathname === "/history"
                   ? "text-purple-600 font-semibold"
                   : "text-gray-600 hover:text-gray-900"
@@ -94,7 +104,7 @@ export function Header() {
             </button>
             <button
               onClick={() => router.push("/profile")}
-              className={`text-sm transition ${
+              className={`text-sm transition cursor-pointer ${
                 pathname === "/profile"
                   ? "text-purple-600 font-semibold"
                   : "text-gray-600 hover:text-gray-900"
@@ -106,7 +116,7 @@ export function Header() {
         )}
 
         {/* Right side - User & Tier Info */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {user && (
             <div className="flex items-center gap-3">
               <span className="text-xs font-semibold px-2 py-1 bg-purple-100 text-purple-700 rounded">
@@ -114,16 +124,24 @@ export function Header() {
               </span>
               <button
                 onClick={() => router.push("/profile")}
-                className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold flex items-center justify-center hover:opacity-80 transition"
+                className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold flex items-center justify-center hover:opacity-80 transition cursor-pointer hover:scale-110"
+                title="View profile"
               >
                 {user.email?.charAt(0).toUpperCase() || "U"}
+              </button>
+              <button
+                onClick={handleSignOut}
+                className="text-xs px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition cursor-pointer"
+                title="Sign out"
+              >
+                Sign Out
               </button>
             </div>
           )}
           {!user && !isLoginPage && (
             <button
               onClick={() => router.push("/login")}
-              className="text-sm px-3 py-1 text-purple-600 hover:bg-purple-50 rounded transition"
+              className="text-sm px-3 py-1 text-purple-600 hover:bg-purple-50 rounded transition cursor-pointer"
             >
               Sign In
             </button>

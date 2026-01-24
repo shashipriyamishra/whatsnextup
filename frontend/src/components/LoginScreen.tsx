@@ -13,7 +13,7 @@ export default function LoginScreen() {
       {/* Back Button */}
       <button
         onClick={() => router.push("/")}
-        className="absolute top-6 left-6 z-50 flex items-center gap-2 text-white/70 hover:text-white transition"
+        className="absolute top-6 left-6 z-50 flex items-center gap-2 text-white/70 hover:text-white transition cursor-pointer hover:scale-110"
       >
         <span>←</span>
         <span className="text-sm">Back to Home</span>

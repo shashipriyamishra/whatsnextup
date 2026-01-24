@@ -1185,6 +1185,22 @@ async def get_personalized_trending_feed(
 # USAGE & SUBSCRIPTION MANAGEMENT ENDPOINTS
 # ============================================================================
 
+@app.get("/api/user/tier")
+async def get_user_tier(user: dict = Depends(get_current_user)):
+    """Get current user's tier/plan"""
+    try:
+        uid = user.get("uid")
+        stats = await get_usage_stats(uid)
+        return {
+            "tier": stats.get("tier", "free"),
+            "limit": stats.get("limit", 15),
+            "messages_today": stats.get("messages_today", 0),
+            "messages_remaining": stats.get("messages_remaining", 15)
+        }
+    except Exception as e:
+        print(f"❌ Error fetching user tier: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/usage/stats")
 async def get_user_usage_stats(user: dict = Depends(get_current_user)):
     """Get current user's usage statistics"""

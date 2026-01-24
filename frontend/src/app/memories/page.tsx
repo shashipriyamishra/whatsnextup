@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "@/lib/AuthContext"
 import { getApiUrl } from "@/lib/api"
+import { Header } from "@/components/Header"
 
 interface Memory {
   id: string
@@ -142,41 +143,7 @@ export default function MemoriesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950">
-      <nav className="sticky top-0 z-50 bg-gray-900/80 backdrop-blur border-b border-white/10">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-white hover:text-pink-400 transition"
-          >
-            <span className="text-xl">✨</span>
-            <span className="font-bold">whatsnextup</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/"
-              className="text-white/70 hover:text-white transition"
-              title="Chat"
-            >
-              💬
-            </Link>
-            <Link
-              href="/plans"
-              className="text-white/70 hover:text-white transition"
-              title="Plans"
-            >
-              📋
-            </Link>
-            <Link
-              href="/reflections"
-              className="text-white/70 hover:text-white transition"
-              title="Reflections"
-            >
-              💭
-            </Link>
-            <span className="text-white font-bold">🧠</span>
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       <main className="max-w-5xl mx-auto px-4 pt-32 pb-8">
         {/* Create new memory button */}
