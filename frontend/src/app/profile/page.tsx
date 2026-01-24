@@ -120,13 +120,6 @@ export default function ProfilePage() {
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
-          <Link href="/">
-            <Button variant="glass" size="sm" className="cursor-pointer">
-              ← Back
-            </Button>
-          </Link>
-        </div>
-      </header>
 
       {/* Content */}
       <main className="relative z-10 px-4 md:px-6 py-8 flex-1">
