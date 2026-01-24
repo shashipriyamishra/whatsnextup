@@ -201,6 +201,19 @@ class ApiClient {
 export const apiClient = new ApiClient()
 
 /**
+ * Export API URL configuration
+ */
+export const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+
+/**
+ * Helper function to get API URL
+ */
+export function getApiUrl(): string {
+  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+}
+
+/**
  * Export utility for error handling
  */
 export { getUserFriendlyErrorMessage, ApiException }

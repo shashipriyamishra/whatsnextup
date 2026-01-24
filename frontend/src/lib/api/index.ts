@@ -2,7 +2,13 @@
  * API Index - Central export point
  */
 
-export { apiClient, ApiException, getUserFriendlyErrorMessage } from "./client"
+export {
+  apiClient,
+  ApiException,
+  getUserFriendlyErrorMessage,
+  API_URL,
+  getApiUrl,
+} from "./client"
 export type {
   ApiError,
   UsageStats,
