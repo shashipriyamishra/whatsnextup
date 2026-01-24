@@ -61,6 +61,26 @@ export default function ChatScreen() {
 
     const res = await sendMessage(input)
     setMessages((m) => [...m, { role: "ai", text: res.reply }])
+
+    // Refresh usage stats after message sent
+    if (user) {
+      try {
+        const token = await (user as any).getIdToken()
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/usage/stats`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        )
+        if (response.ok) {
+          const data = await response.json()
+          setUserTier(data.tier || "free")
+        }
+      } catch (error) {
+        console.error("Failed to refresh usage stats:", error)
+      }
+    }
+
     setLoading(false)
   }
 

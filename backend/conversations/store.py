@@ -129,3 +129,8 @@ async def get_conversation_stats(user_id: str) -> Dict[str, Any]:
     except Exception as e:
         print(f"❌ Error getting conversation stats: {e}")
         return {"total_conversations": 0, "unique_agents": 0, "agents_list": []}
+
+# Aliases for endpoint compatibility
+get_conversations = get_conversation_history
+search_conversations_fn = search_conversations
+delete_conversation_fn = delete_conversation

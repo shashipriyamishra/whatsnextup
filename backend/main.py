@@ -1235,3 +1235,65 @@ async def upgrade_subscription(
     except Exception as e:
         print(f"❌ Error upgrading subscription: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# ============================================================================
+# CONVERSATION HISTORY ENDPOINTS
+# ============================================================================
+
+@app.get("/conversations")
+async def get_conversations_endpoint(
+    limit: int = 50,
+    user: dict = Depends(get_current_user)
+):
+    """Get user's conversation history"""
+    try:
+        uid = user.get("uid")
+        from conversations.store import get_conversation_history
+        conversations = await get_conversation_history(uid, limit=limit)
+        return {"conversations": conversations, "total": len(conversations)}
+    except Exception as e:
+        print(f"❌ Error fetching conversations: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/conversations/stats")
+async def get_conversation_stats_endpoint(user: dict = Depends(get_current_user)):
+    """Get conversation statistics"""
+    try:
+        uid = user.get("uid")
+        from conversations.store import get_conversation_stats
+        stats = await get_conversation_stats(uid)
+        return stats
+    except Exception as e:
+        print(f"❌ Error fetching conversation stats: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/conversations/search")
+async def search_conversations_endpoint(
+    q: str,
+    limit: int = 20,
+    user: dict = Depends(get_current_user)
+):
+    """Search conversations by message content"""
+    try:
+        uid = user.get("uid")
+        from conversations.store import search_conversations
+        results = await search_conversations(uid, search_query=q, limit=limit)
+        return {"results": results, "total": len(results)}
+    except Exception as e:
+        print(f"❌ Error searching conversations: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/conversations/{conversation_id}")
+async def delete_conversation_endpoint(
+    conversation_id: str,
+    user: dict = Depends(get_current_user)
+):
+    """Delete a conversation"""
+    try:
+        uid = user.get("uid")
+        from conversations.store import delete_conversation
+        success = await delete_conversation(uid, conversation_id)
+        return {"success": success, "deleted": conversation_id}
+    except Exception as e:
+        print(f"❌ Error deleting conversation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
