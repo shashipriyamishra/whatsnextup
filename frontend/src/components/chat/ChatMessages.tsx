@@ -1,3 +1,5 @@
+"use client"
+
 /**
  * ChatMessages Component
  * Displays list of messages and loading state
@@ -48,7 +50,7 @@ export const ChatMessages = React.memo(function ChatMessages({
         icon: "💭",
       },
     ],
-    []
+    [],
   )
 
   return (
@@ -79,7 +81,9 @@ export const ChatMessages = React.memo(function ChatMessages({
                   key={i}
                   onClick={() => {
                     // Find textarea and set its value
-                    const textarea = document.querySelector("textarea") as HTMLTextAreaElement
+                    const textarea = document.querySelector(
+                      "textarea",
+                    ) as HTMLTextAreaElement
                     if (textarea) {
                       textarea.value = item.description
                       textarea.focus()
@@ -103,7 +107,12 @@ export const ChatMessages = React.memo(function ChatMessages({
         )}
 
         {messages.map((msg, idx) => (
-          <ChatMessage key={idx} role={msg.role} text={msg.text} timestamp={msg.timestamp} />
+          <ChatMessage
+            key={idx}
+            role={msg.role}
+            text={msg.text}
+            timestamp={msg.timestamp}
+          />
         ))}
 
         {loading && (

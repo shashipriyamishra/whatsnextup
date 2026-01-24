@@ -9,7 +9,7 @@ export class ApiException extends Error {
   constructor(
     public status: number,
     message: string,
-    public details?: Record<string, any>
+    public details?: Record<string, any>,
   ) {
     super(message)
     this.name = "ApiException"
@@ -58,9 +58,7 @@ export const ERROR_MESSAGES = {
 /**
  * Handle API errors with user-friendly messages
  */
-export function getUserFriendlyErrorMessage(
-  error: unknown
-): string {
+export function getUserFriendlyErrorMessage(error: unknown): string {
   if (error instanceof ApiException) {
     switch (error.status) {
       case 401:

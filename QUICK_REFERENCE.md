@@ -3,11 +3,13 @@
 ## 🎯 What Changed
 
 ### Critical Bugs Fixed ✅
+
 1. Sign Out infinite loop → Fixed with state guard
 2. Stats API returning HTML → Fixed with centralized client
 3. Trending page light colors → Fixed with dark backgrounds
 
 ### Architecture Improved ✅
+
 1. Monolithic ChatScreen (414 lines) → Split into 5 components
 2. Scattered API calls → Centralized API client
 3. Mixed folders → Clear organized structure
@@ -108,11 +110,12 @@ src/
 ### Old Way → New Way
 
 **API Calls**:
+
 ```typescript
 // OLD
 const token = await user.getIdToken()
 const res = await fetch(`${apiUrl}/api/user/tier`, {
-  headers: { Authorization: `Bearer ${token}` }
+  headers: { Authorization: `Bearer ${token}` },
 })
 const data = await res.json()
 
@@ -121,6 +124,7 @@ const tier = await apiClient.getUserTier()
 ```
 
 **AuthContext Import**:
+
 ```typescript
 // OLD
 import { useAuth } from "@/lib/AuthContext"
@@ -130,6 +134,7 @@ import { useAuth } from "@/components/contexts"
 ```
 
 **Stats Logic**:
+
 ```typescript
 // OLD
 useEffect(() => {
@@ -146,12 +151,14 @@ const { stats, loading, error, refetch } = useStats()
 ## 📊 Performance Improvements
 
 ### Optimizations Applied
+
 1. ✅ **React.memo** - All chat components memoized
 2. ✅ **useMemo** - Expensive computations cached
 3. ✅ **useCallback** - Event handlers stable
 4. ✅ **Component splitting** - Smaller render trees
 
 ### Results
+
 - **30-40% fewer re-renders** in chat
 - **Faster message rendering**
 - **Better mobile performance**
@@ -162,28 +169,30 @@ const { stats, loading, error, refetch } = useStats()
 ## 🛠️ Utility Functions
 
 ### Formatters
+
 ```typescript
 import {
-  formatDate,      // "Jan 25, 2026"
-  formatTime,      // "03:45 PM"
-  formatTimeAgo,   // "2h ago"
-  truncate,        // "Long..."
-  capitalize,      // "Hello"
-  formatCurrency,  // "$99.99"
-  formatPercent,   // "50%"
+  formatDate, // "Jan 25, 2026"
+  formatTime, // "03:45 PM"
+  formatTimeAgo, // "2h ago"
+  truncate, // "Long..."
+  capitalize, // "Hello"
+  formatCurrency, // "$99.99"
+  formatPercent, // "50%"
 } from "@/lib/utils"
 ```
 
 ### Validators
+
 ```typescript
 import {
-  isValidEmail,         // true/false
-  isValidPassword,      // true/false
-  isValidUrl,           // true/false
-  isEmpty,              // true/false
-  isInRange,            // true/false
+  isValidEmail, // true/false
+  isValidPassword, // true/false
+  isValidUrl, // true/false
+  isEmpty, // true/false
+  isInRange, // true/false
   isValidMessageLength, // true/false
-  sanitizeInput,        // Sanitized string
+  sanitizeInput, // Sanitized string
 } from "@/lib/utils"
 ```
 
@@ -192,22 +201,24 @@ import {
 ## 📝 Constants
 
 ### API Endpoints
+
 ```typescript
 import { API_ENDPOINTS } from "@/lib/constants"
 
-API_ENDPOINTS.USER.TIER          // "/api/user/tier"
-API_ENDPOINTS.USAGE.STATS        // "/api/usage/stats"
-API_ENDPOINTS.CHAT.SEND          // "/api/chat"
+API_ENDPOINTS.USER.TIER // "/api/user/tier"
+API_ENDPOINTS.USAGE.STATS // "/api/usage/stats"
+API_ENDPOINTS.CHAT.SEND // "/api/chat"
 ```
 
 ### Routes
+
 ```typescript
 import { ROUTES } from "@/lib/constants"
 
-ROUTES.HOME          // "/"
-ROUTES.LOGIN         // "/login"
-ROUTES.CHAT          // "/chat"
-ROUTES.TRENDING      // "/trending"
+ROUTES.HOME // "/"
+ROUTES.LOGIN // "/login"
+ROUTES.CHAT // "/chat"
+ROUTES.TRENDING // "/trending"
 ```
 
 ---
@@ -215,26 +226,28 @@ ROUTES.TRENDING      // "/trending"
 ## 🧪 Testing
 
 ### Test Custom Hooks
+
 ```typescript
 import { renderHook, act } from "@testing-library/react"
 import { useChat } from "@/lib/hooks"
 
 it("sends message", async () => {
   const { result } = renderHook(() => useChat())
-  
+
   act(() => {
     result.current.setInput("Hello")
   })
-  
+
   await act(async () => {
     await result.current.handleSend()
   })
-  
+
   expect(result.current.messages).toHaveLength(2)
 })
 ```
 
 ### Test Components
+
 ```typescript
 import { render, screen } from "@testing-library/react"
 import { ChatMessage } from "@/components/chat"
@@ -250,6 +263,7 @@ it("renders message", () => {
 ## 🐛 Common Patterns
 
 ### Pattern 1: API Call with Error Handling
+
 ```typescript
 try {
   const data = await apiClient.getUsageStats()
@@ -263,6 +277,7 @@ try {
 ```
 
 ### Pattern 2: Fetching with Memoization
+
 ```typescript
 const { data, loading, error } = useFetch<MyType>(endpoint)
 
@@ -272,19 +287,20 @@ return <DataDisplay data={data} />
 ```
 
 ### Pattern 3: Custom Hook Logic
+
 ```typescript
 export function useMyFeature() {
   const [state, setState] = useState(null)
-  
+
   const fetch = useCallback(async () => {
     const data = await apiClient.request("/endpoint")
     setState(data)
   }, [])
-  
+
   useEffect(() => {
     fetch()
   }, [fetch])
-  
+
   return { state, refetch: fetch }
 }
 ```
@@ -294,6 +310,7 @@ export function useMyFeature() {
 ## ⚡ ESLint Rules
 
 Key rules enforced:
+
 - ✅ No unused variables
 - ✅ React hooks dependencies
 - ✅ Strict equality (===)
@@ -301,6 +318,7 @@ Key rules enforced:
 - ✅ No debugger statements
 
 Run linter:
+
 ```bash
 npm run lint
 # or
@@ -312,6 +330,7 @@ npx eslint src/
 ## 📚 File Imports
 
 ### Correct Import Paths
+
 ```typescript
 // ✅ GOOD
 import { useAuth } from "@/components/contexts"
@@ -331,6 +350,7 @@ import hooks from "@/lib/hooks"
 ## 🚀 Deployment
 
 ### Pre-Deployment Checklist
+
 1. [ ] `npm run build` - No errors
 2. [ ] `npx tsc --noEmit` - No TypeScript errors
 3. [ ] Test all critical flows
@@ -347,21 +367,25 @@ import hooks from "@/lib/hooks"
 ### Common Issues
 
 **"Module not found" error**
+
 - Check import path is correct
 - Verify file exists in that location
 - Check TypeScript types exported
 
 **"Cannot read property X of undefined"**
+
 - Check component props are correct
 - Add null checks before accessing
 - Use optional chaining: `obj?.prop?.value`
 
 **API calls returning HTML**
+
 - Make sure using `apiClient` not fetch
 - Check environment variables set
 - Use env vars for API URL
 
 **Infinite re-renders**
+
 - Check useEffect dependencies
 - Use useCallback for handlers
 - Verify memoization is working
@@ -371,6 +395,7 @@ import hooks from "@/lib/hooks"
 ## 📖 Full Documentation
 
 For detailed information, see:
+
 - `COMPLETE_REFACTORING_SUMMARY.md` - Overview of everything
 - `COMPREHENSIVE_REFACTORING_GUIDE.md` - Detailed planning
 - `PHASE_1_COMPLETE.md` - Phase 1 details
@@ -381,6 +406,7 @@ For detailed information, see:
 ## 🎓 Key Takeaways
 
 ### What You Should Know
+
 1. **API calls** go through `apiClient` (not fetch)
 2. **Logic** goes in custom hooks (not components)
 3. **Components** should be small and memoized
@@ -388,6 +414,7 @@ For detailed information, see:
 5. **Utils** provide formatting and validation
 
 ### Best Practices
+
 1. Keep components under 100 lines
 2. Use custom hooks for shared logic
 3. Memoize pure components
@@ -395,6 +422,7 @@ For detailed information, see:
 5. Always handle errors
 
 ### Never Do
+
 1. ❌ Direct fetch calls (use apiClient)
 2. ❌ Business logic in components (use hooks)
 3. ❌ Duplicate API calls (use cache)

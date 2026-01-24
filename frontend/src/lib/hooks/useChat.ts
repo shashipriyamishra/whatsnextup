@@ -1,3 +1,5 @@
+"use client"
+
 /**
  * useChat Hook
  * Encapsulates all chat-related logic and state management

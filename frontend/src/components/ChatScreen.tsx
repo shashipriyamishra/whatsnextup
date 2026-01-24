@@ -4,7 +4,7 @@
  * ChatScreen Component (Refactored)
  * Main chat interface using extracted sub-components
  * Manages state and orchestrates chat flow
- * 
+ *
  * Components:
  * - ChatHeader: Navigation and user info
  * - ChatMessages: Message display list
@@ -30,7 +30,15 @@ export default function ChatScreen() {
   const [userTier, setUserTier] = useState<string>("free")
 
   // Use custom hook for all chat logic
-  const { messages, input, setInput, loading, error, handleSend, containerRef } = useChat()
+  const {
+    messages,
+    input,
+    setInput,
+    loading,
+    error,
+    handleSend,
+    containerRef,
+  } = useChat()
 
   // Fetch user tier on mount
   useEffect(() => {
@@ -76,10 +84,19 @@ export default function ChatScreen() {
       <ChatHeader user={user} userTier={userTier} onLogout={handleLogout} />
 
       {/* Messages Container */}
-      <ChatMessages messages={messages} loading={loading} containerRef={containerRef} />
+      <ChatMessages
+        messages={messages}
+        loading={loading}
+        containerRef={containerRef}
+      />
 
       {/* Input Area */}
-      <ChatInput value={input} onChange={setInput} onSend={handleSend} loading={loading} />
+      <ChatInput
+        value={input}
+        onChange={setInput}
+        onSend={handleSend}
+        loading={loading}
+      />
 
       {/* Error Display */}
       {error && (
@@ -112,4 +129,3 @@ export default function ChatScreen() {
     </div>
   )
 }
-

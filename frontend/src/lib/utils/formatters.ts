@@ -38,7 +38,7 @@ export function formatTimeAgo(date: Date | number | string): string {
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`
   if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`
-  
+
   return formatDate(d)
 }
 
@@ -61,7 +61,10 @@ export function capitalize(str: string): string {
 /**
  * Format number as currency
  */
-export function formatCurrency(amount: number, currency: string = "USD"): string {
+export function formatCurrency(
+  amount: number,
+  currency: string = "USD",
+): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,

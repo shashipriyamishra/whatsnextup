@@ -3,7 +3,7 @@
 /**
  * Auth Context & Provider
  * Manages Firebase authentication state across the application
- * 
+ *
  * Usage:
  *   const { user, loading, token } = useAuth()
  */
@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     // Listen for Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser)
-      
+
       if (currentUser) {
         try {
           const idToken = await currentUser.getIdToken()
@@ -46,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       } else {
         setToken(null)
       }
-      
+
       setLoading(false)
     })
 
@@ -59,11 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     token,
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 /**
@@ -72,10 +68,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
  */
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext)
-  
+
   if (context === undefined) {
     throw new Error("useAuth must be used within AuthProvider")
   }
-  
+
   return context
 }

@@ -1,3 +1,5 @@
+"use client"
+
 /**
  * useStats Hook
  * Fetches and manages usage statistics for the current user

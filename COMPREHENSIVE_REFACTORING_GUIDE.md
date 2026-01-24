@@ -1,7 +1,9 @@
 # Comprehensive Frontend Refactoring Guide
 
 ## Executive Summary
+
 This document provides a complete refactoring roadmap for the WhatsNextUp frontend application. The goals are to:
+
 1. **Fix critical bugs** (Sign Out infinite loop, Stats API routing)
 2. **Improve architecture** (folder structure, component organization)
 3. **Enhance performance** (memoization, lazy loading, optimization)
@@ -13,11 +15,13 @@ This document provides a complete refactoring roadmap for the WhatsNextUp fronte
 ## Part 1: Critical Bugs - Status Report
 
 ### ✅ Bug #1: Sign Out Infinite Loop - FIXED
+
 **File**: `/frontend/src/components/Header.tsx`
 
 **Root Cause**: The `useEffect([user])` dependency caused re-renders during logout, creating an infinite loop.
 
 **Solution Applied**:
+
 ```typescript
 // BEFORE (Broken)
 useEffect(() => {
@@ -43,11 +47,13 @@ router.replace("/")    // Use replace, not push
 ---
 
 ### ✅ Bug #2: Stats API Returning HTML (DOCTYPE) - FIXED
+
 **File**: `/frontend/src/components/Header.tsx`
 
 **Root Cause**: Relative URL `/api/user/tier` was intercepted by Next.js, returning 404 HTML page instead of JSON from backend.
 
 **Solution Applied**:
+
 ```typescript
 // BEFORE (Returns HTML)
 const res = await fetch("/api/user/tier", {...})
@@ -62,11 +68,14 @@ const res = await fetch(`${apiUrl}/api/user/tier`, {...})
 ---
 
 ### ⚠️ Bug #3: Tab Styling Inconsistencies - PARTIALLY FIXED
-**Files**: 
+
+**Files**:
+
 - `/frontend/src/components/ui/tabs.tsx` (already has dark styling)
 - `/frontend/src/app/trending/page.tsx` (light cards → dark cards)
 
 **Changes Made**:
+
 - Changed Reddit cards from `bg-red-50` → `bg-red-900/30` (dark backgrounds)
 - Changed text from `text-gray-900` → `text-white` (light text on dark)
 - Changed links from `text-pink-400` → `text-cyan-400` (better contrast)
@@ -110,18 +119,18 @@ frontend/src/
 
 ### Identified Problems
 
-| # | Issue | Impact | Priority |
-|---|-------|--------|----------|
-| 1 | ChatScreen is 414 lines | Hard to test, debug, maintain | **HIGH** |
-| 2 | No centralized API client | Duplicate fetch calls across files | **HIGH** |
-| 3 | No custom hooks | Code duplication (useFetch, useStats) | **HIGH** |
-| 4 | Mixed concerns in `/lib` | Confusing imports, poor organization | **MEDIUM** |
-| 5 | No TypeScript strict types | Type safety issues, runtime errors | **MEDIUM** |
-| 6 | No React.memo usage | Unnecessary re-renders | **MEDIUM** |
-| 7 | No error boundaries | App crashes on component errors | **MEDIUM** |
-| 8 | No ESLint config | Code quality issues not caught | **LOW** |
-| 9 | No test files | Can't verify changes safely | **LOW** |
-| 10 | No environment config pattern | Hard to manage secrets, URLs | **MEDIUM** |
+| #   | Issue                         | Impact                                | Priority   |
+| --- | ----------------------------- | ------------------------------------- | ---------- |
+| 1   | ChatScreen is 414 lines       | Hard to test, debug, maintain         | **HIGH**   |
+| 2   | No centralized API client     | Duplicate fetch calls across files    | **HIGH**   |
+| 3   | No custom hooks               | Code duplication (useFetch, useStats) | **HIGH**   |
+| 4   | Mixed concerns in `/lib`      | Confusing imports, poor organization  | **MEDIUM** |
+| 5   | No TypeScript strict types    | Type safety issues, runtime errors    | **MEDIUM** |
+| 6   | No React.memo usage           | Unnecessary re-renders                | **MEDIUM** |
+| 7   | No error boundaries           | App crashes on component errors       | **MEDIUM** |
+| 8   | No ESLint config              | Code quality issues not caught        | **LOW**    |
+| 9   | No test files                 | Can't verify changes safely           | **LOW**    |
+| 10  | No environment config pattern | Hard to manage secrets, URLs          | **MEDIUM** |
 
 ---
 
@@ -212,6 +221,7 @@ frontend/src/
 **Target**: 5-6 focused components, each <100 lines
 
 **Proposed Structure**:
+
 ```typescript
 // ChatScreen.tsx (70 lines) - Main container
 export default function ChatScreen() {
@@ -242,6 +252,7 @@ export function ChatWindow({ children }) {...}
 ```
 
 **Benefits**:
+
 - Each component <100 lines (easy to understand)
 - Reusable across the app
 - Testable in isolation
@@ -253,6 +264,7 @@ export function ChatWindow({ children }) {...}
 ## Part 5: API Client Centralization
 
 ### Current Problem
+
 ```typescript
 // In Header.tsx
 const res = await fetch(`${apiUrl}/api/user/tier`, {...})
@@ -264,21 +276,22 @@ const response = await fetch(`${apiUrl}/api/usage/stats`, {...})
 ```
 
 ### Proposed Solution: `/lib/api/client.ts`
+
 ```typescript
 // Centralized API client
 class ApiClient {
   private baseUrl: string
-  
+
   constructor() {
     this.baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
   }
-  
+
   async request<T>(
     endpoint: string,
-    options: RequestInit & { authRequired?: boolean } = {}
+    options: RequestInit & { authRequired?: boolean } = {},
   ): Promise<T> {
     const { authRequired = true, ...fetchOptions } = options
-    
+
     if (authRequired) {
       const token = await this.getToken()
       fetchOptions.headers = {
@@ -286,23 +299,23 @@ class ApiClient {
         Authorization: `Bearer ${token}`,
       }
     }
-    
+
     const url = `${this.baseUrl}${endpoint}`
     const response = await fetch(url, fetchOptions)
-    
+
     if (!response.ok) throw new Error(`API Error: ${response.status}`)
     return response.json()
   }
-  
+
   async getUserTier(): Promise<string> {
     const data = await this.request<{ tier: string }>("/api/user/tier")
     return data.tier
   }
-  
+
   async getUsageStats() {
     return this.request("/api/usage/stats")
   }
-  
+
   private async getToken(): Promise<string> {
     const user = await this.getCurrentUser()
     return user.getIdToken()
@@ -313,6 +326,7 @@ export const apiClient = new ApiClient()
 ```
 
 ### Usage in Components
+
 ```typescript
 // Before: Scattered fetch calls
 const res = await fetch(`${apiUrl}/api/user/tier`, {...})
@@ -326,6 +340,7 @@ const tier = await apiClient.getUserTier()
 ## Part 6: Custom Hooks Strategy
 
 ### Hook 1: `useStats`
+
 ```typescript
 // Replaces duplicated stats fetching logic in ChatScreen and Header
 export function useStats() {
@@ -333,7 +348,7 @@ export function useStats() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const { user } = useAuth()
-  
+
   useEffect(() => {
     if (!user) return
     const fetchStats = async () => {
@@ -348,39 +363,41 @@ export function useStats() {
     }
     fetchStats()
   }, [user])
-  
+
   return { stats, loading, error }
 }
 ```
 
 ### Hook 2: `useFetch`
+
 ```typescript
 // Generic fetch hook for any API endpoint
 export function useFetch<T>(url: string, options?: RequestInit) {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
-  
+
   useEffect(() => {
     // Implement fetch logic
   }, [url])
-  
+
   return { data, loading, error, refetch: () => {} }
 }
 ```
 
 ### Hook 3: `useChat`
+
 ```typescript
 // Encapsulates all chat logic
 export function useChat() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
-  
+
   const handleSend = async () => {
     // Send message logic
   }
-  
+
   return { messages, input, setInput, handleSend, loading }
 }
 ```
@@ -390,20 +407,22 @@ export function useChat() {
 ## Part 7: Performance Optimizations
 
 ### Strategy 1: React.memo for Pure Components
+
 ```typescript
 // ChatMessage.tsx - doesn't re-render unless props change
-export const ChatMessage = React.memo(function ChatMessage({ 
-  role, 
-  text 
+export const ChatMessage = React.memo(function ChatMessage({
+  role,
+  text
 }: ChatMessageProps) {
   return <div className={...}>{text}</div>
 }, (prevProps, nextProps) => {
-  return prevProps.role === nextProps.role && 
+  return prevProps.role === nextProps.role &&
          prevProps.text === nextProps.text
 })
 ```
 
 ### Strategy 2: useMemo for Expensive Computations
+
 ```typescript
 // Only recalculate if messages array changes
 const sortedMessages = useMemo(() => {
@@ -412,6 +431,7 @@ const sortedMessages = useMemo(() => {
 ```
 
 ### Strategy 3: useCallback for Event Handlers
+
 ```typescript
 // Only recreate function if dependencies change
 const handleSend = useCallback(() => {
@@ -420,6 +440,7 @@ const handleSend = useCallback(() => {
 ```
 
 ### Strategy 4: Code Splitting
+
 ```typescript
 // Load trending page only when needed
 const TrendingPage = dynamic(() => import("@/app/trending/page"), {
@@ -432,13 +453,14 @@ const TrendingPage = dynamic(() => import("@/app/trending/page"), {
 ## Part 8: Error Handling & Boundaries
 
 ### Error Boundary Component
+
 ```typescript
 // components/common/ErrorBoundary.tsx
 export class ErrorBoundary extends React.Component {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("Error caught:", error, errorInfo)
   }
-  
+
   render() {
     if (this.state.hasError) {
       return <div>Something went wrong. Please refresh.</div>
@@ -449,6 +471,7 @@ export class ErrorBoundary extends React.Component {
 ```
 
 ### Error Handling in Hooks
+
 ```typescript
 // All hooks should handle errors consistently
 const { data, error } = useFetch("/api/endpoint")
@@ -463,36 +486,42 @@ if (error) {
 ## Part 9: Implementation Phases
 
 ### Phase 1: Foundation (2 hours)
+
 - ✅ Fix critical bugs (Header.tsx)
 - ✅ Fix styling issues (Trending page)
 - Create `/lib/api/client.ts` (API client)
 - Create `/lib/hooks/` folder and initial hooks
 
 ### Phase 2: Component Refactoring (3 hours)
+
 - Split ChatScreen into 5 components
 - Move AuthContext to `/components/contexts/`
 - Create error boundary
 - Add React.memo to pure components
 
 ### Phase 3: Folder Restructuring (2 hours)
+
 - Create new folder structure per recommendation
 - Move files to new locations
 - Update all import paths
 - Verify no broken imports
 
 ### Phase 4: Performance (1.5 hours)
+
 - Add useMemo/useCallback optimizations
 - Implement code splitting
 - Audit re-renders with React DevTools
 - Profile with Lighthouse
 
 ### Phase 5: Code Quality (2 hours)
+
 - Add ESLint configuration
 - Fix linting errors
 - Add TypeScript strict mode
 - Add type definitions for all functions
 
 ### Phase 6: Testing & Deployment (3 hours)
+
 - Write unit tests for hooks
 - Write component snapshot tests
 - Test all fixed bugs
@@ -504,14 +533,14 @@ if (error) {
 
 ## Part 10: Quick Reference - What's Already Fixed
 
-| Item | Status | File | Notes |
-|------|--------|------|-------|
-| Sign Out infinite loop | ✅ FIXED | Header.tsx | Guard clause + cleanup |
-| Stats API returning HTML | ✅ FIXED | Header.tsx | Using env var for URL |
-| Trending page dark styling | ✅ FIXED | trending/page.tsx | Dark backgrounds, light text |
-| Tab styling | ✅ PARTIAL | tabs.tsx | Already has bg-white/10 |
-| API URL consistency | ✅ FIXED | Header.tsx | Using apiUrl variable |
-| Router back button issue | ✅ FIXED | Header.tsx | Using router.replace() |
+| Item                       | Status     | File              | Notes                        |
+| -------------------------- | ---------- | ----------------- | ---------------------------- |
+| Sign Out infinite loop     | ✅ FIXED   | Header.tsx        | Guard clause + cleanup       |
+| Stats API returning HTML   | ✅ FIXED   | Header.tsx        | Using env var for URL        |
+| Trending page dark styling | ✅ FIXED   | trending/page.tsx | Dark backgrounds, light text |
+| Tab styling                | ✅ PARTIAL | tabs.tsx          | Already has bg-white/10      |
+| API URL consistency        | ✅ FIXED   | Header.tsx        | Using apiUrl variable        |
+| Router back button issue   | ✅ FIXED   | Header.tsx        | Using router.replace()       |
 
 ---
 
@@ -551,16 +580,19 @@ if (error) {
 ## Success Criteria
 
 ✅ **Achieved**:
+
 - Critical bugs fixed
 - Styling issues resolved
 - Code organization improved
 
 **In Progress**:
+
 - Component refactoring
 - Custom hooks extraction
 - Performance optimization
 
 **Tracked**:
+
 - All changes documented
 - No breaking changes
 - Backward compatible

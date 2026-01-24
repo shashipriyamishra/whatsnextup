@@ -17,7 +17,8 @@ const UsageBarContent = React.memo(function UsageBarContent() {
   if (loading || !stats) return null
 
   const { messages_used = 0, messages_limit = 10, tier = "free" } = stats
-  const percentage = messages_limit > 0 ? (messages_used / messages_limit) * 100 : 0
+  const percentage =
+    messages_limit > 0 ? (messages_used / messages_limit) * 100 : 0
   const isNearLimit = percentage >= 80
   const isAtLimit = percentage >= 100
 

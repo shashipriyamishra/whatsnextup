@@ -52,7 +52,7 @@ export function isInRange(value: number, min: number, max: number): boolean {
 export function isValidMessageLength(
   message: string,
   minLength: number = 1,
-  maxLength: number = 5000
+  maxLength: number = 5000,
 ): boolean {
   const length = message.trim().length
   return length >= minLength && length <= maxLength

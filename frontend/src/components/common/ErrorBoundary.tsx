@@ -41,7 +41,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
                 Something Went Wrong
               </h1>
               <p className="text-gray-600 mb-4">
-                We're sorry for the inconvenience. Please try refreshing the page.
+                We're sorry for the inconvenience. Please try refreshing the
+                page.
               </p>
               {process.env.NODE_ENV === "development" && (
                 <details className="text-left bg-gray-100 p-4 rounded mt-4 mb-4">

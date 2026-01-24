@@ -1,3 +1,5 @@
+"use client"
+
 /**
  * ChatInput Component
  * Input area for sending messages
@@ -20,12 +22,15 @@ export const ChatInput = React.memo(function ChatInput({
   onSend,
   loading,
 }: ChatInputProps) {
-  const handleKeyPress = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      onSend()
-    }
-  }, [onSend])
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault()
+        onSend()
+      }
+    },
+    [onSend],
+  )
 
   return (
     <footer className="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-white/5 backdrop-blur-2xl px-4 md:px-6 py-4">

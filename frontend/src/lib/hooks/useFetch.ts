@@ -1,3 +1,5 @@
+"use client"
+
 /**
  * useFetch Hook
  * Generic hook for fetching data from any API endpoint
@@ -22,7 +24,7 @@ interface UseFetchResult<T> {
 
 export function useFetch<T>(
   endpoint: string,
-  options: UseFetchOptions = {}
+  options: UseFetchOptions = {},
 ): UseFetchResult<T> {
   const { skip = false, retries = 3, timeout = 10000 } = options
 
@@ -39,7 +41,7 @@ export function useFetch<T>(
       const result = await apiClient.requestWithRetry<T>(
         endpoint,
         { timeout },
-        retries
+        retries,
       )
       setData(result)
     } catch (err) {
@@ -72,7 +74,7 @@ export function useFetch<T>(
  */
 export function useMutation<T, R = void>(
   endpoint: string,
-  method: "POST" | "PUT" | "DELETE" = "POST"
+  method: "POST" | "PUT" | "DELETE" = "POST",
 ) {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(false)
@@ -100,7 +102,7 @@ export function useMutation<T, R = void>(
         setLoading(false)
       }
     },
-    [endpoint, method]
+    [endpoint, method],
   )
 
   return {
