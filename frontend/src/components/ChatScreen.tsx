@@ -198,7 +198,7 @@ export default function ChatScreen() {
           </nav>
 
           {/* User Info & Sign Out */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-auto">
             {user?.photoURL && (
               <>
                 <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-white/10 rounded-lg border border-white/20">
@@ -213,7 +213,7 @@ export default function ChatScreen() {
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="text-xs px-3 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg hover:shadow-pink-500/50 transition-all font-bold cursor-pointer"
+                  className="text-xs px-3 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg hover:shadow-pink-500/50 transition-all font-bold cursor-pointer whitespace-nowrap"
                 >
                   Sign out
                 </button>

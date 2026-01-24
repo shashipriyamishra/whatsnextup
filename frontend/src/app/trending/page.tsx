@@ -146,11 +146,18 @@ export default function TrendingPage() {
                       {feed.reddit.slice(0, 4).map((post, idx) => (
                         <Card
                           key={idx}
-                          className="hover:scale-105 transition-transform cursor-pointer"
+                          className={`hover:scale-105 transition-transform cursor-pointer ${
+                            [
+                              "bg-red-50 border-red-200 hover:bg-red-100",
+                              "bg-blue-50 border-blue-200 hover:bg-blue-100",
+                              "bg-orange-50 border-orange-200 hover:bg-orange-100",
+                              "bg-pink-50 border-pink-200 hover:bg-pink-100",
+                            ][idx % 4]
+                          }`}
                         >
                           <CardHeader>
                             <div className="flex justify-between items-start">
-                              <CardTitle className="text-white text-base">
+                              <CardTitle className="text-gray-900 text-base">
                                 {post.title}
                               </CardTitle>
                             </div>
@@ -270,10 +277,16 @@ export default function TrendingPage() {
                   {feed.reddit.map((post, idx) => (
                     <Card
                       key={idx}
-                      className="hover:scale-105 transition-transform"
+                      className={`hover:scale-105 transition-transform ${
+                        [
+                          "bg-red-50 border-red-200 hover:bg-red-100",
+                          "bg-blue-50 border-blue-200 hover:bg-blue-100",
+                          "bg-orange-50 border-orange-200 hover:bg-orange-100",
+                        ][idx % 3]
+                      }`}
                     >
                       <CardHeader>
-                        <CardTitle className="text-white text-base">
+                        <CardTitle className="text-gray-900 text-base">
                           {post.title}
                         </CardTitle>
                       </CardHeader>
@@ -286,7 +299,7 @@ export default function TrendingPage() {
                           href={post.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-pink-400 text-sm"
+                          className="text-blue-600 text-sm hover:text-blue-800 font-semibold"
                         >
                           View →
                         </a>
@@ -303,10 +316,16 @@ export default function TrendingPage() {
                   {feed.tech.map((story, idx) => (
                     <Card
                       key={idx}
-                      className="hover:scale-105 transition-transform"
+                      className={`hover:scale-105 transition-transform ${
+                        [
+                          "bg-yellow-50 border-yellow-200 hover:bg-yellow-100",
+                          "bg-purple-50 border-purple-200 hover:bg-purple-100",
+                          "bg-green-50 border-green-200 hover:bg-green-100",
+                        ][idx % 3]
+                      }`}
                     >
                       <CardHeader>
-                        <CardTitle className="text-white text-base">
+                        <CardTitle className="text-gray-900 text-base">
                           {story.title}
                         </CardTitle>
                       </CardHeader>
@@ -319,7 +338,7 @@ export default function TrendingPage() {
                           href={story.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-pink-400 text-sm"
+                          className="text-blue-600 text-sm hover:text-blue-800 font-semibold"
                         >
                           Read →
                         </a>
@@ -336,15 +355,21 @@ export default function TrendingPage() {
                   {feed.github.map((repo, idx) => (
                     <Card
                       key={idx}
-                      className="hover:scale-105 transition-transform"
+                      className={`hover:scale-105 transition-transform ${
+                        [
+                          "bg-gray-100 border-gray-300 hover:bg-gray-200",
+                          "bg-slate-100 border-slate-300 hover:bg-slate-200",
+                          "bg-zinc-100 border-zinc-300 hover:bg-zinc-200",
+                        ][idx % 3]
+                      }`}
                     >
                       <CardHeader>
-                        <CardTitle className="text-white text-base">
+                        <CardTitle className="text-gray-900 text-base">
                           {repo.full_name}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-white/70 text-sm mb-2 line-clamp-2">
+                        <p className="text-gray-700 text-sm mb-2 line-clamp-2">
                           {repo.description}
                         </p>
                         <div className="flex gap-2">
@@ -353,6 +378,57 @@ export default function TrendingPage() {
                           )}
                           <Badge variant="glass">⭐ {repo.stars}</Badge>
                         </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="youtube">
+              {feed.youtube && feed.youtube.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {feed.youtube.map((video, idx) => (
+                    <Card
+                      key={idx}
+                      className={`hover:scale-105 transition-transform overflow-hidden ${
+                        [
+                          "bg-red-50 border-red-200 hover:bg-red-100",
+                          "bg-rose-50 border-rose-200 hover:bg-rose-100",
+                          "bg-pink-50 border-pink-200 hover:bg-pink-100",
+                        ][idx % 3]
+                      }`}
+                    >
+                      {video.thumbnail && (
+                        <div className="relative h-40 bg-white/10">
+                          <img
+                            src={video.thumbnail}
+                            alt={video.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <CardHeader>
+                        <CardTitle className="text-gray-900 text-base line-clamp-2">
+                          {video.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-700 text-sm mb-2">
+                          {video.channel}
+                        </p>
+                        <div className="flex gap-2 mb-2">
+                          <Badge variant="glass">👁️ {video.views.toLocaleString()}</Badge>
+                          <Badge variant="glass">👍 {video.likes.toLocaleString()}</Badge>
+                        </div>
+                        <a
+                          href={video.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-red-600 text-sm hover:text-red-800 font-semibold"
+                        >
+                          Watch on YouTube →
+                        </a>
                       </CardContent>
                     </Card>
                   ))}

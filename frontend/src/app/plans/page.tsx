@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "@/lib/AuthContext"
 import { getApiUrl } from "@/lib/api"
+import { Header } from "@/components/Header"
 
 interface PlanStep {
   step: number
@@ -184,44 +185,10 @@ export default function PlansPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950">
-      <nav className="sticky top-0 z-50 bg-gray-900/80 backdrop-blur border-b border-white/10">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-white hover:text-pink-400 transition"
-          >
-            <span className="text-xl">✨</span>
-            <span className="font-bold">whatsnextup</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/"
-              className="text-white/70 hover:text-white transition"
-              title="Chat"
-            >
-              💬
-            </Link>
-            <span className="text-white font-bold">📋</span>
-            <Link
-              href="/reflections"
-              className="text-white/70 hover:text-white transition"
-              title="Reflections"
-            >
-              💭
-            </Link>
-            <Link
-              href="/memories"
-              className="text-white/70 hover:text-white transition"
-              title="Memories"
-            >
-              🧠
-            </Link>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-black/95 relative overflow-hidden">
+      <Header />
 
-      <main className="max-w-5xl mx-auto px-4 pt-32 pb-8">
+      <main className="max-w-5xl mx-auto px-4 pt-24 pb-8">
         {/* New plan button */}
         <div className="mb-8">
           <Link href="/plans/create" className="block">

@@ -270,29 +270,43 @@ async def get_github_trending(language: str = "", since: str = "daily") -> List[
         return cached
     
     try:
-        # Using unofficial API
-        url = f"https://api.gitterapp.com/repositories?since={since}"
+        # Using GitHub trending page (unofficial parsing)
+        url = "https://github.com/trending"
         if language:
-            url += f"&language={language}"
+            url += f"/{language}"
+        url += f"?since={since}"
+        
+        headers = {"User-Agent": "WhatsNextUp/1.0"}
         
         async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(url)
+            response = await client.get(url, headers=headers)
             response.raise_for_status()
-            data = response.json()
+            html = response.text
         
+        # Parse trending repos from HTML
         repos = []
-        for repo in data[:10]:
-            repos.append({
-                "name": repo.get("name", ""),
-                "full_name": repo.get("fullname", ""),
-                "author": repo.get("author", ""),
-                "description": repo.get("description", ""),
-                "language": repo.get("language", ""),
-                "stars": repo.get("stars", 0),
-                "forks": repo.get("forks", 0),
-                "stars_today": repo.get("currentPeriodStars", 0),
-                "url": repo.get("url", "")
-            })
+        import re
+        # Simple extraction of repo links (they're in format /owner/repo)
+        repo_pattern = r'href="(/[\w\-]+/[\w\-\.]+)"'
+        matches = re.findall(repo_pattern, html)
+        
+        seen = set()
+        for match in matches[:15]:  # Get top 15
+            if match not in seen and "/issues" not in match and "/pull" not in match:
+                parts = match.strip("/").split("/")
+                if len(parts) == 2:
+                    repos.append({
+                        "name": parts[1],
+                        "full_name": match.strip("/"),
+                        "author": parts[0],
+                        "description": "Trending on GitHub",
+                        "language": language or "Multi",
+                        "stars": 0,
+                        "forks": 0,
+                        "stars_today": 0,
+                        "url": f"https://github.com{match}"
+                    })
+                    seen.add(match)
         
         _set_cache(cache_key, repos)
         return repos
@@ -310,9 +324,9 @@ async def get_personalized_feed(
 ) -> Dict[str, Any]:
     """Get aggregated personalized feed from multiple sources"""
     try:
-        # Run all API calls in parallel
-        reddit_task = get_reddit_trending("popular", limit=5)
-        hackernews_task = get_hackernews_top(limit=5)
+        # Run all API calls in parallel with increased limits
+        reddit_task = get_reddit_trending("popular", limit=15)
+        hackernews_task = get_hackernews_top(limit=15)
         github_task = get_github_trending(since="daily")
         
         # Add location-based if provided
@@ -326,10 +340,10 @@ async def get_personalized_feed(
             city = user_location.get("city", "New York")
             country = user_location.get("country_code", "US")
             tasks["weather"] = get_weather(city, country)
-            tasks["news"] = get_top_news(country.lower(), "general", limit=5)
+            tasks["news"] = get_top_news(country.lower(), "general", limit=15)
         
         if YOUTUBE_API_KEY:
-            tasks["youtube"] = get_youtube_trending("US", "0", limit=5)
+            tasks["youtube"] = get_youtube_trending("US", "0", limit=15)
         
         # Wait for all tasks
         results = await asyncio.gather(*[tasks[k] for k in tasks], return_exceptions=True)

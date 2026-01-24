@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "../../lib/AuthContext"
+import { Header } from "@/components/Header"
 
 type MemoryCategory =
   | "habit"
@@ -100,22 +101,11 @@ export default function MemoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-30 bg-black/40 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-white text-xl font-bold">💭 My Memories</h1>
-          <Link
-            href="/"
-            className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition"
-          >
-            Back to chat
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-black/95 relative overflow-hidden">
+      <Header />
 
       {/* Main content */}
-      <main className="max-w-4xl mx-auto px-4 pt-32 pb-8">
+      <main className="max-w-4xl mx-auto px-4 pt-24 pb-8">
         {/* Category filters */}
         <div className="mb-8">
           <h2 className="text-white text-sm font-semibold mb-4">
