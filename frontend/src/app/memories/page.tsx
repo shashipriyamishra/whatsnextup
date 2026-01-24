@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { useAuth } from "@/components/contexts"
 import { getApiUrl } from "@/lib/api"
@@ -31,16 +31,13 @@ export default function MemoriesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    if (user && !loading) {
-      fetchMemories()
-    }
-  }, [user, loading])
+  // Memoize fetchMemories to prevent infinite loops
+  const fetchMemories = useCallback(async () => {
+    if (!user) return
 
-  const fetchMemories = async () => {
     try {
       setIsLoading(true)
-      const token = await user?.getIdToken()
+      const token = await user.getIdToken()
 
       if (!token) {
         console.error("No auth token available")
@@ -57,13 +54,22 @@ export default function MemoriesPage() {
       if (response.ok) {
         const data = await response.json()
         setMemories(data.memories || [])
+      } else {
+        console.error("Failed to fetch memories:", response.statusText)
       }
     } catch (error) {
       console.error("Failed to fetch memories:", error)
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user])
+
+  // Load memories once when user is authenticated
+  useEffect(() => {
+    if (user && !loading) {
+      fetchMemories()
+    }
+  }, [user, loading, fetchMemories])
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {

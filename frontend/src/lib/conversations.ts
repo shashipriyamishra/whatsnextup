@@ -29,7 +29,7 @@ export async function getConversationHistory(
   if (agentId) params.append("agent_id", agentId)
   params.append("limit", limit.toString())
 
-  const response = await fetch(`${API_URL}/conversations?${params}`, {
+  const response = await fetch(`${API_URL}/api/conversations?${params}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -49,11 +49,14 @@ export async function searchConversations(
 ): Promise<Conversation[]> {
   const params = new URLSearchParams({ q: query, limit: limit.toString() })
 
-  const response = await fetch(`${API_URL}/conversations/search?${params}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${API_URL}/api/conversations/search?${params}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
+  )
 
   if (!response.ok) {
     throw new Error(`Failed to search conversations: ${response.statusText}`)
@@ -66,12 +69,15 @@ export async function deleteConversation(
   token: string,
   conversationId: string,
 ): Promise<void> {
-  const response = await fetch(`${API_URL}/conversations/${conversationId}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${API_URL}/api/conversations/${conversationId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     },
-  })
+  )
 
   if (!response.ok) {
     throw new Error(`Failed to delete conversation: ${response.statusText}`)
@@ -81,7 +87,7 @@ export async function deleteConversation(
 export async function getConversationStats(
   token: string,
 ): Promise<ConversationStats> {
-  const response = await fetch(`${API_URL}/conversations/stats`, {
+  const response = await fetch(`${API_URL}/api/conversations/stats`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
