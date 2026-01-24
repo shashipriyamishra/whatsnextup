@@ -1,5 +1,3 @@
-\"use client\"
-
 /**
  * API Index - Central export point
  */
