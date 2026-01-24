@@ -1,5 +1,3 @@
-"use client"
-
 /**
  * Hooks Index - Central export point
  */

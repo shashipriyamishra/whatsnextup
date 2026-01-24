@@ -1,4 +1,3 @@
-\"use client\"
 /**
  * Chat Components Index
  */

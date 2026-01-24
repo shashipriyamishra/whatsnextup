@@ -1,5 +1,3 @@
-"use client"
-
 /**
  * Contexts Index - Central export point
  */
