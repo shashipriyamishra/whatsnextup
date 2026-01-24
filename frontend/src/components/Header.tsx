@@ -1,20 +1,20 @@
 "use client"
 
 import { useRouter, usePathname } from "next/navigation"
-import { useContext, useEffect, useState } from "react"
-import { AuthContext } from "@/lib/AuthContext"
+import { useEffect, useState } from "react"
+import { useAuth } from "@/lib/AuthContext"
 
 export function Header() {
   const router = useRouter()
   const pathname = usePathname()
-  const authContext = useContext(AuthContext)
+  const { user } = useAuth()
   const [tier, setTier] = useState("free")
 
   useEffect(() => {
-    if (authContext?.user) {
+    if (user) {
       const fetchTier = async () => {
         try {
-          const token = await authContext.user.getIdToken()
+          const token = await user.getIdToken()
           const res = await fetch("/api/user/tier", {
             headers: { authorization: `Bearer ${token}` },
           })
@@ -28,7 +28,7 @@ export function Header() {
       }
       fetchTier()
     }
-  }, [authContext?.user])
+  }, [user])
 
   const isHomePage = pathname === "/"
   const isLoginPage = pathname === "/login"
@@ -60,7 +60,7 @@ export function Header() {
         </div>
 
         {/* Center - Navigation */}
-        {authContext?.user && !isHomePage && (
+        {user && !isHomePage && (
           <nav className="hidden md:flex items-center gap-6">
             <button
               onClick={() => router.push("/trending")}
@@ -107,7 +107,7 @@ export function Header() {
 
         {/* Right side - User & Tier Info */}
         <div className="flex items-center gap-4">
-          {authContext?.user && (
+          {user && (
             <div className="flex items-center gap-3">
               <span className="text-xs font-semibold px-2 py-1 bg-purple-100 text-purple-700 rounded">
                 {tier.charAt(0).toUpperCase() + tier.slice(1)}
@@ -116,11 +116,11 @@ export function Header() {
                 onClick={() => router.push("/profile")}
                 className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold flex items-center justify-center hover:opacity-80 transition"
               >
-                {authContext.user.email?.charAt(0).toUpperCase() || "U"}
+                {user.email?.charAt(0).toUpperCase() || "U"}
               </button>
             </div>
           )}
-          {!authContext?.user && !isLoginPage && (
+          {!user && !isLoginPage && (
             <button
               onClick={() => router.push("/login")}
               className="text-sm px-3 py-1 text-purple-600 hover:bg-purple-50 rounded transition"
