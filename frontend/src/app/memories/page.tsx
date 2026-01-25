@@ -98,7 +98,7 @@ export default function MemoriesPage() {
       ? memories
       : memories.filter((m) => m.category === selectedCategory)
 
-  if (loading || isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950">
         <nav className="sticky top-0 z-50 bg-gray-900/80 backdrop-blur border-b border-white/10">
