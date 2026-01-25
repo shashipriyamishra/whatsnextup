@@ -1033,11 +1033,15 @@ async def get_conversations(
     try:
         from conversations.store import get_conversation_history
         uid = user.get("uid")
+        print(f"📋 /api/conversations endpoint called for user: {uid}")
         
         conversations = await get_conversation_history(uid, agent_id, limit)
+        print(f"📤 Returning {len(conversations)} conversations")
         return {"conversations": conversations}
     except Exception as e:
         print(f"❌ Error fetching conversations: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/conversations/search")

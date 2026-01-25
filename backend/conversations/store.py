@@ -37,26 +37,49 @@ async def get_conversation_history(
 ) -> List[Dict[str, Any]]:
     """Get conversation history for a user"""
     try:
-        query = db.collection("conversations").where(
-            filter=FieldFilter("user_id", "==", user_id)
-        )
+        print(f"🔍 Fetching conversations for user_id: {user_id}, agent_id: {agent_id}")
         
-        if agent_id:
-            query = query.where(filter=FieldFilter("agent_id", "==", agent_id))
+        try:
+            # Try the optimized query first
+            query = db.collection("conversations").where(
+                filter=FieldFilter("user_id", "==", user_id)
+            )
+            
+            if agent_id:
+                query = query.where(filter=FieldFilter("agent_id", "==", agent_id))
+            
+            query = query.order_by("timestamp", direction="DESCENDING").limit(limit)
+            docs = list(query.stream())
+            
+        except Exception as e:
+            print(f"⚠️  Optimized query failed: {e}")
+            print("   Attempting fallback query without ordering...")
+            
+            # Fallback: Simple query without order_by (no composite index needed)
+            query = db.collection("conversations").where(
+                filter=FieldFilter("user_id", "==", user_id)
+            )
+            
+            if agent_id:
+                query = query.where(filter=FieldFilter("agent_id", "==", agent_id))
+            
+            docs = list(query.stream())
+            
+            # Sort in-memory
+            docs.sort(key=lambda d: d.get("timestamp", 0), reverse=True)
+            docs = docs[:limit]
         
-        query = query.order_by("timestamp", direction="DESCENDING").limit(limit)
-        
-        docs = query.stream()
         conversations = []
-        
         for doc in docs:
             data = doc.to_dict()
             data["id"] = doc.id
             conversations.append(data)
         
+        print(f"✅ Found {len(conversations)} conversations for user {user_id}")
         return conversations
     except Exception as e:
         print(f"❌ Error fetching conversation history: {e}")
+        print(f"   Error details: {str(e)}")
         return []
 
 async def search_conversations(
