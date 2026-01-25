@@ -47,11 +47,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading: prevLoading,
       } = useAuthStore.getState()
 
-      if (prevUser?.uid !== currentUser?.uid) {
+      const userChanged = prevUser?.uid !== currentUser?.uid
+
+      if (userChanged) {
         setUser(currentUser)
       }
 
-      if (currentUser) {
+      if (currentUser && userChanged) {
         try {
           const idToken = await currentUser.getIdToken()
           if (prevToken !== idToken) {
@@ -63,10 +65,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setToken(null)
           }
         }
-      } else {
-        if (prevToken !== null) {
-          setToken(null)
-        }
+      } else if (!currentUser && prevToken !== null) {
+        setToken(null)
       }
 
       if (prevLoading) {
