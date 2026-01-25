@@ -26,6 +26,12 @@ function HeaderComponent() {
   const [isSigningOut, setIsSigningOut] = useState(false)
   const [isPending, startTransition] = useTransition() // For smooth route transitions
 
+  // Check if on login page (after all hooks)
+  const isLoginPage = pathname === "/login"
+
+  // Don't render header on login page
+  if (isLoginPage) return null
+
   // Memoized navigation handler using useTransition
   const handleNavigation = useCallback(
     (path: string) => {
@@ -71,11 +77,6 @@ function HeaderComponent() {
       mounted = false
     }
   }, [user, isSigningOut])
-
-  const isLoginPage = pathname === "/login"
-
-  // Don't show header on login page only
-  if (isLoginPage) return null
 
   return (
     <header className="bg-black/80 border-b border-white/10 sticky top-0 z-40 backdrop-blur-2xl">

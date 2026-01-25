@@ -13,7 +13,7 @@
  *   const user = useUser() // New Zustand hook (more efficient)
  */
 
-import React, { createContext, useContext, useEffect } from "react"
+import React, { createContext, useContext, useEffect, useMemo } from "react"
 import { User, onAuthStateChanged } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { useAuthStore } from "@/lib/store/authStore"
@@ -56,12 +56,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return unsubscribe
   }, [setUser, setToken, setLoading])
 
-  // Context value stays the same for React Context consumers
-  const value: AuthContextType = {
-    user,
-    loading,
-    token,
-  }
+  // Memoize context value to prevent unnecessary rerenders
+  const value: AuthContextType = useMemo(
+    () => ({
+      user,
+      loading,
+      token,
+    }),
+    [user, token, loading],
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
