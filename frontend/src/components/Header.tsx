@@ -79,108 +79,108 @@ function HeaderComponent() {
           <nav className="hidden md:flex items-center gap-8">
             <button
               onClick={() => handleNavigation("/trending")}
-              className={`text-sm transition cursor-pointer ${
+              className={`transition cursor-pointer pb-2 border-b-2 ${
                 pathname === "/trending" || navigatingTo === "/trending"
-                  ? "font-bold"
-                  : "text-white/70 hover:text-white font-medium"
+                  ? "font-bold border-purple-500"
+                  : "text-purple-300 hover:text-purple-200 font-medium border-transparent"
               }`}
               style={
                 pathname === "/trending" || navigatingTo === "/trending"
-                  ? { color: "#e32bf4" }
-                  : {}
+                  ? { color: "#a855f7", fontSize: "16px" }
+                  : { color: "#c084fc", fontSize: "14px" }
               }
             >
-              🔥 Trending
+              Trending
             </button>
             <button
               onClick={() => handleNavigation("/agents")}
-              className={`text-sm transition cursor-pointer ${
+              className={`transition cursor-pointer pb-2 border-b-2 ${
                 pathname === "/agents" || navigatingTo === "/agents"
-                  ? "font-bold"
-                  : "text-white/70 hover:text-white font-medium"
+                  ? "font-bold border-purple-500"
+                  : "text-purple-300 hover:text-purple-200 font-medium border-transparent"
               }`}
               style={
                 pathname === "/agents" || navigatingTo === "/agents"
-                  ? { color: "#e32bf4" }
-                  : {}
+                  ? { color: "#a855f7", fontSize: "16px" }
+                  : { color: "#c084fc", fontSize: "14px" }
               }
             >
-              🤖 Agents
+              Agents
             </button>
             <button
               onClick={() => handleNavigation("/history")}
-              className={`text-sm transition cursor-pointer ${
+              className={`transition cursor-pointer pb-2 border-b-2 ${
                 pathname === "/history" || navigatingTo === "/history"
-                  ? "font-bold"
-                  : "text-white/70 hover:text-white font-medium"
+                  ? "font-bold border-purple-500"
+                  : "text-purple-300 hover:text-purple-200 font-medium border-transparent"
               }`}
               style={
                 pathname === "/history" || navigatingTo === "/history"
-                  ? { color: "#e32bf4" }
-                  : {}
+                  ? { color: "#a855f7", fontSize: "16px" }
+                  : { color: "#c084fc", fontSize: "14px" }
               }
             >
-              📜 History
+              History
             </button>
             <button
               onClick={() => handleNavigation("/memories")}
-              className={`text-sm transition cursor-pointer ${
+              className={`transition cursor-pointer pb-2 border-b-2 ${
                 pathname === "/memories" || navigatingTo === "/memories"
-                  ? "font-bold"
-                  : "text-white/70 hover:text-white font-medium"
+                  ? "font-bold border-purple-500"
+                  : "text-purple-300 hover:text-purple-200 font-medium border-transparent"
               }`}
               style={
                 pathname === "/memories" || navigatingTo === "/memories"
-                  ? { color: "#e32bf4" }
-                  : {}
+                  ? { color: "#a855f7", fontSize: "16px" }
+                  : { color: "#c084fc", fontSize: "14px" }
               }
             >
-              💭 Memories
+              Memories
             </button>
             <button
               onClick={() => handleNavigation("/plans")}
-              className={`text-sm transition cursor-pointer ${
+              className={`transition cursor-pointer pb-2 border-b-2 ${
                 pathname === "/plans" || navigatingTo === "/plans"
-                  ? "font-bold"
-                  : "text-white/70 hover:text-white font-medium"
+                  ? "font-bold border-purple-500"
+                  : "text-purple-300 hover:text-purple-200 font-medium border-transparent"
               }`}
               style={
                 pathname === "/plans" || navigatingTo === "/plans"
-                  ? { color: "#e32bf4" }
-                  : {}
+                  ? { color: "#a855f7", fontSize: "16px" }
+                  : { color: "#c084fc", fontSize: "14px" }
               }
             >
-              📋 Plans
+              Plans
             </button>
             <button
               onClick={() => handleNavigation("/reflections")}
-              className={`text-sm transition cursor-pointer ${
+              className={`transition cursor-pointer pb-2 border-b-2 ${
                 pathname === "/reflections" || navigatingTo === "/reflections"
-                  ? "font-bold"
-                  : "text-white/70 hover:text-white font-medium"
+                  ? "font-bold border-purple-500"
+                  : "text-purple-300 hover:text-purple-200 font-medium border-transparent"
               }`}
               style={
                 pathname === "/reflections" || navigatingTo === "/reflections"
-                  ? { color: "#e32bf4" }
-                  : {}
+                  ? { color: "#a855f7", fontSize: "16px" }
+                  : { color: "#c084fc", fontSize: "14px" }
               }
             >
-              💭 Reflect
+              Reflect
             </button>
             <button
               onClick={() => handleNavigation("/pricing")}
-              className={`text-sm transition cursor-pointer ${
+              className={`transition cursor-pointer pb-2 border-b-2 ${
                 pathname === "/pricing" || navigatingTo === "/pricing"
-                  ? "font-bold"
-                  : "text-white/70 hover:text-white font-medium"
+                  ? "font-bold border-purple-500"
+                  : "text-purple-300 hover:text-purple-200 font-medium border-transparent"
               }`}
               style={
                 pathname === "/pricing" || navigatingTo === "/pricing"
-                  ? { color: "#e32bf4" }
-                  : {}
+                  ? { color: "#a855f7", fontSize: "16px" }
+                  : { color: "#c084fc", fontSize: "14px" }
               }
             >
-              💎 Upgrade
+              Upgrade
             </button>
           </nav>
         )}

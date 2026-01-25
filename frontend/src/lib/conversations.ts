@@ -97,5 +97,14 @@ export async function getConversationStats(
     throw new Error(`Failed to fetch stats: ${response.statusText}`)
   }
 
-  return response.json()
+  const data = await response.json()
+  
+  // Ensure agents_used is always an array
+  return {
+    total_conversations: data.total_conversations ?? 0,
+    total_messages: data.total_messages ?? 0,
+    agents_used: Array.isArray(data.agents_used) ? data.agents_used : [],
+    date_range: data.date_range,
+  }
+}
 }
