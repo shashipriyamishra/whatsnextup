@@ -63,7 +63,10 @@ function HeaderComponent() {
           setTier(tierValue)
         }
       } catch (err) {
-        if (mounted) console.error("Failed to fetch tier:", err)
+        // Silently fail - tier already defaults to 'free'
+        if (mounted && process.env.NODE_ENV === 'development') {
+          console.error("Failed to fetch tier:", err)
+        }
       }
     }
     fetchTier()

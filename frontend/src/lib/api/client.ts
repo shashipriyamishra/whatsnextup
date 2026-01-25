@@ -184,11 +184,14 @@ class ApiClient {
 
   async getUserTier(): Promise<string> {
     try {
-      const data = await this.request<UserTierResponse>("/api/user/tier")
+      const data = await this.request<UserTierResponse>("/api/user/tier", {
+        timeout: 30000, // 30 second timeout for tier fetch
+      })
       return data.tier || "free"
     } catch (error) {
       console.error("Failed to fetch user tier:", error)
-      throw error
+      // Gracefully fallback to free tier instead of throwing
+      return "free"
     }
   }
 
