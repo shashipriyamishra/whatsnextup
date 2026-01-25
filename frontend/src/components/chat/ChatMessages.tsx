@@ -63,7 +63,7 @@ export const ChatMessages = React.memo(function ChatMessages({
   return (
     <div
       ref={containerRef}
-      className="flex-1 overflow-y-auto px-4 md:px-6 py-6 relative z-10 mt-20 mb-28 scroll-smooth"
+      className="flex-1 overflow-y-auto px-4 md:px-6 py-6 relative z-10 mt-4 mb-28 scroll-smooth"
       data-messages
     >
       <div className="max-w-3xl mx-auto w-full space-y-4">
