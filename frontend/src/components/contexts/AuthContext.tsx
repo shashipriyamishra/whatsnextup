@@ -13,7 +13,7 @@
  *   const user = useUser() // New Zustand hook (more efficient)
  */
 
-import React, { createContext, useContext, useEffect, useMemo } from "react"
+import React, { useEffect } from "react"
 import { User, onAuthStateChanged } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { useAuthStore } from "@/lib/store/authStore"
@@ -24,8 +24,6 @@ export interface AuthContextType {
   token: string | null
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
 /**
  * AuthProvider - Wraps app with Firebase auth sync to Zustand
  * Syncs Firebase auth state to Zustand store on mount
@@ -34,9 +32,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const setUser = useAuthStore((state) => state.setUser)
   const setToken = useAuthStore((state) => state.setToken)
   const setLoading = useAuthStore((state) => state.setLoading)
-  const user = useAuthStore((state) => state.user)
-  const token = useAuthStore((state) => state.token)
-  const loading = useAuthStore((state) => state.loading)
 
   useEffect(() => {
     // Listen for Firebase auth state changes and sync to Zustand
@@ -77,17 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return unsubscribe
   }, [setUser, setToken, setLoading])
 
-  // Memoize context value to prevent unnecessary rerenders
-  const value: AuthContextType = useMemo(
-    () => ({
-      user,
-      loading,
-      token,
-    }),
-    [user, token, loading],
-  )
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return <>{children}</>
 }
 
 /**
@@ -98,11 +83,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
  * - useAuthLoading() - only rerenders when loading changes
  */
 export function useAuth(): AuthContextType {
-  const context = useContext(AuthContext)
+  const user = useAuthStore((state) => state.user)
+  const token = useAuthStore((state) => state.token)
+  const loading = useAuthStore((state) => state.loading)
 
-  if (context === undefined) {
-    throw new Error("useAuth must be used within AuthProvider")
-  }
-
-  return context
+  return { user, token, loading }
 }
