@@ -100,10 +100,10 @@ function HeaderComponent() {
 
           {/* Center - Navigation */}
           {user && (
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden md:flex items-center gap-8 h-full">
               <button
                 onClick={() => handleNavigation("/trending")}
-                className={`transition cursor-pointer pb-2 border-b-2 font-bold hover:opacity-80 ${
+                className={`transition cursor-pointer border-b-2 font-bold hover:opacity-80 flex items-center h-full ${
                   pathname === "/trending"
                     ? "font-bold border-purple-500"
                     : "border-transparent"
@@ -118,7 +118,7 @@ function HeaderComponent() {
               </button>
               <button
                 onClick={() => handleNavigation("/agents")}
-                className={`transition cursor-pointer pb-2 border-b-2 font-bold hover:opacity-80 ${
+                className={`transition cursor-pointer border-b-2 font-bold hover:opacity-80 flex items-center h-full ${
                   pathname === "/agents"
                     ? "font-bold border-purple-500"
                     : "border-transparent"
@@ -133,7 +133,7 @@ function HeaderComponent() {
               </button>
               <button
                 onClick={() => handleNavigation("/history")}
-                className={`transition cursor-pointer pb-2 border-b-2 font-bold hover:opacity-80 ${
+                className={`transition cursor-pointer border-b-2 font-bold hover:opacity-80 flex items-center h-full ${
                   pathname === "/history"
                     ? "font-bold border-purple-500"
                     : "border-transparent"
@@ -148,7 +148,7 @@ function HeaderComponent() {
               </button>
               <button
                 onClick={() => handleNavigation("/memories")}
-                className={`transition cursor-pointer pb-2 border-b-2 font-bold hover:opacity-80 ${
+                className={`transition cursor-pointer border-b-2 font-bold hover:opacity-80 flex items-center h-full ${
                   pathname === "/memories"
                     ? "font-bold border-purple-500"
                     : "border-transparent"
@@ -163,7 +163,7 @@ function HeaderComponent() {
               </button>
               <button
                 onClick={() => handleNavigation("/plans")}
-                className={`transition cursor-pointer pb-2 border-b-2 font-bold hover:opacity-80 ${
+                className={`transition cursor-pointer border-b-2 font-bold hover:opacity-80 flex items-center h-full ${
                   pathname === "/plans"
                     ? "font-bold border-purple-500"
                     : "border-transparent"
@@ -178,7 +178,7 @@ function HeaderComponent() {
               </button>
               <button
                 onClick={() => handleNavigation("/reflections")}
-                className={`transition cursor-pointer pb-2 border-b-2 font-bold hover:opacity-80 ${
+                className={`transition cursor-pointer border-b-2 font-bold hover:opacity-80 flex items-center h-full ${
                   pathname === "/reflections"
                     ? "font-bold border-purple-500"
                     : "border-transparent"
@@ -193,7 +193,7 @@ function HeaderComponent() {
               </button>
               <button
                 onClick={() => handleNavigation("/pricing")}
-                className={`transition cursor-pointer pb-2 border-b-2 font-bold hover:opacity-80 ${
+                className={`transition cursor-pointer border-b-2 font-bold hover:opacity-80 flex items-center h-full ${
                   pathname === "/pricing"
                     ? "font-bold border-purple-500"
                     : "border-transparent"
