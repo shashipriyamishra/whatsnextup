@@ -120,12 +120,12 @@ export default function TrendingPage() {
               <TabsTrigger value="github" colorIndex={3}>
                 GitHub
               </TabsTrigger>
-              {feed.youtube && (
+              {feed && feed.youtube && (
                 <TabsTrigger value="youtube" colorIndex={4}>
                   YouTube
                 </TabsTrigger>
               )}
-              {feed.news && (
+              {feed && feed.news && (
                 <TabsTrigger value="news" colorIndex={5}>
                   News
                 </TabsTrigger>
