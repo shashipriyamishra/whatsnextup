@@ -3,12 +3,14 @@
 ## ✅ What Was Fixed This Session
 
 ### 1. **Header Consolidation** ✅ COMPLETE
+
 - Moved Header from individual page components to root layout
 - **Before**: Different header styling on different pages
 - **After**: Single unified header on all pages
 - **Result**: Profile photo always visible in top-right
 
 ### 2. **Card Visibility Improvement** ✅ COMPLETE
+
 - Changed card opacity from 40% → 70%
 - Changed card base color from -900 → -950 (darker)
 - Updated borders from 30% → 50-60% opacity
@@ -16,12 +18,14 @@
 - **After**: Cards solid and readable
 
 ### 3. **Code Cleanup** ✅ COMPLETE
+
 - Removed duplicate Header imports from 9 pages
 - Removed <Header /> components from all pages
 - Each page now cleaner and shorter
 - **Result**: Smaller bundle size, easier to maintain
 
 ### 4. **Build Verification** ✅ COMPLETE
+
 - Build passes with 0 errors
 - 27 static pages generated successfully
 - Ready for production deployment
@@ -49,6 +53,7 @@
 ## 🚀 How to Deploy
 
 ### Step 1: Push to GitHub
+
 ```bash
 git push origin main
 ```
@@ -56,11 +61,13 @@ git push origin main
 Vercel will automatically detect the push and start building.
 
 ### Step 2: Monitor Build on Vercel
+
 ```
 https://vercel.com/whatsnextup → Deployments
 ```
 
 Watch for:
+
 - ✅ Build starts
 - ✅ Build completes (should take ~3-5 minutes)
 - ✅ Deployment successful
@@ -70,6 +77,7 @@ Watch for:
 Go to: **Vercel Dashboard → whatsnextup → Settings → Environment Variables**
 
 Add:
+
 ```
 NEXT_PUBLIC_API_URL = https://whatsnextup-api-214675476458.us-central1.run.app
 ```
@@ -77,6 +85,7 @@ NEXT_PUBLIC_API_URL = https://whatsnextup-api-214675476458.us-central1.run.app
 Then redeploy by clicking **"Redeploy"** on the latest deployment.
 
 ### Step 4: Test in Production
+
 ```
 1. Visit https://www.whatsnextup.com
 2. Check header is visible everywhere
@@ -92,6 +101,7 @@ Then redeploy by clicking **"Redeploy"** on the latest deployment.
 ## 🔍 What to Look For
 
 ### ✅ Correct Header Behavior
+
 ```
 All pages should show:
 ┌───────────────────────────────────────────────────┐
@@ -101,6 +111,7 @@ All pages should show:
 ```
 
 ### ✅ Correct Card Appearance
+
 ```
 Trending & Agents pages should show:
 ┌─────────────────────┐  ┌─────────────────────┐
@@ -113,6 +124,7 @@ Trending & Agents pages should show:
 ```
 
 ### ❌ What NOT to See
+
 ```
 ✗ Different header on different pages
 ✗ Profile photo missing
@@ -129,11 +141,13 @@ Trending & Agents pages should show:
 ### For Developer Testing
 
 **In Development (localhost:3000)**:
+
 - Backend should run on http://localhost:8000
 - API calls automatically use localhost
 - Header will work correctly
 
 **Run locally:**
+
 ```bash
 cd frontend
 npm run dev
@@ -142,6 +156,7 @@ npm run dev
 ### For Production Testing
 
 **In Production (whatsnextup.com)**:
+
 - MUST have NEXT_PUBLIC_API_URL set in Vercel
 - Without it: API calls fail with 404
 - With it: Everything works perfectly
@@ -149,11 +164,13 @@ npm run dev
 ### Console Messages in Production
 
 **Expected messages:**
+
 ```
 None - everything runs silently
 ```
 
 **If you see errors:**
+
 ```
 🚨 CRITICAL: NEXT_PUBLIC_API_URL not configured
 → This means env var not set in Vercel
@@ -173,15 +190,15 @@ da0e204 - fix: Move header to root layout for consistency across all pages
 
 ## ✨ Summary of Benefits
 
-| Feature | Before | After |
-|---------|--------|-------|
+| Feature                | Before                | After              |
+| ---------------------- | --------------------- | ------------------ |
 | **Header Consistency** | ❌ Different per page | ✅ Same everywhere |
-| **Profile Photo** | ⚠️ Sometimes hidden | ✅ Always visible |
-| **Card Readability** | ❌ Too transparent | ✅ Easy to read |
-| **Card Borders** | ❌ Invisible | ✅ Visible |
-| **Code Quality** | ❌ Duplicated | ✅ Clean |
-| **Build Size** | ⚠️ Larger | ✅ Optimized |
-| **User Experience** | ⚠️ Inconsistent | ✅ Professional |
+| **Profile Photo**      | ⚠️ Sometimes hidden   | ✅ Always visible  |
+| **Card Readability**   | ❌ Too transparent    | ✅ Easy to read    |
+| **Card Borders**       | ❌ Invisible          | ✅ Visible         |
+| **Code Quality**       | ❌ Duplicated         | ✅ Clean           |
+| **Build Size**         | ⚠️ Larger             | ✅ Optimized       |
+| **User Experience**    | ⚠️ Inconsistent       | ✅ Professional    |
 
 ---
 
@@ -198,6 +215,7 @@ da0e204 - fix: Move header to root layout for consistency across all pages
 ## 🆘 Troubleshooting
 
 ### If header looks wrong:
+
 ```
 1. Hard refresh: Cmd+Shift+R (Mac) or Ctrl+Shift+R (Windows)
 2. Clear browser cache
@@ -206,6 +224,7 @@ da0e204 - fix: Move header to root layout for consistency across all pages
 ```
 
 ### If cards look wrong:
+
 ```
 1. Hard refresh page
 2. Check card opacity in browser DevTools
@@ -214,6 +233,7 @@ da0e204 - fix: Move header to root layout for consistency across all pages
 ```
 
 ### If API calls fail:
+
 ```
 1. Open DevTools: F12 → Console
 2. Look for error messages

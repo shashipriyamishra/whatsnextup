@@ -148,7 +148,6 @@ export default function MemoriesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 pt-0">
-
       <main className="max-w-5xl mx-auto px-4 pt-8 pb-8">
         {/* Create new memory button */}
         <div className="mb-8">

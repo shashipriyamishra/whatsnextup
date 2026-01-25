@@ -19,10 +19,10 @@ const Card = React.forwardRef<
     "bg-cyan-950/70 border border-cyan-700/50 hover:bg-cyan-950/80 hover:border-cyan-600/60",
     "bg-teal-950/70 border border-teal-700/50 hover:bg-teal-950/80 hover:border-teal-600/60",
   ]
-  
+
   // Use random color for variety
   const colorClass = colors[Math.floor(Math.random() * colors.length)]
-  
+
   return (
     <div
       ref={ref}

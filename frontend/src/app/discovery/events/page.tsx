@@ -46,30 +46,6 @@ export default function EventsPage() {
         ></div>
       </div>
 
-      <header className="relative z-10 px-4 md:px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <button
-            onClick={() => router.push("/")}
-            className="flex items-center gap-4 cursor-pointer hover:opacity-80"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-fuchsia-600 via-purple-600 to-fuchsia-500 flex items-center justify-center text-white font-bold shadow-lg shadow-purple-500/30">
-              <span className="text-xl">🎉</span>
-            </div>
-            <div>
-              <h1 className="font-bold text-lg text-white">
-                What&apos;s Next Up
-              </h1>
-              <p className="text-xs text-white/50">Events</p>
-            </div>
-          </button>
-          <Link href="/login">
-            <Button variant="default" size="sm">
-              Sign In
-            </Button>
-          </Link>
-        </div>
-      </header>
-
       <main className="relative z-10 px-4 md:px-6 py-8 flex-1">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">

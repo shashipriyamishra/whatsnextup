@@ -115,31 +115,8 @@ export default function AgentChatPage({
         ></div>
       </div>
 
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-30 px-4 md:px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl">
-        <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <Link
-            href="/agents"
-            className="flex items-center gap-4 cursor-pointer hover:opacity-80"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-pink-500/30">
-              <span className="text-xl">{agent.icon}</span>
-            </div>
-            <div>
-              <h1 className="font-bold text-lg text-white">{agent.name}</h1>
-              <p className="text-xs text-white/50">{agent.description}</p>
-            </div>
-          </Link>
-          <Link href="/agents">
-            <Button variant="glass" size="sm" className="cursor-pointer">
-              ← All Agents
-            </Button>
-          </Link>
-        </div>
-      </header>
-
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6 relative z-10 mt-20 mb-28">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-6 relative z-10 mt-0 mb-28">
         <div className="max-w-3xl mx-auto w-full space-y-4">
           {messages.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full py-16 text-center">
