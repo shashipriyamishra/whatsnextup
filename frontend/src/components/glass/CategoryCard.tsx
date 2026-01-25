@@ -48,7 +48,7 @@ export function CategoryCard({
     >
       {/* Content */}
       <div className="relative z-10">
-        <div className="text-5xl mb-4 group-hover:scale-125 transition-transform duration-300">
+        <div className="text-5xl mb-4 group-hover:opacity-80 transition-opacity duration-300">
           {icon}
         </div>
         <h3 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors duration-300">
