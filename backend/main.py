@@ -117,6 +117,20 @@ def chat(
         print(f"❌ Chat orchestrator error: {e}")
         raise HTTPException(status_code=500, detail=f"Error processing chat: {str(e)}")
 
+    # Save conversation to Firestore
+    try:
+        from conversations.store import save_conversation_message_sync
+        save_conversation_message_sync(
+            user_id=uid,
+            agent_id="general",  # Default agent_id for chat
+            message=request.message,
+            response=response
+        )
+        print(f"💾 Conversation saved for user {uid}")
+    except Exception as e:
+        print(f"⚠️  Warning: Failed to save conversation: {e}")
+        # Don't fail the response if conversation save fails
+
     return {
         "user": name,
         "reply": response

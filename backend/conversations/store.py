@@ -4,6 +4,32 @@ from datetime import datetime
 from typing import List, Optional, Dict, Any
 from google.cloud.firestore_v1 import FieldFilter
 
+def save_conversation_message_sync(
+    user_id: str,
+    agent_id: str,
+    message: str,
+    response: str,
+    metadata: Optional[Dict[str, Any]] = None
+) -> str:
+    """Save a conversation message to Firestore (synchronous version)"""
+    try:
+        conversation_data = {
+            "user_id": user_id,
+            "agent_id": agent_id,
+            "user_message": message,
+            "agent_response": response,
+            "timestamp": datetime.utcnow(),
+            "metadata": metadata or {}
+        }
+        
+        doc_ref = db.collection("conversations").document()
+        doc_ref.set(conversation_data)
+        
+        return doc_ref.id
+    except Exception as e:
+        print(f"❌ Error saving conversation: {e}")
+        raise
+
 async def save_conversation_message(
     user_id: str,
     agent_id: str,

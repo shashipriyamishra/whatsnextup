@@ -15,17 +15,6 @@ function HeaderComponent() {
   const { user } = useAuth()
   const [tier, setTier] = useState("free")
   const [isSigningOut, setIsSigningOut] = useState(false)
-  const [navigatingTo, setNavigatingTo] = useState<string | null>(null)
-
-  useEffect(() => {
-    // Clear navigatingTo after a brief delay to show visual feedback
-    if (navigatingTo && pathname !== "/login") {
-      const timer = setTimeout(() => {
-        setNavigatingTo(null)
-      }, 100)
-      return () => clearTimeout(timer)
-    }
-  }, [pathname, navigatingTo])
 
   useEffect(() => {
     // Skip if signing out to prevent re-renders
@@ -63,7 +52,6 @@ function HeaderComponent() {
 
   const handleNavigation = useCallback(
     (path: string) => {
-      setNavigatingTo(path)
       router.push(path)
     },
     [router],
@@ -93,12 +81,12 @@ function HeaderComponent() {
             <button
               onClick={() => handleNavigation("/trending")}
               className={`transition cursor-pointer pb-2 border-b-2 font-medium hover:opacity-80 ${
-                pathname === "/trending" || navigatingTo === "/trending"
+                pathname === "/trending"
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={
-                pathname === "/trending" || navigatingTo === "/trending"
+              style={{
+                pathname === "/trending"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
               }
@@ -108,12 +96,12 @@ function HeaderComponent() {
             <button
               onClick={() => handleNavigation("/agents")}
               className={`transition cursor-pointer pb-2 border-b-2 font-medium hover:opacity-80 ${
-                pathname === "/agents" || navigatingTo === "/agents"
+                pathname === "/agents"
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={
-                pathname === "/agents" || navigatingTo === "/agents"
+              style={{
+                pathname === "/agents"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
               }
@@ -123,12 +111,12 @@ function HeaderComponent() {
             <button
               onClick={() => handleNavigation("/history")}
               className={`transition cursor-pointer pb-2 border-b-2 font-medium hover:opacity-80 ${
-                pathname === "/history" || navigatingTo === "/history"
+                pathname === "/history"
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={
-                pathname === "/history" || navigatingTo === "/history"
+              style={{
+                pathname === "/history"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
               }
@@ -138,12 +126,12 @@ function HeaderComponent() {
             <button
               onClick={() => handleNavigation("/memories")}
               className={`transition cursor-pointer pb-2 border-b-2 font-medium hover:opacity-80 ${
-                pathname === "/memories" || navigatingTo === "/memories"
+                pathname === "/memories"
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={
-                pathname === "/memories" || navigatingTo === "/memories"
+              style={{
+                pathname === "/memories"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
               }
@@ -153,12 +141,12 @@ function HeaderComponent() {
             <button
               onClick={() => handleNavigation("/plans")}
               className={`transition cursor-pointer pb-2 border-b-2 font-medium hover:opacity-80 ${
-                pathname === "/plans" || navigatingTo === "/plans"
+                pathname === "/plans"
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={
-                pathname === "/plans" || navigatingTo === "/plans"
+              style={{
+                pathname === "/plans"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
               }
@@ -168,12 +156,12 @@ function HeaderComponent() {
             <button
               onClick={() => handleNavigation("/reflections")}
               className={`transition cursor-pointer pb-2 border-b-2 font-medium hover:opacity-80 ${
-                pathname === "/reflections" || navigatingTo === "/reflections"
+                pathname === "/reflections"
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={
-                pathname === "/reflections" || navigatingTo === "/reflections"
+              style={{
+                pathname === "/reflections"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
               }
@@ -183,12 +171,12 @@ function HeaderComponent() {
             <button
               onClick={() => handleNavigation("/pricing")}
               className={`transition cursor-pointer pb-2 border-b-2 font-medium hover:opacity-80 ${
-                pathname === "/pricing" || navigatingTo === "/pricing"
+                pathname === "/pricing"
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={
-                pathname === "/pricing" || navigatingTo === "/pricing"
+              style={{
+                pathname === "/pricing"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
               }

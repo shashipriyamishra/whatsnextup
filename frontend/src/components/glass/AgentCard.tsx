@@ -59,7 +59,7 @@ export function AgentCard({
     >
       {/* Content */}
       <div className="relative z-10 flex items-start gap-4">
-        <div className="text-4xl group-hover:scale-110 group-hover:animate-bounce transition-transform duration-300">
+        <div className="text-4xl group-hover:opacity-80 transition-opacity duration-300">
           {icon}
         </div>
         <div className="flex-1">
