@@ -2,23 +2,23 @@
 
 import { cn } from "@/lib/utils"
 
-// Define gradient variants for different agents (lighter, more vibrant)
+// Define gradient variants for different agents - darker, more vibrant
 const gradients = [
-  "from-purple-400/25 via-pink-400/15 to-purple-500/5", // Purple-Pink
-  "from-blue-400/25 via-cyan-400/15 to-blue-500/5", // Blue-Cyan
-  "from-green-400/25 via-emerald-400/15 to-green-500/5", // Green-Emerald
-  "from-orange-400/25 via-amber-400/15 to-orange-500/5", // Orange-Amber
-  "from-rose-400/25 via-pink-400/15 to-rose-500/5", // Rose-Pink
-  "from-indigo-400/25 via-violet-400/15 to-indigo-500/5", // Indigo-Violet
-  "from-cyan-400/25 via-sky-400/15 to-cyan-500/5", // Cyan-Sky
-  "from-lime-400/25 via-green-400/15 to-lime-500/5", // Lime-Green
-  "from-fuchsia-400/25 via-purple-400/15 to-fuchsia-500/5", // Fuchsia-Purple
-  "from-violet-400/25 via-purple-400/15 to-violet-500/5", // Violet-Purple
-  "from-teal-400/25 via-cyan-400/15 to-teal-500/5", // Teal-Cyan
-  "from-amber-400/25 via-yellow-400/15 to-amber-500/5", // Amber-Yellow
-  "from-red-400/25 via-rose-400/15 to-red-500/5", // Red-Rose
-  "from-emerald-400/25 via-teal-400/15 to-emerald-500/5", // Emerald-Teal
-  "from-sky-400/25 via-blue-400/15 to-sky-500/5", // Sky-Blue
+  "from-purple-900/70 via-pink-800/50 to-purple-950/80", // Deep Purple-Pink
+  "from-blue-900/70 via-cyan-800/50 to-blue-950/80", // Deep Blue-Cyan
+  "from-green-900/70 via-emerald-800/50 to-green-950/80", // Deep Green-Emerald
+  "from-orange-900/70 via-amber-800/50 to-orange-950/80", // Deep Orange-Amber
+  "from-rose-900/70 via-pink-800/50 to-rose-950/80", // Deep Rose-Pink
+  "from-indigo-900/70 via-purple-800/50 to-indigo-950/80", // Deep Indigo-Purple
+  "from-cyan-900/70 via-teal-800/50 to-cyan-950/80", // Deep Cyan-Teal
+  "from-lime-900/70 via-green-800/50 to-lime-950/80", // Deep Lime-Green
+  "from-fuchsia-900/70 via-purple-800/50 to-fuchsia-950/80", // Deep Fuchsia-Purple
+  "from-violet-900/70 via-purple-800/50 to-violet-950/80", // Deep Violet-Purple
+  "from-teal-900/70 via-cyan-800/50 to-teal-950/80", // Deep Teal-Cyan
+  "from-amber-900/70 via-yellow-800/50 to-amber-950/80", // Deep Amber-Yellow
+  "from-red-900/70 via-rose-800/50 to-red-950/80", // Deep Red-Rose
+  "from-emerald-900/70 via-teal-800/50 to-emerald-950/80", // Deep Emerald-Teal
+  "from-sky-900/70 via-blue-800/50 to-sky-950/80", // Deep Sky-Blue
 ]
 
 interface AgentCardProps {
@@ -48,30 +48,32 @@ export function AgentCard({
     <div
       onClick={onClick}
       className={cn(
-        "group relative rounded-2xl backdrop-blur-sm p-6 cursor-pointer transition-all duration-300 overflow-hidden",
+        "group relative rounded-2xl backdrop-blur-xl p-6 cursor-pointer transition-all duration-300 overflow-hidden",
         active
-          ? "border-pink-400 shadow-lg shadow-pink-500/30"
-          : "border border-white/20",
-        "hover:border-pink-400 hover:shadow-xl hover:shadow-pink-500/20 hover:-translate-y-1",
+          ? "shadow-2xl hover:-translate-y-2"
+          : "hover:shadow-2xl hover:-translate-y-2",
         className,
       )}
     >
-      {/* Gradient Background with varied colors - lighter opacity */}
+      {/* Dark base with transparency */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/80 to-black/95 rounded-2xl"></div>
+
+      {/* Gradient Background with varied colors - darker base */}
       <div
         className={cn(
-          "absolute inset-0 bg-gradient-to-br opacity-40 group-hover:opacity-70 transition-opacity duration-300",
+          "absolute inset-0 bg-gradient-to-br opacity-60 group-hover:opacity-80 transition-opacity duration-300 rounded-2xl",
           gradient,
         )}
       ></div>
 
       {/* Content */}
-      <div className="relative flex items-start gap-4">
-        <div className="text-3xl animate-pulse">{icon}</div>
+      <div className="relative z-10 flex items-start gap-4">
+        <div className="text-4xl group-hover:scale-110 group-hover:animate-bounce transition-transform duration-300">{icon}</div>
         <div className="flex-1">
-          <h3 className="text-lg font-bold text-white mb-1">{name}</h3>
-          <p className="text-sm text-white/70 mb-2">{description}</p>
+          <h3 className="text-lg font-bold text-white mb-1 group-hover:text-cyan-300 transition-colors duration-300">{name}</h3>
+          <p className="text-sm text-white/70 group-hover:text-white/90 transition-colors duration-300 mb-2">{description}</p>
           {status && (
-            <div className="inline-flex items-center px-2 py-1 rounded-full bg-white/10 border border-white/20 text-xs text-white/80">
+            <div className="inline-flex items-center px-3 py-1 rounded-full bg-gradient-to-r from-white/10 to-white/5 border border-white/30 text-xs text-white/90 font-medium">
               {status}
             </div>
           )}

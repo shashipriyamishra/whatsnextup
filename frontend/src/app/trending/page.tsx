@@ -124,7 +124,7 @@ export default function TrendingPage() {
                     <h2 className="text-2xl font-bold text-white mb-4">
                       🔴 Trending on Reddit
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {feed.reddit.slice(0, 4).map((post, idx) => (
                         <Card
                           key={idx}
@@ -171,7 +171,7 @@ export default function TrendingPage() {
                     <h2 className="text-2xl font-bold text-white mb-4">
                       🔶 Top on Hacker News
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {feed.tech.slice(0, 4).map((story, idx) => (
                         <Card
                           key={idx}
@@ -211,7 +211,7 @@ export default function TrendingPage() {
                     <h2 className="text-2xl font-bold text-white mb-4">
                       ⭐ Trending on GitHub
                     </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       {feed.github.slice(0, 4).map((repo, idx) => (
                         <Card
                           key={idx}
@@ -255,7 +255,7 @@ export default function TrendingPage() {
             {/* Individual Tabs */}
             <TabsContent value="reddit">
               {feed.reddit && feed.reddit.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {feed.reddit.map((post, idx) => (
                     <Card
                       key={idx}
@@ -294,7 +294,7 @@ export default function TrendingPage() {
 
             <TabsContent value="tech">
               {feed.tech && feed.tech.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {feed.tech.map((story, idx) => (
                     <Card
                       key={idx}
@@ -333,7 +333,7 @@ export default function TrendingPage() {
 
             <TabsContent value="github">
               {feed.github && feed.github.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {feed.github.map((repo, idx) => (
                     <Card
                       key={idx}
@@ -369,7 +369,7 @@ export default function TrendingPage() {
 
             <TabsContent value="youtube">
               {feed.youtube && feed.youtube.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {feed.youtube.map((video, idx) => (
                     <Card
                       key={idx}

@@ -115,7 +115,7 @@ export default function DiscoveryHub() {
       {/* Categories Grid */}
       <section className="relative z-10 px-4 md:px-6 pb-16 flex-1">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
             {categories.map((category, index) => (
               <CategoryCard
                 key={category.id}

@@ -2,18 +2,18 @@
 
 import { cn } from "@/lib/utils"
 
-// Define gradient variants for different categories
+// Define gradient variants for different categories - darker, more vibrant
 const gradients = [
-  "from-purple-500/30 via-pink-500/20 to-purple-600/10", // Purple-Pink
-  "from-blue-500/30 via-cyan-500/20 to-blue-600/10", // Blue-Cyan
-  "from-green-500/30 via-teal-500/20 to-green-600/10", // Green-Teal
-  "from-orange-500/30 via-amber-500/20 to-orange-600/10", // Orange-Amber
-  "from-rose-500/30 via-pink-500/20 to-rose-600/10", // Rose-Pink
-  "from-indigo-500/30 via-purple-500/20 to-indigo-600/10", // Indigo-Purple
-  "from-cyan-500/30 via-blue-500/20 to-cyan-600/10", // Cyan-Blue
-  "from-lime-500/30 via-green-500/20 to-lime-600/10", // Lime-Green
-  "from-fuchsia-500/30 via-purple-500/20 to-fuchsia-600/10", // Fuchsia-Purple
-  "from-violet-500/30 via-purple-500/20 to-violet-600/10", // Violet-Purple
+  "from-purple-900/60 via-pink-800/40 to-purple-950/80", // Deep Purple-Pink
+  "from-blue-900/60 via-cyan-800/40 to-blue-950/80", // Deep Blue-Cyan
+  "from-green-900/60 via-emerald-800/40 to-green-950/80", // Deep Green-Emerald
+  "from-orange-900/60 via-amber-800/40 to-orange-950/80", // Deep Orange-Amber
+  "from-rose-900/60 via-pink-800/40 to-rose-950/80", // Deep Rose-Pink
+  "from-indigo-900/60 via-purple-800/40 to-indigo-950/80", // Deep Indigo-Purple
+  "from-cyan-900/60 via-teal-800/40 to-cyan-950/80", // Deep Cyan-Teal
+  "from-lime-900/60 via-green-800/40 to-lime-950/80", // Deep Lime-Green
+  "from-fuchsia-900/60 via-purple-800/40 to-fuchsia-950/80", // Deep Fuchsia-Purple
+  "from-violet-900/60 via-purple-800/40 to-violet-950/80", // Deep Violet-Purple
 ]
 
 interface CategoryCardProps {
@@ -39,26 +39,33 @@ export function CategoryCard({
     <div
       onClick={onClick}
       className={cn(
-        "group relative rounded-2xl border border-white/20 backdrop-blur-sm p-6 cursor-pointer transition-all duration-300 overflow-hidden",
-        "hover:border-white/40 hover:shadow-xl hover:shadow-pink-500/20 hover:-translate-y-1",
+        "group relative rounded-2xl backdrop-blur-xl p-6 cursor-pointer transition-all duration-300 overflow-hidden",
+        "hover:shadow-2xl hover:-translate-y-2",
         className,
       )}
     >
-      {/* Gradient Background with varied colors */}
+      {/* Dark base with transparency */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black/70 to-black/90 rounded-2xl"></div>
+
+      {/* Gradient Background with varied colors - darker base */}
       <div
         className={cn(
-          "absolute inset-0 bg-gradient-to-br opacity-60 group-hover:opacity-100 transition-opacity duration-300",
+          "absolute inset-0 bg-gradient-to-br opacity-50 group-hover:opacity-70 transition-opacity duration-300 rounded-2xl",
           gradient,
         )}
       ></div>
 
       {/* Content */}
-      <div className="relative">
-        <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
+      <div className="relative z-10">
+        <div className="text-5xl mb-4 group-hover:scale-125 transition-transform duration-300">
           {icon}
         </div>
-        <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
-        <p className="text-sm text-white/70">{description}</p>
+        <h3 className="text-lg font-bold text-white mb-2 group-hover:text-cyan-300 transition-colors duration-300">
+          {title}
+        </h3>
+        <p className="text-sm text-white/70 group-hover:text-white/90 transition-colors duration-300">
+          {description}
+        </p>
       </div>
     </div>
   )
