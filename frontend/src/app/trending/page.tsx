@@ -128,14 +128,7 @@ export default function TrendingPage() {
                       {feed.reddit.slice(0, 4).map((post, idx) => (
                         <Card
                           key={idx}
-                          className={`hover:scale-105 transition-transform cursor-pointer ${
-                            [
-                              "bg-red-900/30 border-red-700/50 hover:bg-red-900/40",
-                              "bg-blue-900/30 border-blue-700/50 hover:bg-blue-900/40",
-                              "bg-orange-900/30 border-orange-700/50 hover:bg-orange-900/40",
-                              "bg-pink-900/30 border-pink-700/50 hover:bg-pink-900/40",
-                            ][idx % 4]
-                          }`}
+                          className="hover:scale-105 transition-transform cursor-pointer"
                         >
                           <CardHeader>
                             <div className="flex justify-between items-start">
@@ -259,13 +252,7 @@ export default function TrendingPage() {
                   {feed.reddit.map((post, idx) => (
                     <Card
                       key={idx}
-                      className={`hover:scale-105 transition-transform ${
-                        [
-                          "bg-red-900/30 border-red-700/50 hover:bg-red-900/40",
-                          "bg-blue-900/30 border-blue-700/50 hover:bg-blue-900/40",
-                          "bg-orange-900/30 border-orange-700/50 hover:bg-orange-900/40",
-                        ][idx % 3]
-                      }`}
+                      className="hover:scale-105 transition-transform"
                     >
                       <CardHeader>
                         <CardTitle className="text-white text-base">
@@ -298,13 +285,7 @@ export default function TrendingPage() {
                   {feed.tech.map((story, idx) => (
                     <Card
                       key={idx}
-                      className={`hover:scale-105 transition-transform ${
-                        [
-                          "bg-orange-900/30 border-orange-700/50 hover:bg-orange-900/40",
-                          "bg-yellow-900/30 border-yellow-700/50 hover:bg-yellow-900/40",
-                          "bg-amber-900/30 border-amber-700/50 hover:bg-amber-900/40",
-                        ][idx % 3]
-                      }`}
+                      className="hover:scale-105 transition-transform"
                     >
                       <CardHeader>
                         <CardTitle className="text-white text-base">
@@ -337,13 +318,7 @@ export default function TrendingPage() {
                   {feed.github.map((repo, idx) => (
                     <Card
                       key={idx}
-                      className={`hover:scale-105 transition-transform ${
-                        [
-                          "bg-slate-900/50 border-slate-700/50 hover:bg-slate-900/60",
-                          "bg-gray-900/50 border-gray-700/50 hover:bg-gray-900/60",
-                          "bg-zinc-900/50 border-zinc-700/50 hover:bg-zinc-900/60",
-                        ][idx % 3]
-                      }`}
+                      className="hover:scale-105 transition-transform"
                     >
                       <CardHeader>
                         <CardTitle className="text-white text-base">
@@ -373,13 +348,7 @@ export default function TrendingPage() {
                   {feed.youtube.map((video, idx) => (
                     <Card
                       key={idx}
-                      className={`hover:scale-105 transition-transform overflow-hidden ${
-                        [
-                          "bg-red-900/30 border-red-700/50 hover:bg-red-900/40",
-                          "bg-rose-900/30 border-rose-700/50 hover:bg-rose-900/40",
-                          "bg-pink-900/30 border-pink-700/50 hover:bg-pink-900/40",
-                        ][idx % 3]
-                      }`}
+                      className="hover:scale-105 transition-transform overflow-hidden"
                     >
                       {video.thumbnail && (
                         <div className="relative h-40 bg-white/10">
