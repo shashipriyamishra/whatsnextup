@@ -1,3 +1,5 @@
+"use client"
+
 /**
  * Error Boundary Component
  * Catches errors in child components and displays a fallback UI
