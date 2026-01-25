@@ -158,7 +158,7 @@ export default function HistoryPage() {
               <Card>
                 <CardContent className="py-6">
                   <div className="text-3xl font-bold text-white">
-                    {stats.agents_used?.length ?? 0}
+                    {stats?.agents_used?.length ?? 0}
                   </div>
                   <div className="text-white/60 text-sm">Agents Used</div>
                 </CardContent>

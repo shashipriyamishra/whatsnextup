@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useAuth } from "@/components/contexts"
@@ -8,7 +9,7 @@ import { apiClient } from "@/lib/api"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
-export function Header() {
+function HeaderComponent() {
   const router = useRouter()
   const pathname = usePathname()
   const { user } = useAuth()
@@ -178,3 +179,5 @@ export function Header() {
     </header>
   )
 }
+
+export const Header = React.memo(HeaderComponent)
