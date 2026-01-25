@@ -28,13 +28,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 /**
  * AuthProvider - Wraps app with Firebase auth sync to Zustand
- * Memoized to prevent unnecessary re-renders
+ * Syncs Firebase auth state to Zustand store on mount
  */
-export const AuthProvider = React.memo(function AuthProvider({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { user, token, loading, setUser, setToken, setLoading } = useAuthStore()
 
   useEffect(() => {
@@ -68,7 +64,7 @@ export const AuthProvider = React.memo(function AuthProvider({
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-})
+}
 
 /**
  * useAuth Hook - Legacy hook for backward compatibility
