@@ -98,7 +98,7 @@ export async function getConversationStats(
   }
 
   const data = await response.json()
-  
+
   // Ensure agents_used is always an array
   return {
     total_conversations: data.total_conversations ?? 0,

@@ -82,7 +82,7 @@ class ReflectionRequest(BaseModel):
 def health_check():
     return {"status": "ok", "app": "whatsnextup"}
 
-@app.post("/chat")
+@app.post("/api/chat")
 def chat(
     request: ChatRequest,
     authorization: str = Header(None)

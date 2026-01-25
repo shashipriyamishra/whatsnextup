@@ -115,20 +115,23 @@ async def get_conversation_stats(user_id: str) -> Dict[str, Any]:
         docs = list(query.stream())
         
         total_conversations = len(docs)
+        total_messages = 0
         agents_used = set()
         
         for doc in docs:
             data = doc.to_dict()
             agents_used.add(data.get("agent_id"))
+            # Count both user and agent messages
+            total_messages += 2  # Assuming each conversation has 1 user + 1 agent message
         
         return {
             "total_conversations": total_conversations,
-            "unique_agents": len(agents_used),
-            "agents_list": list(agents_used)
+            "total_messages": total_messages,
+            "agents_used": list(agents_used)
         }
     except Exception as e:
         print(f"❌ Error getting conversation stats: {e}")
-        return {"total_conversations": 0, "unique_agents": 0, "agents_list": []}
+        return {"total_conversations": 0, "total_messages": 0, "agents_used": []}
 
 # Aliases for endpoint compatibility
 get_conversations = get_conversation_history
