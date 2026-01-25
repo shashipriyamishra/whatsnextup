@@ -93,29 +93,6 @@ export default function DiscoveryHub() {
         <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl opacity-40"></div>
       </div>
 
-      {/* Header */}
-      <header className="relative z-10 px-4 md:px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div
-            className="flex items-center gap-4 cursor-pointer hover:opacity-80"
-            onClick={() => router.push("/")}
-          >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-pink-500/30">
-              <span className="text-xl">✨</span>
-            </div>
-            <div>
-              <h1 className="font-bold text-lg text-white">What's Next Up</h1>
-              <p className="text-xs text-white/50">Your AI Companion</p>
-            </div>
-          </div>
-          <Link href="/login">
-            <Button variant="default" size="sm" className="cursor-pointer">
-              Sign In
-            </Button>
-          </Link>
-        </div>
-      </header>
-
       {/* Hero Section */}
       <section className="relative z-10 px-4 md:px-6 py-16 text-center">
         <div className="max-w-4xl mx-auto">

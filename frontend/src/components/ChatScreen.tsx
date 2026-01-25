@@ -14,20 +14,14 @@
  */
 
 import { useAuth } from "@/components/contexts"
-import { useRouter } from "next/navigation"
-import { auth } from "@/lib/firebase"
-import { useEffect, useState } from "react"
 import { useChat } from "@/lib/hooks"
 import type { Message } from "@/lib/hooks/useChat"
-import { ChatHeader, ChatMessages, ChatInput } from "@/components/chat"
+import { ChatMessages, ChatInput } from "@/components/chat"
 import Sidebar from "./Sidebar"
 import UsageBar from "./UsageBar"
-import { apiClient } from "@/lib/api"
 
 export default function ChatScreen() {
   const { user } = useAuth()
-  const router = useRouter()
-  const [userTier, setUserTier] = useState<string>("free")
 
   // Use custom hook for all chat logic
   const {
@@ -39,31 +33,6 @@ export default function ChatScreen() {
     handleSend,
     containerRef,
   } = useChat()
-
-  // Fetch user tier on mount
-  useEffect(() => {
-    if (!user) return
-
-    async function fetchTier() {
-      try {
-        const tierValue = await apiClient.getUserTier()
-        setUserTier(tierValue)
-      } catch (err) {
-        console.error("Failed to fetch tier:", err)
-      }
-    }
-
-    fetchTier()
-  }, [user])
-
-  const handleLogout = async () => {
-    try {
-      await auth.signOut()
-      router.replace("/")
-    } catch (err) {
-      console.error("Sign out failed:", err)
-    }
-  }
 
   return (
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">
@@ -79,9 +48,6 @@ export default function ChatScreen() {
         ></div>
         <div className="absolute top-1/3 right-1/4 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl"></div>
       </div>
-
-      {/* Header */}
-      <ChatHeader user={user} userTier={userTier} onLogout={handleLogout} />
 
       {/* Messages Container */}
       <ChatMessages
