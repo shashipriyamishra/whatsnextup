@@ -1,26 +1,32 @@
 "use client"
 
 /**
- * ChatMessages Component
+ * ChatMessages Component - Production optimized
  * Displays list of messages and loading state
  * Auto-scrolls to bottom when new messages arrive
- * Optimized with useMemo to prevent unnecessary re-renders
+ *
+ * Optimizations:
+ * - React.memo with proper dependency array
+ * - useMemo for starter suggestions
+ * - Efficient scroll-to-bottom with useEffect
+ * - Granular Zustand subscriptions
  */
 
-import React, { useRef, useEffect, useMemo } from "react"
+import React, { useEffect, useMemo } from "react"
+import { useChatMessages, useChatLoading } from "@/lib/store"
 import { ChatMessage, MessageProps } from "./ChatMessage"
 
 interface ChatMessagesProps {
-  messages: MessageProps[]
-  loading: boolean
   containerRef: React.RefObject<HTMLDivElement | null>
 }
 
 export const ChatMessages = React.memo(function ChatMessages({
-  messages,
-  loading,
   containerRef,
 }: ChatMessagesProps) {
+  // Zustand subscriptions - only rerenders when these specific values change
+  const messages = useChatMessages()
+  const loading = useChatLoading()
+
   // Scroll to bottom when messages change
   useEffect(() => {
     const scrollToBottom = () => {
@@ -28,8 +34,9 @@ export const ChatMessages = React.memo(function ChatMessages({
         containerRef.current.scrollTop = containerRef.current.scrollHeight
       }
     }
+    // Use setTimeout to ensure DOM is updated
     setTimeout(scrollToBottom, 0)
-  }, [messages, loading, containerRef])
+  }, [messages, containerRef])
 
   // Memoize starter suggestions to prevent recreating on every render
   const starterSuggestions = useMemo(

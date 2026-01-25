@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { CategoryCard } from "@/components/glass/CategoryCard"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
@@ -78,7 +79,7 @@ const categories = [
   },
 ]
 
-export default function DiscoveryHub() {
+function DiscoveryHub() {
   const router = useRouter()
 
   return (
@@ -150,3 +151,5 @@ export default function DiscoveryHub() {
     </div>
   )
 }
+
+export default React.memo(DiscoveryHub)

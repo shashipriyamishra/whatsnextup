@@ -1,21 +1,55 @@
 "use client"
 
-import React from "react"
+/**
+ * Header Component - Production-optimized navigation
+ *
+ * Optimizations:
+ * - React.memo to prevent rerenders when props don't change
+ * - useTransition for smooth route transitions without blocking UI
+ * - Zustand selectors for granular subscriptions
+ * - Memoized callbacks to prevent child re-renders
+ */
+
+import React, { useTransition, useCallback, useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { useEffect, useState, useCallback } from "react"
-import { useAuth } from "@/components/contexts"
 import { auth } from "@/lib/firebase"
 import { apiClient } from "@/lib/api"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { useUser } from "@/lib/store"
 
 function HeaderComponent() {
   const router = useRouter()
   const pathname = usePathname()
-  const { user } = useAuth()
+  const user = useUser() // Zustand hook - only rerenders when user changes
   const [tier, setTier] = useState("free")
   const [isSigningOut, setIsSigningOut] = useState(false)
+  const [isPending, startTransition] = useTransition() // For smooth route transitions
 
+  // Memoized navigation handler using useTransition
+  const handleNavigation = useCallback(
+    (path: string) => {
+      startTransition(() => {
+        router.push(path)
+      })
+    },
+    [router],
+  )
+
+  // Memoized sign out handler
+  const handleSignOut = useCallback(async () => {
+    try {
+      setIsSigningOut(true)
+      await auth.signOut()
+      // Use replace to avoid back button issues
+      router.replace("/")
+    } catch (err) {
+      console.error("Sign out failed:", err)
+      setIsSigningOut(false)
+    }
+  }, [router])
+
+  // Fetch tier on user change
   useEffect(() => {
     // Skip if signing out to prevent re-renders
     if (!user || isSigningOut) return
@@ -37,25 +71,6 @@ function HeaderComponent() {
       mounted = false
     }
   }, [user, isSigningOut])
-
-  const handleSignOut = async () => {
-    try {
-      setIsSigningOut(true)
-      await auth.signOut()
-      // Use replace to avoid back button issues and prevent re-renders
-      router.replace("/")
-    } catch (err) {
-      console.error("Sign out failed:", err)
-      setIsSigningOut(false)
-    }
-  }
-
-  const handleNavigation = useCallback(
-    (path: string) => {
-      router.push(path)
-    },
-    [router],
-  )
 
   const isLoginPage = pathname === "/login"
 

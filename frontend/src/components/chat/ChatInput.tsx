@@ -1,35 +1,89 @@
 "use client"
 
 /**
- * ChatInput Component
+ * ChatInput Component - Production optimized
  * Input area for sending messages
  * Handles Enter key and Shift+Enter for new lines
- * Optimized with useCallback to memoize event handlers
+ *
+ * Optimizations:
+ * - React.memo to prevent rerenders
+ * - useCallback for memoized event handlers
+ * - Zustand for state (no prop drilling)
+ * - Async message sending with loading states
  */
 
-import React, { useCallback } from "react"
+import React, { useCallback, useRef } from "react"
+import {
+  useChatInput,
+  useChatLoading,
+  useChatStore,
+  useToken,
+} from "@/lib/store"
+import { apiClient } from "@/lib/api"
 
-interface ChatInputProps {
-  value: string
-  onChange: (value: string) => void
-  onSend: () => void
-  loading: boolean
-}
+export const ChatInput = React.memo(function ChatInput() {
+  const input = useChatInput()
+  const loading = useChatLoading()
+  const token = useToken()
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-export const ChatInput = React.memo(function ChatInput({
-  value,
-  onChange,
-  onSend,
-  loading,
-}: ChatInputProps) {
+  // Get Zustand setters
+  const { setInput, setLoading, addMessage } = useChatStore((state) => ({
+    setInput: state.setInput,
+    setLoading: state.setLoading,
+    addMessage: state.addMessage,
+  }))
+
+  // Memoized send handler
+  const handleSend = useCallback(async () => {
+    if (!input.trim() || loading || !token) return
+
+    try {
+      setLoading(true)
+
+      // Add user message
+      addMessage({
+        role: "user",
+        text: input,
+        timestamp: Date.now(),
+      })
+
+      // Send to API
+      const response = await apiClient.sendChatMessage(input)
+
+      // Add AI response
+      addMessage({
+        role: "ai",
+        text: response.reply,
+        timestamp: Date.now(),
+      })
+
+      // Clear input
+      setInput("")
+
+      // Refresh stats
+      // await refetchStats()
+    } catch (err) {
+      console.error("Failed to send message:", err)
+      addMessage({
+        role: "ai",
+        text: "Sorry, I encountered an error. Please try again.",
+        timestamp: Date.now(),
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [input, loading, token, setLoading, addMessage, setInput])
+
+  // Memoized key press handler
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault()
-        onSend()
+        handleSend()
       }
     },
-    [onSend],
+    [handleSend],
   )
 
   return (
@@ -37,19 +91,21 @@ export const ChatInput = React.memo(function ChatInput({
       <div className="max-w-3xl mx-auto">
         <div className="flex gap-3">
           <textarea
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="What should I do next? Share your thoughts..."
             className="flex-1 border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none bg-white text-black placeholder-gray-400 text-sm font-medium transition-all"
             rows={2}
+            disabled={loading}
           />
           <button
-            onClick={onSend}
-            disabled={loading || !value.trim()}
+            onClick={handleSend}
+            disabled={loading || !input.trim()}
             className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold hover:shadow-lg hover:shadow-pink-500/70 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center cursor-pointer text-sm whitespace-nowrap transform hover:scale-105 active:scale-95"
           >
-            Send
+            {loading ? "Sending..." : "Send"}
           </button>
         </div>
         <p className="text-xs text-white/50 mt-2">
@@ -59,5 +115,3 @@ export const ChatInput = React.memo(function ChatInput({
     </footer>
   )
 })
-
-ChatInput.displayName = "ChatInput"

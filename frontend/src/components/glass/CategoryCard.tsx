@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { cn } from "@/lib/utils"
 
 // Define solid dark color variants for different categories
@@ -25,7 +26,7 @@ interface CategoryCardProps {
   gradientIndex?: number // Index to select gradient variant
 }
 
-export function CategoryCard({
+function CategoryCardComponent({
   icon,
   title,
   description,
@@ -61,3 +62,5 @@ export function CategoryCard({
     </div>
   )
 }
+
+export const CategoryCard = React.memo(CategoryCardComponent)

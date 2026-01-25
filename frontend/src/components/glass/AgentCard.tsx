@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { cn } from "@/lib/utils"
 
 // Define solid dark color variants for different agents
@@ -32,7 +33,7 @@ interface AgentCardProps {
   gradientIndex?: number // Index to select gradient variant
 }
 
-export function AgentCard({
+function AgentCardComponent({
   icon,
   name,
   description,
@@ -79,3 +80,5 @@ export function AgentCard({
     </div>
   )
 }
+
+export const AgentCard = React.memo(AgentCardComponent)

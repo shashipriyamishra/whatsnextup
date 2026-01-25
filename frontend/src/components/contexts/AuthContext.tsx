@@ -1,16 +1,22 @@
 "use client"
 
 /**
- * Auth Context & Provider
- * Manages Firebase authentication state across the application
+ * Auth Provider - Syncs Firebase auth to Zustand store
+ *
+ * This component:
+ * - Listens to Firebase auth state changes
+ * - Updates the Zustand auth store
+ * - Provides a React Context wrapper for easy provider setup
  *
  * Usage:
- *   const { user, loading, token } = useAuth()
+ *   const { user, loading, token } = useAuth() // Legacy hook
+ *   const user = useUser() // New Zustand hook (more efficient)
  */
 
-import React, { createContext, useContext, useEffect, useState } from "react"
+import React, { createContext, useContext, useEffect } from "react"
 import { User, onAuthStateChanged } from "firebase/auth"
 import { auth } from "@/lib/firebase"
+import { useAuthStore } from "@/lib/store/authStore"
 
 export interface AuthContextType {
   user: User | null
@@ -21,17 +27,18 @@ export interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 /**
- * AuthProvider - Wraps app with Firebase auth state
+ * AuthProvider - Wraps app with Firebase auth sync to Zustand
+ * Memoized to prevent unnecessary re-renders
  */
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+export const AuthProvider = React.memo(function AuthProvider({
   children,
-}) => {
-  const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+}: {
+  children: React.ReactNode
+}) {
+  const { user, token, loading, setUser, setToken, setLoading } = useAuthStore()
 
   useEffect(() => {
-    // Listen for Firebase auth state changes
+    // Listen for Firebase auth state changes and sync to Zustand
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser)
 
@@ -51,8 +58,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     })
 
     return unsubscribe
-  }, [])
+  }, [setUser, setToken, setLoading])
 
+  // Context value stays the same for React Context consumers
   const value: AuthContextType = {
     user,
     loading,
@@ -60,13 +68,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
+})
 
 /**
- * useAuth Hook - Access auth state from any component
- * Must be used within AuthProvider
+ * useAuth Hook - Legacy hook for backward compatibility
+ * Consider using Zustand hooks directly for better performance:
+ * - useUser() - only rerenders when user changes
+ * - useToken() - only rerenders when token changes
+ * - useAuthLoading() - only rerenders when loading changes
  */
-export const useAuth = (): AuthContextType => {
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext)
 
   if (context === undefined) {

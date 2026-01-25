@@ -1,38 +1,38 @@
 "use client"
 
 /**
- * ChatScreen Component (Refactored)
- * Main chat interface using extracted sub-components
- * Manages state and orchestrates chat flow
+ * ChatScreen Component - Production-optimized chat interface
+ *
+ * Optimizations:
+ * - React.memo to prevent rerenders when props don't change
+ * - Zustand for chat state management (no prop drilling)
+ * - Memoized sub-components
+ * - Efficient useRef for scroll container
  *
  * Components:
- * - ChatHeader: Navigation and user info
  * - ChatMessages: Message display list
  * - ChatInput: Input form
  * - Sidebar: Navigation sidebar
  * - UsageBar: Usage statistics
  */
 
-import { useAuth } from "@/components/contexts"
-import { useChat } from "@/lib/hooks"
-import type { Message } from "@/lib/hooks/useChat"
+import React, { useRef } from "react"
+import { useUser } from "@/lib/store"
 import { ChatMessages, ChatInput } from "@/components/chat"
 import Sidebar from "./Sidebar"
 import UsageBar from "./UsageBar"
 
-export default function ChatScreen() {
-  const { user } = useAuth()
+function ChatScreenComponent() {
+  const user = useUser() // Zustand hook - granular subscription
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  // Use custom hook for all chat logic
-  const {
-    messages,
-    input,
-    setInput,
-    loading,
-    error,
-    handleSend,
-    containerRef,
-  } = useChat()
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black/95">
+        <div className="text-white">Loading...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">
@@ -50,26 +50,10 @@ export default function ChatScreen() {
       </div>
 
       {/* Messages Container */}
-      <ChatMessages
-        messages={messages}
-        loading={loading}
-        containerRef={containerRef}
-      />
+      <ChatMessages containerRef={containerRef} />
 
       {/* Input Area */}
-      <ChatInput
-        value={input}
-        onChange={setInput}
-        onSend={handleSend}
-        loading={loading}
-      />
-
-      {/* Error Display */}
-      {error && (
-        <div className="fixed top-20 right-4 bg-red-600/80 text-white px-4 py-2 rounded-lg text-sm">
-          {error.message}
-        </div>
-      )}
+      <ChatInput />
 
       <style jsx>{`
         @keyframes blob {
@@ -95,3 +79,9 @@ export default function ChatScreen() {
     </div>
   )
 }
+
+/**
+ * Memoized component to prevent rerenders when parent rerenders
+ * Only rerenders when the `user` prop actually changes (via Zustand)
+ */
+export default React.memo(ChatScreenComponent)
