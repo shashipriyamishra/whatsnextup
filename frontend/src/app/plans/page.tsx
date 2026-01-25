@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useAuth } from "@/components/contexts"
 import { getApiUrl } from "@/lib/api"
 import { useCachedData } from "@/lib/cache"
+import { Button } from "@/components/ui/button"
 
 interface PlanStep {
   step: number
@@ -63,12 +64,8 @@ export default function PlansPage() {
     { initialState: [] as Plan[] },
   )
 
-  // Update plans when cache loads
-  useEffect(() => {
-    if (cachedPlans) {
-      setPlans(cachedPlans)
-    }
-  }, [cachedPlans])
+  // Use cached plans directly via useCachedData
+  const displayPlans: Plan[] = cachedPlans || plans
 
   const handleDeletePlan = (planId: string) => {
     setPlans(plans.filter((p) => p.id !== planId))
@@ -84,10 +81,10 @@ export default function PlansPage() {
     // Plan is created, UI will refresh
   }
 
-  const filteredPlans =
+  const filteredPlans: Plan[] =
     selectedStatus === "all"
-      ? plans
-      : plans.filter((p) => p.status === selectedStatus)
+      ? displayPlans
+      : displayPlans.filter((p: Plan) => p.status === selectedStatus)
 
   if (loading) {
     return (
@@ -239,7 +236,7 @@ export default function PlansPage() {
           </div>
         </div>
         {/* Plans list */}
-        {isLoading ? (
+        {plansLoading ? (
           <div className="text-center py-12">
             <p className="text-white/60">Loading plans...</p>
           </div>
@@ -251,7 +248,7 @@ export default function PlansPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {filteredPlans.map((plan) => (
+            {filteredPlans.map((plan: Plan) => (
               <Link
                 key={plan.id}
                 href={`/plans/${plan.id}`}
@@ -298,14 +295,16 @@ export default function PlansPage() {
                       Steps: {plan.steps.length}
                     </p>
                     <div className="flex gap-2">
-                      {plan.steps.slice(0, 3).map((step, idx) => (
-                        <span
-                          key={idx}
-                          className="text-xs px-2 py-1 rounded bg-white/10 text-white/70"
-                        >
-                          {step.action}
-                        </span>
-                      ))}
+                      {plan.steps
+                        .slice(0, 3)
+                        .map((step: PlanStep, idx: number) => (
+                          <span
+                            key={idx}
+                            className="text-xs px-2 py-1 rounded bg-white/10 text-white/70"
+                          >
+                            {step.action}
+                          </span>
+                        ))}
                       {plan.steps.length > 3 && (
                         <span className="text-xs px-2 py-1 text-white/50">
                           +{plan.steps.length - 3} more

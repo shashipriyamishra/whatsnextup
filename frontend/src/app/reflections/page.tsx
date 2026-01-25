@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useAuth } from "@/components/contexts"
 import { getApiUrl } from "@/lib/api"
 import { useCachedData } from "@/lib/cache"
+import { Button } from "@/components/ui/button"
 
 interface Reflection {
   id: string
@@ -52,12 +53,8 @@ export default function ReflectionsPage() {
     { initialState: [] as Reflection[] },
   )
 
-  // Update reflections when cache loads
-  useEffect(() => {
-    if (cachedReflections) {
-      setReflections(cachedReflections)
-    }
-  }, [cachedReflections])
+  // Use cached reflections directly via useCachedData
+  const displayReflections: Reflection[] = cachedReflections || reflections
 
   const getTypeColor = (type: string) => {
     const colors: Record<string, string> = {
@@ -79,10 +76,10 @@ export default function ReflectionsPage() {
     return emojis[type] || "💭"
   }
 
-  const filteredReflections =
+  const filteredReflections: Reflection[] =
     selectedType === "all"
-      ? reflections
-      : reflections.filter((r) => r.type === selectedType)
+      ? displayReflections
+      : displayReflections.filter((r: Reflection) => r.type === selectedType)
 
   if (loading) {
     return (
@@ -200,7 +197,7 @@ export default function ReflectionsPage() {
               </p>
             </div>
           ) : (
-            filteredReflections.map((reflection) => (
+            filteredReflections.map((reflection: Reflection) => (
               <div
                 key={reflection.id}
                 className={`p-4 rounded-lg border transition hover:shadow-lg ${getTypeColor(
@@ -231,11 +228,13 @@ export default function ReflectionsPage() {
                       Key Insights:
                     </p>
                     <ul className="space-y-1">
-                      {reflection.insights.slice(0, 2).map((insight, idx) => (
-                        <li key={idx} className="text-white/60 text-xs">
-                          • {insight}
-                        </li>
-                      ))}
+                      {reflection.insights
+                        .slice(0, 2)
+                        .map((insight: string, idx: number) => (
+                          <li key={idx} className="text-white/60 text-xs">
+                            • {insight}
+                          </li>
+                        ))}
                     </ul>
                   </div>
                 )}

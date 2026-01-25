@@ -61,12 +61,8 @@ export default function MemoriesPage() {
     { initialState: [] as Memory[] },
   )
 
-  // Update memories when cache loads
-  useEffect(() => {
-    if (cachedMemories) {
-      setMemories(cachedMemories)
-    }
-  }, [cachedMemories])
+  // Use cached memories directly via useCachedData
+  const displayMemories: Memory[] = cachedMemories || memories
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
@@ -94,10 +90,10 @@ export default function MemoriesPage() {
     return emojis[category] || "📝"
   }
 
-  const filteredMemories =
+  const filteredMemories: Memory[] =
     selectedCategory === "all"
-      ? memories
-      : memories.filter((m) => m.category === selectedCategory)
+      ? displayMemories
+      : displayMemories.filter((m: Memory) => m.category === selectedCategory)
 
   if (loading) {
     return (
@@ -215,7 +211,7 @@ export default function MemoriesPage() {
               </p>
             </div>
           ) : (
-            filteredMemories.map((memory) => (
+            filteredMemories.map((memory: Memory) => (
               <div
                 key={memory.id}
                 className={`p-4 rounded-lg border transition hover:shadow-lg ${getCategoryColor(
@@ -244,7 +240,7 @@ export default function MemoriesPage() {
 
                 {memory.tags && memory.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-3">
-                    {memory.tags.slice(0, 3).map((tag, idx) => (
+                    {memory.tags.slice(0, 3).map((tag: string, idx: number) => (
                       <span
                         key={idx}
                         className="px-2 py-1 text-xs rounded bg-white/10 text-white/70"

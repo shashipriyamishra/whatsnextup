@@ -162,7 +162,7 @@ export function useCachedData<T>(
 
   React.useEffect(() => {
     refresh()
-  }, []) // Only run once on mount
+  }, [refresh]) // Only run once on mount
 
   return { data, loading, error, refresh, clearCache }
 }
