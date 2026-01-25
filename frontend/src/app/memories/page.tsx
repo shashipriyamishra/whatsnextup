@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useAuth } from "@/components/contexts"
 import { getApiUrl } from "@/lib/api"
 import { useCachedData } from "@/lib/cache"
+import { Button } from "@/components/ui/button"
 
 interface Memory {
   id: string
