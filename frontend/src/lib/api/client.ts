@@ -32,15 +32,23 @@ class ApiClient {
         process.env.NODE_ENV === "production"
       ) {
         console.error(
-          "CRITICAL: NEXT_PUBLIC_API_URL environment variable is not set in production! " +
-            "API calls will fail. Please configure this in your deployment settings.",
+          "🚨 CRITICAL: NEXT_PUBLIC_API_URL environment variable is not set in production! " +
+            "API calls will fail. Please configure this in your deployment settings (Vercel, etc). " +
+            "Set it to your Cloud Run backend URL.",
         )
       }
       // Only fallback to localhost in development
       this.baseUrl =
         process.env.NODE_ENV === "development" ? "http://localhost:8000" : ""
+
+      if (process.env.NODE_ENV === "development") {
+        console.log("[API] Using development fallback: http://localhost:8000")
+      }
     } else {
       this.baseUrl = apiUrl
+      if (process.env.NODE_ENV === "development") {
+        console.log(`[API] Using configured API URL: ${apiUrl}`)
+      }
     }
   }
 
@@ -70,6 +78,12 @@ class ApiClient {
       }
 
       const url = `${this.baseUrl}${endpoint}`
+
+      // Log request details for debugging
+      if (process.env.NODE_ENV === "development") {
+        console.log(`[API] ${fetchOptions.method || "GET"} ${url}`)
+      }
+
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), timeout)
 
@@ -80,6 +94,11 @@ class ApiClient {
       })
 
       clearTimeout(timeoutId)
+
+      // Log response status
+      if (process.env.NODE_ENV === "development") {
+        console.log(`[API] Response: ${response.status} ${response.statusText}`)
+      }
 
       if (!response.ok) {
         throw await parseError(response)

@@ -78,12 +78,12 @@ export function Header() {
 
         {/* Center - Navigation */}
         {user && !isHomePage && (
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-8">
             <button
               onClick={() => router.push("/trending")}
-              className={`text-sm transition cursor-pointer ${
+              className={`text-sm font-medium transition cursor-pointer ${
                 pathname === "/trending"
-                  ? "text-purple-600 font-semibold"
+                  ? "text-purple-600 font-bold border-b-2 border-purple-600 pb-1"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -91,9 +91,9 @@ export function Header() {
             </button>
             <button
               onClick={() => router.push("/agents")}
-              className={`text-sm transition cursor-pointer ${
+              className={`text-sm font-medium transition cursor-pointer ${
                 pathname === "/agents"
-                  ? "text-purple-600 font-semibold"
+                  ? "text-purple-600 font-bold border-b-2 border-purple-600 pb-1"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -101,9 +101,9 @@ export function Header() {
             </button>
             <button
               onClick={() => router.push("/history")}
-              className={`text-sm transition cursor-pointer ${
+              className={`text-sm font-medium transition cursor-pointer ${
                 pathname === "/history"
-                  ? "text-purple-600 font-semibold"
+                  ? "text-purple-600 font-bold border-b-2 border-purple-600 pb-1"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
@@ -111,9 +111,9 @@ export function Header() {
             </button>
             <button
               onClick={() => router.push("/profile")}
-              className={`text-sm transition cursor-pointer ${
+              className={`text-sm font-medium transition cursor-pointer ${
                 pathname === "/profile"
-                  ? "text-purple-600 font-semibold"
+                  ? "text-purple-600 font-bold border-b-2 border-purple-600 pb-1"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
