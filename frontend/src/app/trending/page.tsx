@@ -136,7 +136,7 @@ export default function TrendingPage() {
             <TabsContent value="all">
               <div className="space-y-8">
                 {/* Weather */}
-                {feed.weather && (
+                {feed && feed.weather && (
                   <section>
                     <h2 className="text-2xl font-bold text-white mb-4">
                       🌤️ Weather
@@ -165,7 +165,7 @@ export default function TrendingPage() {
                 )}
 
                 {/* Reddit */}
-                {feed.reddit && feed.reddit.length > 0 && (
+                {feed && feed.reddit && feed.reddit.length > 0 && (
                   <section>
                     <h2 className="text-2xl font-bold text-white mb-4">
                       🔴 Trending on Reddit
@@ -205,7 +205,7 @@ export default function TrendingPage() {
                 )}
 
                 {/* Hacker News */}
-                {feed.tech && feed.tech.length > 0 && (
+                {feed && feed.tech && feed.tech.length > 0 && (
                   <section>
                     <h2 className="text-2xl font-bold text-white mb-4">
                       🔶 Top on Hacker News
@@ -245,7 +245,7 @@ export default function TrendingPage() {
                 )}
 
                 {/* GitHub */}
-                {feed.github && feed.github.length > 0 && (
+                {feed && feed.github && feed.github.length > 0 && (
                   <section>
                     <h2 className="text-2xl font-bold text-white mb-4">
                       ⭐ Trending on GitHub
@@ -293,7 +293,7 @@ export default function TrendingPage() {
 
             {/* Individual Tabs */}
             <TabsContent value="reddit">
-              {feed.reddit && feed.reddit.length > 0 && (
+              {feed && feed.reddit && feed.reddit.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {feed.reddit.map((post, idx) => (
                     <Card
@@ -326,7 +326,7 @@ export default function TrendingPage() {
             </TabsContent>
 
             <TabsContent value="tech">
-              {feed.tech && feed.tech.length > 0 && (
+              {feed && feed.tech && feed.tech.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {feed.tech.map((story, idx) => (
                     <Card
@@ -359,7 +359,7 @@ export default function TrendingPage() {
             </TabsContent>
 
             <TabsContent value="github">
-              {feed.github && feed.github.length > 0 && (
+              {feed && feed.github && feed.github.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {feed.github.map((repo, idx) => (
                     <Card
@@ -389,7 +389,7 @@ export default function TrendingPage() {
             </TabsContent>
 
             <TabsContent value="youtube">
-              {feed.youtube && feed.youtube.length > 0 && (
+              {feed && feed.youtube && feed.youtube.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {feed.youtube.map((video, idx) => (
                     <Card
