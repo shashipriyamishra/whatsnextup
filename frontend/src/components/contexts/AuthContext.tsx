@@ -31,7 +31,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
  * Syncs Firebase auth state to Zustand store on mount
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { user, token, loading, setUser, setToken, setLoading } = useAuthStore()
+  const setUser = useAuthStore((state) => state.setUser)
+  const setToken = useAuthStore((state) => state.setToken)
+  const setLoading = useAuthStore((state) => state.setLoading)
+  const user = useAuthStore((state) => state.user)
+  const token = useAuthStore((state) => state.token)
+  const loading = useAuthStore((state) => state.loading)
 
   useEffect(() => {
     // Listen for Firebase auth state changes and sync to Zustand
