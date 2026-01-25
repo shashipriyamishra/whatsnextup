@@ -234,7 +234,7 @@ export default function CreateReflectionPage() {
                 value={reflectionContent}
                 onChange={(e) => setReflectionContent(e.target.value)}
                 placeholder="What's on your mind? What did you accomplish? What challenges did you face? What did you learn?"
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-white/40 resize-none mb-6"
+                className="w-full px-4 py-3 rounded-lg bg-white border border-white/20 text-black placeholder-gray-400 focus:outline-none focus:border-white/40 resize-none mb-6"
                 rows={6}
               />
 
@@ -343,7 +343,7 @@ export default function CreateReflectionPage() {
                 <textarea
                   value={draft.content}
                   onChange={(e) => handleFieldChange("content", e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-white/40 resize-none"
+                  className="w-full px-4 py-3 rounded-lg bg-white border border-white/20 text-black focus:outline-none focus:border-white/40 resize-none"
                   rows={6}
                 />
                 <SuggestionBox

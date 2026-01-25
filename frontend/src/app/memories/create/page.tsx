@@ -231,7 +231,7 @@ export default function CreateMemoryPage() {
                 value={memoryContent}
                 onChange={(e) => setMemoryContent(e.target.value)}
                 placeholder="Describe the memory, what happened, what you learned, how it made you feel..."
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-white/40 resize-none mb-6"
+                className="w-full px-4 py-3 rounded-lg bg-white border border-white/20 text-black placeholder-gray-400 focus:outline-none focus:border-white/40 resize-none mb-6"
                 rows={6}
               />
 
@@ -342,7 +342,7 @@ export default function CreateMemoryPage() {
                 <textarea
                   value={draft.content}
                   onChange={(e) => handleFieldChange("content", e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-white/40 resize-none"
+                  className="w-full px-4 py-3 rounded-lg bg-white border border-white/20 text-black focus:outline-none focus:border-white/40 resize-none"
                   rows={6}
                 />
                 <SuggestionBox

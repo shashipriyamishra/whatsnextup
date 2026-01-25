@@ -250,7 +250,7 @@ export default function CreatePlanPage() {
                 onChange={(e) => setGoalInput(e.target.value)}
                 placeholder="E.g., 'Learn React and build a project', 'Get fit by summer', 'Launch my startup'..."
                 rows={4}
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-purple-400 resize-none"
+                className="w-full px-4 py-3 rounded-lg bg-white border border-white/20 text-black placeholder-gray-400 focus:outline-none focus:border-purple-400 resize-none"
               />
 
               <button

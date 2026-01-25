@@ -39,7 +39,18 @@ export async function getConversationHistory(
     throw new Error(`Failed to fetch conversations: ${response.statusText}`)
   }
 
-  return response.json()
+  const data = await response.json()
+
+  // Handle both wrapped and unwrapped responses
+  if (data.conversations && Array.isArray(data.conversations)) {
+    return data.conversations
+  }
+
+  if (Array.isArray(data)) {
+    return data
+  }
+
+  return []
 }
 
 export async function searchConversations(
@@ -62,7 +73,18 @@ export async function searchConversations(
     throw new Error(`Failed to search conversations: ${response.statusText}`)
   }
 
-  return response.json()
+  const data = await response.json()
+
+  // Handle wrapped response with conversations array
+  if (data.conversations && Array.isArray(data.conversations)) {
+    return data.conversations
+  }
+
+  if (Array.isArray(data)) {
+    return data
+  }
+
+  return []
 }
 
 export async function deleteConversation(

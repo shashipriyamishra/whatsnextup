@@ -478,7 +478,7 @@ export default function PlanDetailPage({
                     handleFieldChange("success_metric", e.target.value)
                   }
                   placeholder="How will you know this plan is successful?"
-                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-white/40 resize-none"
+                  className="w-full px-4 py-3 rounded-lg bg-white border border-white/20 text-black focus:outline-none focus:border-white/40 resize-none"
                   rows={3}
                 />
               </div>

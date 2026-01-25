@@ -41,7 +41,7 @@ export const ChatInput = React.memo(function ChatInput({
             onChange={(e) => onChange(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="What should I do next? Share your thoughts..."
-            className="flex-1 border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none bg-white/10 text-white placeholder-white/40 text-sm font-medium backdrop-blur-sm transition-all"
+            className="flex-1 border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent resize-none bg-white text-black placeholder-gray-400 text-sm font-medium transition-all"
             rows={2}
           />
           <button
