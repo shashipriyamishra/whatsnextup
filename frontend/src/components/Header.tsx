@@ -15,6 +15,7 @@ function HeaderComponent() {
   const { user } = useAuth()
   const [tier, setTier] = useState("free")
   const [isSigningOut, setIsSigningOut] = useState(false)
+  const [navigatingTo, setNavigatingTo] = useState<string | null>(null)
 
   useEffect(() => {
     // Skip if signing out to prevent re-renders
@@ -50,6 +51,11 @@ function HeaderComponent() {
     }
   }
 
+  const handleNavigation = (path: string) => {
+    setNavigatingTo(path)
+    router.push(path)
+  }
+
   const isLoginPage = pathname === "/login"
 
   // Don't show header on login page only
@@ -72,72 +78,79 @@ function HeaderComponent() {
         {user && (
           <nav className="hidden md:flex items-center gap-8">
             <button
-              onClick={() => router.push("/trending")}
+              onClick={() => handleNavigation("/trending")}
               className={`text-sm font-medium transition cursor-pointer ${
-                pathname === "/trending"
-                  ? "text-purple-400 font-bold border-b-2 border-purple-400 pb-1"
+                pathname === "/trending" || navigatingTo === "/trending"
+                  ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
+              style={pathname === "/trending" || navigatingTo === "/trending" ? { color: "#e32bf4" } : {}}
             >
               🔥 Trending
             </button>
             <button
-              onClick={() => router.push("/agents")}
+              onClick={() => handleNavigation("/agents")}
               className={`text-sm font-medium transition cursor-pointer ${
-                pathname === "/agents"
-                  ? "text-purple-400 font-bold border-b-2 border-purple-400 pb-1"
+                pathname === "/agents" || navigatingTo === "/agents"
+                  ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
+              style={pathname === "/agents" || navigatingTo === "/agents" ? { color: "#e32bf4" } : {}}
             >
               🤖 Agents
             </button>
             <button
-              onClick={() => router.push("/history")}
+              onClick={() => handleNavigation("/history")}
               className={`text-sm font-medium transition cursor-pointer ${
-                pathname === "/history"
-                  ? "text-purple-400 font-bold border-b-2 border-purple-400 pb-1"
+                pathname === "/history" || navigatingTo === "/history"
+                  ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
+              style={pathname === "/history" || navigatingTo === "/history" ? { color: "#e32bf4" } : {}}
             >
               📜 History
             </button>
             <button
-              onClick={() => router.push("/memories")}
+              onClick={() => handleNavigation("/memories")}
               className={`text-sm font-medium transition cursor-pointer ${
-                pathname === "/memories"
-                  ? "text-purple-400 font-bold border-b-2 border-purple-400 pb-1"
+                pathname === "/memories" || navigatingTo === "/memories"
+                  ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
+              style={pathname === "/memories" || navigatingTo === "/memories" ? { color: "#e32bf4" } : {}}
             >
               💭 Memories
             </button>
             <button
-              onClick={() => router.push("/plans")}
+              onClick={() => handleNavigation("/plans")}
               className={`text-sm font-medium transition cursor-pointer ${
-                pathname === "/plans"
-                  ? "text-purple-400 font-bold border-b-2 border-purple-400 pb-1"
+                pathname === "/plans" || navigatingTo === "/plans"
+                  ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
+              style={pathname === "/plans" || navigatingTo === "/plans" ? { color: "#e32bf4" } : {}}
             >
               📋 Plans
             </button>
             <button
-              onClick={() => router.push("/reflections")}
+              onClick={() => handleNavigation("/reflections")}
               className={`text-sm font-medium transition cursor-pointer ${
-                pathname === "/reflections"
-                  ? "text-purple-400 font-bold border-b-2 border-purple-400 pb-1"
+                pathname === "/reflections" || navigatingTo === "/reflections"
+                  ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
+              style={pathname === "/reflections" || navigatingTo === "/reflections" ? { color: "#e32bf4" } : {}}
             >
               💭 Reflect
             </button>
             <button
-              onClick={() => router.push("/pricing")}
+              onClick={() => handleNavigation("/pricing")}
               className={`text-sm font-medium transition cursor-pointer ${
-                pathname === "/pricing"
-                  ? "text-purple-400 font-bold border-b-2 border-purple-400 pb-1"
+                pathname === "/pricing" || navigatingTo === "/pricing"
+                  ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
+              style={pathname === "/pricing" || navigatingTo === "/pricing" ? { color: "#e32bf4" } : {}}
             >
               💎 Upgrade
             </button>
