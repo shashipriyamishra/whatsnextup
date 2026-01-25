@@ -1,7 +1,21 @@
 // Trending API Client
+import { auth } from "@/lib/firebase"
+
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
   "https://whatsnextup-api-214675476458.us-central1.run.app"
+
+// Helper function to get auth token
+async function getAuthToken(): Promise<string | null> {
+  try {
+    const user = auth.currentUser
+    if (!user) return null
+    return await user.getIdToken()
+  } catch (error) {
+    console.error("Error getting auth token:", error)
+    return null
+  }
+}
 
 export interface RedditPost {
   title: string
@@ -82,8 +96,18 @@ export async function getRedditTrending(
   limit: number = 10,
 ): Promise<RedditPost[]> {
   try {
+    const token = await getAuthToken()
+    if (!token) {
+      console.error("No auth token available")
+      return []
+    }
     const response = await fetch(
       `${API_URL}/api/trending/reddit?subreddit=${subreddit}&limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     )
     const data = await response.json()
     return data.posts || []
@@ -99,8 +123,18 @@ export async function getYouTubeTrending(
   limit: number = 10,
 ): Promise<YouTubeVideo[]> {
   try {
+    const token = await getAuthToken()
+    if (!token) {
+      console.error("No auth token available")
+      return []
+    }
     const response = await fetch(
       `${API_URL}/api/trending/youtube?region=${region}&category=${category}&limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     )
     const data = await response.json()
     return data.videos || []
@@ -116,8 +150,18 @@ export async function getTopNews(
   limit: number = 10,
 ): Promise<NewsArticle[]> {
   try {
+    const token = await getAuthToken()
+    if (!token) {
+      console.error("No auth token available")
+      return []
+    }
     const response = await fetch(
       `${API_URL}/api/trending/news?country=${country}&category=${category}&limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     )
     const data = await response.json()
     return data.articles || []
@@ -132,8 +176,18 @@ export async function getWeather(
   country: string = "US",
 ): Promise<WeatherData | null> {
   try {
+    const token = await getAuthToken()
+    if (!token) {
+      console.error("No auth token available")
+      return null
+    }
     const response = await fetch(
       `${API_URL}/api/trending/weather?city=${city}&country=${country}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     )
     const data = await response.json()
     return data.weather || null
@@ -147,8 +201,18 @@ export async function getHackerNewsTrending(
   limit: number = 10,
 ): Promise<HackerNewsStory[]> {
   try {
+    const token = await getAuthToken()
+    if (!token) {
+      console.error("No auth token available")
+      return []
+    }
     const response = await fetch(
       `${API_URL}/api/trending/hackernews?limit=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     )
     const data = await response.json()
     return data.stories || []
@@ -163,8 +227,18 @@ export async function getGitHubTrending(
   since: string = "daily",
 ): Promise<GitHubRepo[]> {
   try {
+    const token = await getAuthToken()
+    if (!token) {
+      console.error("No auth token available")
+      return []
+    }
     const response = await fetch(
       `${API_URL}/api/trending/github?language=${language}&since=${since}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     )
     const data = await response.json()
     return data.repositories || []
@@ -179,12 +253,22 @@ export async function getPersonalizedFeed(
   country?: string,
 ): Promise<PersonalizedFeed> {
   try {
+    const token = await getAuthToken()
+    if (!token) {
+      console.error("No auth token available")
+      return {}
+    }
     const params = new URLSearchParams()
     if (city) params.append("city", city)
     if (country) params.append("country", country)
 
     const response = await fetch(
       `${API_URL}/api/trending/feed?${params.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     )
     const data = await response.json()
     return data.feed || {}

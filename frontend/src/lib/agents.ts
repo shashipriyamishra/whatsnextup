@@ -1,7 +1,20 @@
 // Agent API calls
 import { getApiUrl } from "./api"
+import { auth } from "@/lib/firebase"
 
 const API_URL = getApiUrl()
+
+// Helper function to get auth token
+async function getAuthToken(): Promise<string | null> {
+  try {
+    const user = auth.currentUser
+    if (!user) return null
+    return await user.getIdToken()
+  } catch (error) {
+    console.error("Error getting auth token:", error)
+    return null
+  }
+}
 
 export interface Agent {
   id: string
@@ -12,7 +25,16 @@ export interface Agent {
 
 export async function getAllAgents(): Promise<Agent[]> {
   try {
-    const response = await fetch(`${API_URL}/api/agents`)
+    const token = await getAuthToken()
+    if (!token) {
+      console.error("No auth token available")
+      return []
+    }
+    const response = await fetch(`${API_URL}/api/agents`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
 
     if (!response.ok) {
       throw new Error(`Failed to fetch agents: ${response.statusText}`)
