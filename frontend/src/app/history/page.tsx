@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/components/contexts"
 import {
@@ -11,6 +11,7 @@ import {
   Conversation,
   ConversationStats,
 } from "@/lib/conversations"
+import { useCachedData } from "@/lib/cache"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,8 +24,14 @@ export default function HistoryPage() {
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [stats, setStats] = useState<ConversationStats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedAgent, setSelectedAgent] = useState<string | undefined>()
+  const observerRef = useRef<IntersectionObserver | null>(null)
+  const loadMoreRef = useRef<HTMLDivElement | null>(null)
+
+  const LIMIT = 20 // Load 20 conversations at a time
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -32,6 +39,7 @@ export default function HistoryPage() {
     }
   }, [authLoading, user, router])
 
+  // Load initial data
   useEffect(() => {
     if (!user || !token) return
 
@@ -41,12 +49,13 @@ export default function HistoryPage() {
       setLoading(true)
       try {
         const [historyData, statsData] = await Promise.all([
-          getConversationHistory(token as string, selectedAgent),
+          getConversationHistory(token as string, selectedAgent, LIMIT),
           getConversationStats(token as string),
         ])
 
         if (mounted) {
           setConversations(historyData || [])
+          setHasMore((historyData || []).length >= LIMIT)
           // Ensure statsData is an object before processing
           if (statsData && typeof statsData === "object") {
             setStats({
@@ -74,6 +83,66 @@ export default function HistoryPage() {
       mounted = false
     }
   }, [user, token, selectedAgent])
+
+  // Load more conversations (infinite scroll)
+  const loadMore = useCallback(async () => {
+    if (!token || loadingMore || !hasMore || loading) return
+
+    setLoadingMore(true)
+    try {
+      // In a real implementation, you'd pass an offset/cursor
+      // For now, we'll simulate by fetching with increased limit
+      const moreData = await getConversationHistory(
+        token as string,
+        selectedAgent,
+        conversations.length + LIMIT,
+      )
+
+      if (moreData && moreData.length > conversations.length) {
+        setConversations(moreData)
+        setHasMore(moreData.length >= conversations.length + LIMIT)
+      } else {
+        setHasMore(false)
+      }
+    } catch (error) {
+      console.error("Failed to load more:", error)
+      setHasMore(false)
+    } finally {
+      setLoadingMore(false)
+    }
+  }, [
+    token,
+    selectedAgent,
+    conversations.length,
+    loadingMore,
+    hasMore,
+    loading,
+  ])
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (loading || !hasMore) return
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loadingMore) {
+          loadMore()
+        }
+      },
+      { threshold: 0.1 },
+    )
+
+    const currentRef = loadMoreRef.current
+    if (currentRef) {
+      observerRef.current.observe(currentRef)
+    }
+
+    return () => {
+      if (observerRef.current && currentRef) {
+        observerRef.current.unobserve(currentRef)
+      }
+    }
+  }, [loadMore, loading, hasMore, loadingMore])
 
   async function handleSearch() {
     if (!token || !searchQuery.trim()) return
@@ -267,11 +336,31 @@ export default function HistoryPage() {
             )}
           </div>
 
-          {conversations.length > 0 && (
+          {/* Infinite scroll trigger */}
+          {hasMore && conversations.length > 0 && (
+            <div ref={loadMoreRef} className="py-8 text-center">
+              {loadingMore ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span className="text-white/60">Loading more...</span>
+                </div>
+              ) : (
+                <Button
+                  onClick={loadMore}
+                  variant="outline"
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                >
+                  Load More
+                </Button>
+              )}
+            </div>
+          )}
+
+          {conversations.length > 0 && !hasMore && (
             <div className="mt-8 text-center">
               <p className="text-white/50 text-sm">
-                Showing {conversations.length} conversation
-                {conversations.length !== 1 ? "s" : ""}
+                Showing all {conversations.length} conversation
+                {conversations.length !== 1 ? "s" : ""} • End of history
               </p>
             </div>
           )}

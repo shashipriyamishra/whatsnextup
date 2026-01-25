@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { useAuth } from "@/components/contexts"
 import { getApiUrl } from "@/lib/api"
+import { useCachedData } from "@/lib/cache"
 
 interface Memory {
   id: string
@@ -28,47 +29,43 @@ export default function MemoriesPage() {
   const { user, loading } = useAuth()
   const [memories, setMemories] = useState<Memory[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [isLoading, setIsLoading] = useState(false)
 
-  // Memoize fetchMemories to prevent infinite loops
-  const fetchMemories = useCallback(async () => {
-    if (!user) return
-
-    try {
-      setIsLoading(true)
-      const token = await user.getIdToken()
-
-      if (!token) {
-        console.error("No auth token available")
-        return
+  const {
+    data: cachedMemories,
+    refresh: refreshMemories,
+    loading: memLoading,
+  } = useCachedData(
+    "getMemories",
+    async () => {
+      if (!user) return []
+      try {
+        const token = await user.getIdToken()
+        if (!token) return []
+        const response = await fetch(`${getApiUrl()}/api/memories`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        if (response.ok) {
+          const data = await response.json()
+          return data.memories || []
+        }
+        return []
+      } catch (error) {
+        console.error("Failed to fetch memories:", error)
+        return []
       }
+    },
+    { initialState: [] as Memory[] },
+  )
 
-      const response = await fetch(`${getApiUrl()}/api/memories`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setMemories(data.memories || [])
-      } else {
-        console.error("Failed to fetch memories:", response.statusText)
-      }
-    } catch (error) {
-      console.error("Failed to fetch memories:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [user])
-
-  // Load memories once when user is authenticated
+  // Update memories when cache loads
   useEffect(() => {
-    if (user && !loading) {
-      fetchMemories()
+    if (cachedMemories) {
+      setMemories(cachedMemories)
     }
-  }, [user, loading, fetchMemories])
+  }, [cachedMemories])
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
@@ -149,6 +146,26 @@ export default function MemoriesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950 pt-0">
       <main className="max-w-5xl mx-auto px-4 pt-8 pb-8">
+        {/* Header with refresh button */}
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-white">🧠 Your Memories</h1>
+          <Button
+            onClick={() => refreshMemories(true)}
+            disabled={memLoading}
+            variant="outline"
+            className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+          >
+            {memLoading ? (
+              <span className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                Refreshing...
+              </span>
+            ) : (
+              "🔄 Refresh"
+            )}
+          </Button>
+        </div>
+
         {/* Create new memory button */}
         <div className="mb-8">
           <Link href="/memories/create" className="block">

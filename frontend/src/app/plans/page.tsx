@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "@/components/contexts"
 import { getApiUrl } from "@/lib/api"
+import { useCachedData } from "@/lib/cache"
 
 interface PlanStep {
   step: number
@@ -31,41 +32,43 @@ export default function PlansPage() {
   const [selectedStatus, setSelectedStatus] = useState<
     "active" | "completed" | "paused" | "all"
   >("active")
-  const [isLoading, setIsLoading] = useState(false)
 
+  const {
+    data: cachedPlans,
+    refresh: refreshPlans,
+    loading: plansLoading,
+  } = useCachedData(
+    "getPlans",
+    async () => {
+      if (!user) return []
+      try {
+        const token = await user.getIdToken()
+        if (!token) return []
+        const response = await fetch(`${getApiUrl()}/api/plans`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        if (response.ok) {
+          const data = await response.json()
+          return data.plans || []
+        }
+        return []
+      } catch (error) {
+        console.error("Failed to fetch plans:", error)
+        return []
+      }
+    },
+    { initialState: [] as Plan[] },
+  )
+
+  // Update plans when cache loads
   useEffect(() => {
-    if (user && !loading) {
-      fetchPlans()
+    if (cachedPlans) {
+      setPlans(cachedPlans)
     }
-  }, [user, loading])
-
-  const fetchPlans = async () => {
-    try {
-      setIsLoading(true)
-      const token = await user?.getIdToken()
-
-      if (!token) {
-        console.error("No auth token available")
-        return
-      }
-
-      const response = await fetch(`${getApiUrl()}/api/plans`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setPlans(data.plans || [])
-      }
-    } catch (error) {
-      console.error("Failed to fetch plans:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  }, [cachedPlans])
 
   const handleDeletePlan = (planId: string) => {
     setPlans(plans.filter((p) => p.id !== planId))
@@ -186,6 +189,26 @@ export default function PlansPage() {
   return (
     <div className="min-h-screen bg-black/95 relative overflow-hidden">
       <main className="max-w-5xl mx-auto px-4 pt-8 pb-8">
+        {" "}
+        {/* Header with refresh button */}
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-white">📋 Your Plans</h1>
+          <Button
+            onClick={() => refreshPlans(true)}
+            disabled={plansLoading}
+            variant="outline"
+            className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+          >
+            {plansLoading ? (
+              <span className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                Refreshing...
+              </span>
+            ) : (
+              "🔄 Refresh"
+            )}
+          </Button>
+        </div>
         {/* New plan button */}
         <div className="mb-8">
           <Link href="/plans/create" className="block">
@@ -194,7 +217,6 @@ export default function PlansPage() {
             </button>
           </Link>
         </div>
-
         {/* Status filters */}
         <div className="mb-8">
           <h2 className="text-white text-sm font-semibold mb-4">
@@ -216,7 +238,6 @@ export default function PlansPage() {
             ))}
           </div>
         </div>
-
         {/* Plans list */}
         {isLoading ? (
           <div className="text-center py-12">

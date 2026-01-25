@@ -8,13 +8,18 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useCachedData } from "@/lib/cache"
 import Link from "next/link"
 
 export default function TrendingPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [feed, setFeed] = useState<PersonalizedFeed>({})
-  const [loading, setLoading] = useState(true)
+  const { data: feed, loading, refresh: refreshFeed } = useCachedData(
+    "getPersonalizedFeed",
+    () => getPersonalizedFeed(),
+    { initialState: {} as PersonalizedFeed },
+  )
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -22,41 +27,40 @@ export default function TrendingPage() {
       return
     }
 
-    if (user) {
-      let mounted = true
-
-      async function loadFeed() {
-        setLoading(true)
-        // Try to get user location (simplified)
-        const feedData = await getPersonalizedFeed()
-        if (mounted) {
-          setFeed(feedData)
-          setLoading(false)
-        }
-      }
-
-      loadFeed()
-
-      return () => {
-        mounted = false
-      }
+    if (user && feed && Object.keys(feed).length > 0) {
+      setLastUpdated(new Date())
     }
+  }, [authLoading, user, router, feed])
   }, [user, authLoading, router])
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black/95">
-        <div className="flex gap-2">
-          <div className="w-3 h-3 bg-pink-400 rounded-full animate-bounce"></div>
+      <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden pt-0">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/50 rounded-full blur-3xl animate-blob"></div>
           <div
-            className="w-3 h-3 bg-pink-400 rounded-full animate-bounce"
-            style={{ animationDelay: "0.2s" }}
-          ></div>
-          <div
-            className="w-3 h-3 bg-pink-400 rounded-full animate-bounce"
-            style={{ animationDelay: "0.4s" }}
+            className="absolute -bottom-40 -left-40 w-96 h-96 bg-pink-600/40 rounded-full blur-3xl animate-blob"
+            style={{ animationDelay: "2s" }}
           ></div>
         </div>
+
+        <main className="relative z-10 px-4 md:px-6 py-8 flex-1">
+          <div className="max-w-7xl mx-auto">
+            <h1 className="text-4xl font-black text-white mb-8">
+              🔥 Trending Now
+            </h1>
+
+            {/* Loading skeleton */}
+            <div className="space-y-8">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="h-64 rounded-2xl bg-white/5 border border-white/10 animate-pulse"
+                ></div>
+              ))}
+            </div>
+          </div>
+        </main>
       </div>
     )
   }
@@ -74,6 +78,35 @@ export default function TrendingPage() {
       {/* Content */}
       <main className="relative z-10 px-4 md:px-6 py-8 flex-1">
         <div className="max-w-7xl mx-auto">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-black text-white mb-2">
+                🔥 Trending Now
+              </h1>
+              {lastUpdated && (
+                <p className="text-white/50 text-sm">
+                  Last updated: {lastUpdated.toLocaleTimeString()}
+                </p>
+              )}
+            </div>
+            <Button
+              onClick={() => refreshFeed(true)}
+              disabled={loading}
+              variant="outline"
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 transition"
+            >
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  Refreshing...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  🔄 Refresh Feed
+                </span>
+              )}
+            </Button>
+          </div>
           <Tabs defaultValue="all" className="w-full">
             <TabsList className="mb-8">
               <TabsTrigger value="all" colorIndex={0}>

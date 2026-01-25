@@ -7,54 +7,59 @@ import { useRouter } from "next/navigation"
 import { getAllAgents, Agent } from "@/lib/agents"
 import { AgentCard } from "@/components/glass/AgentCard"
 import { Button } from "@/components/ui/button"
+import { useCachedData } from "@/lib/cache"
 import Link from "next/link"
 
 export default function AgentsPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [agents, setAgents] = useState<Agent[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: agents, loading, refresh: refreshAgents } = useCachedData(
+    "getAllAgents",
+    () => getAllAgents(),
+    { initialState: [] as Agent[] },
+  )
 
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login")
       return
     }
-
-    if (user) {
-      let mounted = true
-
-      async function loadData() {
-        setLoading(true)
-        const agentList = await getAllAgents()
-        if (mounted) {
-          setAgents(agentList)
-          setLoading(false)
-        }
-      }
-
-      loadData()
-
-      return () => {
-        mounted = false
-      }
-    }
-  }, [user, authLoading, router])
+  }, [authLoading, user, router])
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black/95">
-        <div className="flex gap-2">
-          <div className="w-3 h-3 bg-pink-400 rounded-full animate-bounce"></div>
+      <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden pt-0">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/50 rounded-full blur-3xl animate-blob"></div>
           <div
-            className="w-3 h-3 bg-pink-400 rounded-full animate-bounce"
-            style={{ animationDelay: "0.2s" }}
-          ></div>
-          <div
-            className="w-3 h-3 bg-pink-400 rounded-full animate-bounce"
-            style={{ animationDelay: "0.4s" }}
+            className="absolute -bottom-40 -left-40 w-96 h-96 bg-pink-600/40 rounded-full blur-3xl animate-blob"
+            style={{ animationDelay: "2s" }}
           ></div>
         </div>
+
+        <main className="relative z-10 px-4 md:px-6 py-8 flex-1">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-8">
+              <h2 className="text-4xl font-black text-white mb-3">
+                🤖 Your AI Agents
+              </h2>
+              <p className="text-white/70">
+                Specialized AI assistants ready to help you with specific areas
+                of your life
+              </p>
+            </div>
+
+            {/* Loading skeleton */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div
+                  key={i}
+                  className="h-48 rounded-2xl bg-white/5 border border-white/10 animate-pulse"
+                ></div>
+              ))}
+            </div>
+          </div>
+        </main>
       </div>
     )
   }
@@ -73,16 +78,33 @@ export default function AgentsPage() {
       {/* Content */}
       <main className="relative z-10 px-4 md:px-6 py-8 flex-1">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-8">
-            <h2 className="text-4xl font-black text-white mb-3">
-              🤖 Your AI Agents
-            </h2>
-            <p className="text-white/70">
-              Specialized AI assistants ready to help you with specific areas of
-              your life
-            </p>
-          </div>
-
+            <div className="mb-8 flex items-center justify-between">
+              <div>
+                <h2 className="text-4xl font-black text-white mb-3">
+                  🤖 Your AI Agents
+                </h2>
+                <p className="text-white/70">
+                  Specialized AI assistants ready to help you with specific areas of
+                  your life
+                </p>
+              </div>
+              <Button
+                onClick={() => refreshAgents(true)}
+                disabled={loading}
+                variant="outline"
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20 transition"
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Refreshing...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    🔄 Refresh
+                  </span>
+                )}
+              </Button>
           {agents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {agents.map((agent, index) => (

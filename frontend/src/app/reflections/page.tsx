@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "@/components/contexts"
 import { getApiUrl } from "@/lib/api"
+import { useCachedData } from "@/lib/cache"
 
 interface Reflection {
   id: string
@@ -20,41 +21,43 @@ export default function ReflectionsPage() {
   const { user, loading } = useAuth()
   const [reflections, setReflections] = useState<Reflection[]>([])
   const [selectedType, setSelectedType] = useState<string>("all")
-  const [isLoading, setIsLoading] = useState(false)
 
+  const {
+    data: cachedReflections,
+    refresh: refreshReflections,
+    loading: reflLoading,
+  } = useCachedData(
+    "getReflections",
+    async () => {
+      if (!user) return []
+      try {
+        const token = await user.getIdToken()
+        if (!token) return []
+        const response = await fetch(`${getApiUrl()}/api/reflections`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        if (response.ok) {
+          const data = await response.json()
+          return data.reflections || []
+        }
+        return []
+      } catch (error) {
+        console.error("Failed to fetch reflections:", error)
+        return []
+      }
+    },
+    { initialState: [] as Reflection[] },
+  )
+
+  // Update reflections when cache loads
   useEffect(() => {
-    if (user && !loading) {
-      fetchReflections()
+    if (cachedReflections) {
+      setReflections(cachedReflections)
     }
-  }, [user, loading])
-
-  const fetchReflections = async () => {
-    try {
-      setIsLoading(true)
-      const token = await user?.getIdToken()
-
-      if (!token) {
-        console.error("No auth token available")
-        return
-      }
-
-      const response = await fetch(`${getApiUrl()}/api/reflections`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setReflections(data.reflections || [])
-      }
-    } catch (error) {
-      console.error("Failed to fetch reflections:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  }, [cachedReflections])
 
   const getTypeColor = (type: string) => {
     const colors: Record<string, string> = {
@@ -129,6 +132,26 @@ export default function ReflectionsPage() {
   return (
     <div className="min-h-screen bg-black/95 relative overflow-hidden">
       <main className="max-w-5xl mx-auto px-4 pt-8 pb-8">
+        {/* Header with refresh button */}
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-white">💭 Your Reflections</h1>
+          <Button
+            onClick={() => refreshReflections(true)}
+            disabled={reflLoading}
+            variant="outline"
+            className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+          >
+            {reflLoading ? (
+              <span className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                Refreshing...
+              </span>
+            ) : (
+              "🔄 Refresh"
+            )}
+          </Button>
+        </div>
+
         {/* Create new reflection button */}
         <div className="mb-8">
           <Link href="/reflections/create" className="block">
