@@ -55,25 +55,19 @@ export function Header() {
   if (isLoginPage) return null
 
   return (
-    <header className="relative z-10 px-4 md:px-6 py-4 border-b border-white/10 bg-white/5 backdrop-blur-2xl">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Left side - Logo */}
-        <div
-          className="flex items-center gap-4 cursor-pointer hover:opacity-80"
-          onClick={() => router.push("/")}
-        >
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-pink-500/30">
-            <span className="text-xl">✨</span>
-          </div>
-          <div>
-            <h1 className="font-bold text-lg text-white">What's Next Up</h1>
-            <p className="text-xs text-white/50">
-              {user ? "Your AI Companion" : "Discover What's Next"}
-            </p>
-          </div>
+    <header className="bg-black/80 border-b border-white/10 sticky top-0 z-40 backdrop-blur-2xl">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Left side - Logo/Title */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => router.push("/")}
+            className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent hover:opacity-80 transition cursor-pointer"
+          >
+            ✨ What&apos;s Next Up
+          </button>
         </div>
 
-        {/* Center - Navigation for authenticated users */}
+        {/* Center - Navigation */}
         {user && (
           <nav className="hidden md:flex items-center gap-8">
             <button
@@ -126,19 +120,39 @@ export function Header() {
             >
               📋 Plans
             </button>
+            <button
+              onClick={() => router.push("/reflections")}
+              className={`text-sm font-medium transition cursor-pointer ${
+                pathname === "/reflections"
+                  ? "text-purple-400 font-bold border-b-2 border-purple-400 pb-1"
+                  : "text-white/70 hover:text-white"
+              }`}
+            >
+              💭 Reflect
+            </button>
+            <button
+              onClick={() => router.push("/pricing")}
+              className={`text-sm font-medium transition cursor-pointer ${
+                pathname === "/pricing"
+                  ? "text-purple-400 font-bold border-b-2 border-purple-400 pb-1"
+                  : "text-white/70 hover:text-white"
+              }`}
+            >
+              💎 Upgrade
+            </button>
           </nav>
         )}
 
-        {/* Right side - Auth buttons/user info */}
-        <div className="flex items-center gap-4">
-          {user ? (
+        {/* Right side - User & Tier Info */}
+        <div className="flex items-center gap-3">
+          {user && (
             <div className="flex items-center gap-3">
               <span className="text-xs font-semibold px-3 py-1 bg-purple-500/30 text-purple-300 rounded border border-purple-500/50">
                 {tier.charAt(0).toUpperCase() + tier.slice(1)}
               </span>
               <button
                 onClick={() => router.push("/profile")}
-                className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 text-white text-xs font-bold flex items-center justify-center hover:opacity-80 transition cursor-pointer hover:scale-110"
+                className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold flex items-center justify-center hover:opacity-80 transition cursor-pointer hover:scale-110"
                 title="View profile"
               >
                 {user.email?.charAt(0).toUpperCase() || "U"}
@@ -151,7 +165,8 @@ export function Header() {
                 Sign Out
               </button>
             </div>
-          ) : (
+          )}
+          {!user && (
             <Link href="/login">
               <Button variant="default" size="sm" className="cursor-pointer">
                 Sign In
