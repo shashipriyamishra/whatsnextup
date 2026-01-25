@@ -85,7 +85,7 @@ function HeaderComponent() {
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={{
+              style={
                 pathname === "/trending"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
@@ -100,7 +100,7 @@ function HeaderComponent() {
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={{
+              style={
                 pathname === "/agents"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
@@ -115,7 +115,7 @@ function HeaderComponent() {
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={{
+              style={
                 pathname === "/history"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
@@ -130,7 +130,7 @@ function HeaderComponent() {
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={{
+              style={
                 pathname === "/memories"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
@@ -145,7 +145,7 @@ function HeaderComponent() {
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={{
+              style={
                 pathname === "/plans"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
@@ -160,7 +160,7 @@ function HeaderComponent() {
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={{
+              style={
                 pathname === "/reflections"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
@@ -175,7 +175,7 @@ function HeaderComponent() {
                   ? "font-bold border-purple-500"
                   : "border-transparent"
               }`}
-              style={{
+              style={
                 pathname === "/pricing"
                   ? { color: "#a855f7", fontSize: "16px" }
                   : { color: "#c084fc", fontSize: "14px" }
