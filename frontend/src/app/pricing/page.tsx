@@ -32,7 +32,7 @@ const plans = [
   },
   {
     name: "Plus",
-    price: "₹499",
+    price: "₹199",
     period: "per month",
     description: "For power users who want more",
     features: [
@@ -54,7 +54,7 @@ const plans = [
   },
   {
     name: "Pro",
-    price: "₹999",
+    price: "₹499",
     period: "per month",
     description: "For professionals & teams",
     features: [

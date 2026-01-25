@@ -1,38 +1,47 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/components/contexts"
 import { getPersonalizedFeed, PersonalizedFeed } from "@/lib/trending"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 
 export default function TrendingPage() {
+  const { user, loading: authLoading } = useAuth()
+  const router = useRouter()
   const [feed, setFeed] = useState<PersonalizedFeed>({})
   const [loading, setLoading] = useState(true)
-  const router = useRouter()
 
   useEffect(() => {
-    let mounted = true
+    if (!authLoading && !user) {
+      router.push("/login")
+      return
+    }
 
-    async function loadFeed() {
-      setLoading(true)
-      // Try to get user location (simplified)
-      const feedData = await getPersonalizedFeed()
-      if (mounted) {
-        setFeed(feedData)
-        setLoading(false)
+    if (user) {
+      let mounted = true
+
+      async function loadFeed() {
+        setLoading(true)
+        // Try to get user location (simplified)
+        const feedData = await getPersonalizedFeed()
+        if (mounted) {
+          setFeed(feedData)
+          setLoading(false)
+        }
+      }
+
+      loadFeed()
+
+      return () => {
+        mounted = false
       }
     }
-
-    loadFeed()
-
-    return () => {
-      mounted = false
-    }
-  }, [])
+  }, [user, authLoading, router])
 
   if (loading) {
     return (

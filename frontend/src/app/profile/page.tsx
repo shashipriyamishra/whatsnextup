@@ -182,7 +182,7 @@ export default function ProfilePage() {
               {currentTier === "free" ? (
                 <Link href="/pricing">
                   <Button className="w-full cursor-pointer bg-gradient-to-r from-purple-600 to-pink-600 mt-4">
-                    🚀 Upgrade to Plus - ₹499/month
+                    🚀 Upgrade to Plus - ₹199/month
                   </Button>
                 </Link>
               ) : (

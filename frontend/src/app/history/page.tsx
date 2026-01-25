@@ -47,10 +47,16 @@ export default function HistoryPage() {
 
         if (mounted) {
           setConversations(historyData || [])
-          setStats(statsData ? {
-            ...statsData,
-            agents_used: Array.isArray(statsData.agents_used) ? statsData.agents_used : []
-          } : null)
+          setStats(
+            statsData
+              ? {
+                  ...statsData,
+                  agents_used: Array.isArray(statsData.agents_used)
+                    ? statsData.agents_used
+                    : [],
+                }
+              : null,
+          )
         }
       } catch (error) {
         console.error("Failed to load history:", error)

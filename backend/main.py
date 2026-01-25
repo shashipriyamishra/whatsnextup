@@ -849,8 +849,8 @@ async def discovery_events(location: str = None):
 # ============ AGENT ENDPOINTS (Requires Auth) ============
 
 @app.get("/api/agents")
-def get_all_agents():
-    """Get list of all available AI agents - no auth required for discovery"""
+def get_all_agents(user: dict = Depends(get_current_user)):
+    """Get list of all available AI agents"""
     try:
         # Return hardcoded list for reliability
         agents_list = [
@@ -1092,11 +1092,15 @@ async def get_user_conversation_stats(user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
 
 # ============================================================================
-# TRENDING & SOCIAL MEDIA ENDPOINTS (No auth required)
+# TRENDING & SOCIAL MEDIA ENDPOINTS (Requires Authentication)
 # ============================================================================
 
 @app.get("/api/trending/reddit")
-async def get_trending_reddit(subreddit: str = "popular", limit: int = 10):
+async def get_trending_reddit(
+    subreddit: str = "popular",
+    limit: int = 10,
+    user: dict = Depends(get_current_user)
+):
     """Get trending Reddit posts"""
     try:
         from trending.api_integrations import get_reddit_trending
@@ -1107,7 +1111,12 @@ async def get_trending_reddit(subreddit: str = "popular", limit: int = 10):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/trending/youtube")
-async def get_trending_youtube(region: str = "US", category: str = "0", limit: int = 10):
+async def get_trending_youtube(
+    region: str = "US",
+    category: str = "0",
+    limit: int = 10,
+    user: dict = Depends(get_current_user)
+):
     """Get trending YouTube videos"""
     try:
         from trending.api_integrations import get_youtube_trending
@@ -1118,7 +1127,12 @@ async def get_trending_youtube(region: str = "US", category: str = "0", limit: i
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/trending/news")
-async def get_trending_news(country: str = "us", category: str = "general", limit: int = 10):
+async def get_trending_news(
+    country: str = "us",
+    category: str = "general",
+    limit: int = 10,
+    user: dict = Depends(get_current_user)
+):
     """Get top news headlines"""
     try:
         from trending.api_integrations import get_top_news
@@ -1129,7 +1143,11 @@ async def get_trending_news(country: str = "us", category: str = "general", limi
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/trending/weather")
-async def get_current_weather(city: str = "New York", country: str = "US"):
+async def get_current_weather(
+    city: str = "New York",
+    country: str = "US",
+    user: dict = Depends(get_current_user)
+):
     """Get current weather"""
     try:
         from trending.api_integrations import get_weather
@@ -1140,7 +1158,10 @@ async def get_current_weather(city: str = "New York", country: str = "US"):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/trending/hackernews")
-async def get_trending_hackernews(limit: int = 10):
+async def get_trending_hackernews(
+    limit: int = 10,
+    user: dict = Depends(get_current_user)
+):
     """Get top Hacker News stories"""
     try:
         from trending.api_integrations import get_hackernews_top
@@ -1151,7 +1172,11 @@ async def get_trending_hackernews(limit: int = 10):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/trending/github")
-async def get_trending_github(language: str = "", since: str = "daily"):
+async def get_trending_github(
+    language: str = "",
+    since: str = "daily",
+    user: dict = Depends(get_current_user)
+):
     """Get trending GitHub repositories"""
     try:
         from trending.api_integrations import get_github_trending
@@ -1164,7 +1189,8 @@ async def get_trending_github(language: str = "", since: str = "daily"):
 @app.get("/api/trending/feed")
 async def get_personalized_trending_feed(
     city: Optional[str] = None,
-    country: Optional[str] = None
+    country: Optional[str] = None,
+    user: dict = Depends(get_current_user)
 ):
     """Get aggregated personalized feed from multiple sources"""
     try:

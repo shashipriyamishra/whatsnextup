@@ -84,7 +84,11 @@ function HeaderComponent() {
                   ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
-              style={pathname === "/trending" || navigatingTo === "/trending" ? { color: "#e32bf4" } : {}}
+              style={
+                pathname === "/trending" || navigatingTo === "/trending"
+                  ? { color: "#e32bf4" }
+                  : {}
+              }
             >
               🔥 Trending
             </button>
@@ -95,7 +99,11 @@ function HeaderComponent() {
                   ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
-              style={pathname === "/agents" || navigatingTo === "/agents" ? { color: "#e32bf4" } : {}}
+              style={
+                pathname === "/agents" || navigatingTo === "/agents"
+                  ? { color: "#e32bf4" }
+                  : {}
+              }
             >
               🤖 Agents
             </button>
@@ -106,7 +114,11 @@ function HeaderComponent() {
                   ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
-              style={pathname === "/history" || navigatingTo === "/history" ? { color: "#e32bf4" } : {}}
+              style={
+                pathname === "/history" || navigatingTo === "/history"
+                  ? { color: "#e32bf4" }
+                  : {}
+              }
             >
               📜 History
             </button>
@@ -117,7 +129,11 @@ function HeaderComponent() {
                   ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
-              style={pathname === "/memories" || navigatingTo === "/memories" ? { color: "#e32bf4" } : {}}
+              style={
+                pathname === "/memories" || navigatingTo === "/memories"
+                  ? { color: "#e32bf4" }
+                  : {}
+              }
             >
               💭 Memories
             </button>
@@ -128,7 +144,11 @@ function HeaderComponent() {
                   ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
-              style={pathname === "/plans" || navigatingTo === "/plans" ? { color: "#e32bf4" } : {}}
+              style={
+                pathname === "/plans" || navigatingTo === "/plans"
+                  ? { color: "#e32bf4" }
+                  : {}
+              }
             >
               📋 Plans
             </button>
@@ -139,7 +159,11 @@ function HeaderComponent() {
                   ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
-              style={pathname === "/reflections" || navigatingTo === "/reflections" ? { color: "#e32bf4" } : {}}
+              style={
+                pathname === "/reflections" || navigatingTo === "/reflections"
+                  ? { color: "#e32bf4" }
+                  : {}
+              }
             >
               💭 Reflect
             </button>
@@ -150,7 +174,11 @@ function HeaderComponent() {
                   ? "font-bold pb-1"
                   : "text-white/70 hover:text-white"
               }`}
-              style={pathname === "/pricing" || navigatingTo === "/pricing" ? { color: "#e32bf4" } : {}}
+              style={
+                pathname === "/pricing" || navigatingTo === "/pricing"
+                  ? { color: "#e32bf4" }
+                  : {}
+              }
             >
               💎 Upgrade
             </button>
