@@ -41,21 +41,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Listen for Firebase auth state changes and sync to Zustand
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser)
+      const {
+        user: prevUser,
+        token: prevToken,
+        loading: prevLoading,
+      } = useAuthStore.getState()
+
+      if (prevUser?.uid !== currentUser?.uid) {
+        setUser(currentUser)
+      }
 
       if (currentUser) {
         try {
           const idToken = await currentUser.getIdToken()
-          setToken(idToken)
+          if (prevToken !== idToken) {
+            setToken(idToken)
+          }
         } catch (error) {
           console.error("Failed to get ID token:", error)
-          setToken(null)
+          if (prevToken !== null) {
+            setToken(null)
+          }
         }
       } else {
-        setToken(null)
+        if (prevToken !== null) {
+          setToken(null)
+        }
       }
 
-      setLoading(false)
+      if (prevLoading) {
+        setLoading(false)
+      }
     })
 
     return unsubscribe
