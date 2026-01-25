@@ -79,10 +79,10 @@ function HeaderComponent() {
           <nav className="hidden md:flex items-center gap-8">
             <button
               onClick={() => handleNavigation("/trending")}
-              className={`text-sm font-medium transition cursor-pointer ${
+              className={`text-sm transition cursor-pointer ${
                 pathname === "/trending" || navigatingTo === "/trending"
-                  ? "font-bold pb-1"
-                  : "text-white/70 hover:text-white"
+                  ? "font-bold"
+                  : "text-white/70 hover:text-white font-medium"
               }`}
               style={
                 pathname === "/trending" || navigatingTo === "/trending"
@@ -94,10 +94,10 @@ function HeaderComponent() {
             </button>
             <button
               onClick={() => handleNavigation("/agents")}
-              className={`text-sm font-medium transition cursor-pointer ${
+              className={`text-sm transition cursor-pointer ${
                 pathname === "/agents" || navigatingTo === "/agents"
-                  ? "font-bold pb-1"
-                  : "text-white/70 hover:text-white"
+                  ? "font-bold"
+                  : "text-white/70 hover:text-white font-medium"
               }`}
               style={
                 pathname === "/agents" || navigatingTo === "/agents"
@@ -109,10 +109,10 @@ function HeaderComponent() {
             </button>
             <button
               onClick={() => handleNavigation("/history")}
-              className={`text-sm font-medium transition cursor-pointer ${
+              className={`text-sm transition cursor-pointer ${
                 pathname === "/history" || navigatingTo === "/history"
-                  ? "font-bold pb-1"
-                  : "text-white/70 hover:text-white"
+                  ? "font-bold"
+                  : "text-white/70 hover:text-white font-medium"
               }`}
               style={
                 pathname === "/history" || navigatingTo === "/history"
@@ -124,10 +124,10 @@ function HeaderComponent() {
             </button>
             <button
               onClick={() => handleNavigation("/memories")}
-              className={`text-sm font-medium transition cursor-pointer ${
+              className={`text-sm transition cursor-pointer ${
                 pathname === "/memories" || navigatingTo === "/memories"
-                  ? "font-bold pb-1"
-                  : "text-white/70 hover:text-white"
+                  ? "font-bold"
+                  : "text-white/70 hover:text-white font-medium"
               }`}
               style={
                 pathname === "/memories" || navigatingTo === "/memories"
@@ -139,10 +139,10 @@ function HeaderComponent() {
             </button>
             <button
               onClick={() => handleNavigation("/plans")}
-              className={`text-sm font-medium transition cursor-pointer ${
+              className={`text-sm transition cursor-pointer ${
                 pathname === "/plans" || navigatingTo === "/plans"
-                  ? "font-bold pb-1"
-                  : "text-white/70 hover:text-white"
+                  ? "font-bold"
+                  : "text-white/70 hover:text-white font-medium"
               }`}
               style={
                 pathname === "/plans" || navigatingTo === "/plans"
@@ -154,10 +154,10 @@ function HeaderComponent() {
             </button>
             <button
               onClick={() => handleNavigation("/reflections")}
-              className={`text-sm font-medium transition cursor-pointer ${
+              className={`text-sm transition cursor-pointer ${
                 pathname === "/reflections" || navigatingTo === "/reflections"
-                  ? "font-bold pb-1"
-                  : "text-white/70 hover:text-white"
+                  ? "font-bold"
+                  : "text-white/70 hover:text-white font-medium"
               }`}
               style={
                 pathname === "/reflections" || navigatingTo === "/reflections"
@@ -169,10 +169,10 @@ function HeaderComponent() {
             </button>
             <button
               onClick={() => handleNavigation("/pricing")}
-              className={`text-sm font-medium transition cursor-pointer ${
+              className={`text-sm transition cursor-pointer ${
                 pathname === "/pricing" || navigatingTo === "/pricing"
-                  ? "font-bold pb-1"
-                  : "text-white/70 hover:text-white"
+                  ? "font-bold"
+                  : "text-white/70 hover:text-white font-medium"
               }`}
               style={
                 pathname === "/pricing" || navigatingTo === "/pricing"
