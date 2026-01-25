@@ -64,7 +64,7 @@ function HeaderComponent() {
         }
       } catch (err) {
         // Silently fail - tier already defaults to 'free'
-        if (mounted && process.env.NODE_ENV === 'development') {
+        if (mounted && process.env.NODE_ENV === "development") {
           console.error("Failed to fetch tier:", err)
         }
       }

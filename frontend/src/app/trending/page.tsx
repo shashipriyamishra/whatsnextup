@@ -76,14 +76,28 @@ export default function TrendingPage() {
         <div className="max-w-7xl mx-auto">
           <Tabs defaultValue="all" className="w-full">
             <TabsList className="mb-8">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="reddit">Reddit</TabsTrigger>
-              <TabsTrigger value="tech">Tech</TabsTrigger>
-              <TabsTrigger value="github">GitHub</TabsTrigger>
+              <TabsTrigger value="all" colorIndex={0}>
+                All
+              </TabsTrigger>
+              <TabsTrigger value="reddit" colorIndex={1}>
+                Reddit
+              </TabsTrigger>
+              <TabsTrigger value="tech" colorIndex={2}>
+                Tech
+              </TabsTrigger>
+              <TabsTrigger value="github" colorIndex={3}>
+                GitHub
+              </TabsTrigger>
               {feed.youtube && (
-                <TabsTrigger value="youtube">YouTube</TabsTrigger>
+                <TabsTrigger value="youtube" colorIndex={4}>
+                  YouTube
+                </TabsTrigger>
               )}
-              {feed.news && <TabsTrigger value="news">News</TabsTrigger>}
+              {feed.news && (
+                <TabsTrigger value="news" colorIndex={5}>
+                  News
+                </TabsTrigger>
+              )}
             </TabsList>
 
             {/* All Feed */}

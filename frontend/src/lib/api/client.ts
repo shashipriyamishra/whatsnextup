@@ -17,6 +17,7 @@ import {
 } from "./types"
 import { ApiException, parseError, getUserFriendlyErrorMessage } from "./errors"
 import { auth } from "@/lib/firebase"
+import { logger } from "@/lib/logger"
 
 class ApiClient {
   private baseUrl: string
@@ -31,10 +32,10 @@ class ApiClient {
         typeof window !== "undefined" &&
         process.env.NODE_ENV === "production"
       ) {
-        console.error(
-          "🚨 CRITICAL: NEXT_PUBLIC_API_URL environment variable is not set in production! " +
-            "API calls will fail. Please configure this in your deployment settings (Vercel, etc). " +
-            "Set it to your Cloud Run backend URL.",
+        logger.error(
+          "CRITICAL: NEXT_PUBLIC_API_URL not set in production",
+          undefined,
+          { context: "ApiClient constructor" },
         )
       }
       // Only fallback to localhost in development
@@ -42,12 +43,14 @@ class ApiClient {
         process.env.NODE_ENV === "development" ? "http://localhost:8000" : ""
 
       if (process.env.NODE_ENV === "development") {
-        console.log("[API] Using development fallback: http://localhost:8000")
+        logger.info("Using development API URL", {
+          url: "http://localhost:8000",
+        })
       }
     } else {
       this.baseUrl = apiUrl
       if (process.env.NODE_ENV === "development") {
-        console.log(`[API] Using configured API URL: ${apiUrl}`)
+        logger.info("Using configured API URL", { url: apiUrl })
       }
     }
   }
@@ -62,6 +65,8 @@ class ApiClient {
       headers = {},
       ...fetchOptions
     } = options
+
+    const startTime = Date.now()
 
     try {
       // Add authorization header if required
@@ -78,11 +83,7 @@ class ApiClient {
       }
 
       const url = `${this.baseUrl}${endpoint}`
-
-      // Log request details for debugging
-      if (process.env.NODE_ENV === "development") {
-        console.log(`[API] ${fetchOptions.method || "GET"} ${url}`)
-      }
+      const method = fetchOptions.method || "GET"
 
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), timeout)
@@ -95,10 +96,8 @@ class ApiClient {
 
       clearTimeout(timeoutId)
 
-      // Log response status
-      if (process.env.NODE_ENV === "development") {
-        console.log(`[API] Response: ${response.status} ${response.statusText}`)
-      }
+      const duration = Date.now() - startTime
+      logger.api(method, endpoint, response.status, duration)
 
       if (!response.ok) {
         throw await parseError(response)
@@ -107,12 +106,17 @@ class ApiClient {
       const data = await response.json()
       return data as T
     } catch (error) {
+      const duration = Date.now() - startTime
+      const method = fetchOptions.method || "GET"
+
       if (error instanceof ApiException) {
+        logger.api(method, endpoint, error.status, duration)
         throw error
       }
 
       // Handle AbortError (timeout)
       if (error instanceof DOMException && error.name === "AbortError") {
+        logger.api(method, endpoint, 408, duration)
         throw new ApiException(408, "Request timeout. Please try again.", {
           originalError: error.message,
         })
@@ -120,6 +124,7 @@ class ApiClient {
 
       // Handle network errors
       if (error instanceof TypeError) {
+        logger.api(method, endpoint, 0, duration)
         throw new ApiException(
           0,
           "Network error. Please check your connection.",
@@ -128,6 +133,7 @@ class ApiClient {
       }
 
       // Re-throw if already ApiException
+      logger.error("API request failed", error)
       throw error
     }
   }

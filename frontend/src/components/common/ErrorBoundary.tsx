@@ -5,6 +5,7 @@
  */
 
 import React from "react"
+import { logger } from "@/lib/logger"
 
 interface Props {
   children: React.ReactNode
@@ -27,7 +28,9 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Error caught by boundary:", error, errorInfo)
+    logger.error("React Error Boundary caught error", error, {
+      componentStack: errorInfo.componentStack,
+    })
   }
 
   render() {

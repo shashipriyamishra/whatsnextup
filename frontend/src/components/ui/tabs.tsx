@@ -20,14 +20,27 @@ const TabsList = React.forwardRef<
 ))
 TabsList.displayName = TabsPrimitive.List.displayName
 
+// Solid color variants for each tab (cycle through these)
+const tabColors = [
+  "data-[state=active]:bg-purple-600",
+  "data-[state=active]:bg-blue-600",
+  "data-[state=active]:bg-cyan-600",
+  "data-[state=active]:bg-pink-600",
+  "data-[state=active]:bg-rose-600",
+  "data-[state=active]:bg-indigo-600",
+]
+
 const TabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> & {
+    colorIndex?: number
+  }
+>(({ className, colorIndex = 0, ...props }, ref) => (
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-600 data-[state=active]:to-pink-600 data-[state=active]:shadow-lg",
+      "inline-flex items-center justify-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-lg data-[state=active]:text-white",
+      tabColors[colorIndex % tabColors.length],
       className,
     )}
     {...props}
