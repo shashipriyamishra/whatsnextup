@@ -51,8 +51,8 @@ export function Header() {
   const isLoginPage = pathname === "/login"
   const isLandingPage = pathname === "/"
 
-  // Don't show header on login page
-  if (isLoginPage) return null
+  // Don't show header on login page or landing page (unauthenticated)
+  if (isLoginPage || (!user && isLandingPage)) return null
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
