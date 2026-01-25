@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "@/components/contexts"
-import { Header } from "@/components/Header"
 
 type MemoryCategory =
   | "habit"
@@ -102,10 +101,8 @@ export default function MemoryPage() {
 
   return (
     <div className="min-h-screen bg-black/95 relative overflow-hidden">
-      <Header />
-
       {/* Main content */}
-      <main className="max-w-4xl mx-auto px-4 pt-24 pb-8">
+      <main className="max-w-4xl mx-auto px-4 pt-8 pb-8">
         {/* Category filters */}
         <div className="mb-8">
           <h2 className="text-white text-sm font-semibold mb-4">

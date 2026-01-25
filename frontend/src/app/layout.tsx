@@ -1,5 +1,6 @@
 import "./globals.css"
 import { AuthProvider } from "@/components/contexts"
+import { Header } from "@/components/Header"
 
 export const metadata = {
   title: "What's Next Up - AI Planning Companion",
@@ -44,7 +45,10 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="What's Next Up" />
       </head>
       <body className="bg-gray-50 text-gray-900">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <Header />
+          {children}
+        </AuthProvider>
         <script>
           {`
             if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {

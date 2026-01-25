@@ -6,28 +6,28 @@ const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
-  // Color palette: Solid colors with max 60% dark (40% opacity base colors)
+  // Color palette: Solid colors with max 60% dark (70% opacity base colors for better contrast)
   const colors = [
-    "bg-blue-900/40 border-blue-600/30 hover:bg-blue-900/50 hover:border-blue-500/40",
-    "bg-indigo-900/40 border-indigo-600/30 hover:bg-indigo-900/50 hover:border-indigo-500/40",
-    "bg-purple-900/40 border-purple-600/30 hover:bg-purple-900/50 hover:border-purple-500/40",
-    "bg-pink-900/40 border-pink-600/30 hover:bg-pink-900/50 hover:border-pink-500/40",
-    "bg-rose-900/40 border-rose-600/30 hover:bg-rose-900/50 hover:border-rose-500/40",
-    "bg-red-900/40 border-red-600/30 hover:bg-red-900/50 hover:border-red-500/40",
-    "bg-orange-900/40 border-orange-600/30 hover:bg-orange-900/50 hover:border-orange-500/40",
-    "bg-amber-900/40 border-amber-600/30 hover:bg-amber-900/50 hover:border-amber-500/40",
-    "bg-cyan-900/40 border-cyan-600/30 hover:bg-cyan-900/50 hover:border-cyan-500/40",
-    "bg-teal-900/40 border-teal-600/30 hover:bg-teal-900/50 hover:border-teal-500/40",
+    "bg-blue-950/70 border border-blue-700/50 hover:bg-blue-950/80 hover:border-blue-600/60",
+    "bg-indigo-950/70 border border-indigo-700/50 hover:bg-indigo-950/80 hover:border-indigo-600/60",
+    "bg-purple-950/70 border border-purple-700/50 hover:bg-purple-950/80 hover:border-purple-600/60",
+    "bg-pink-950/70 border border-pink-700/50 hover:bg-pink-950/80 hover:border-pink-600/60",
+    "bg-rose-950/70 border border-rose-700/50 hover:bg-rose-950/80 hover:border-rose-600/60",
+    "bg-red-950/70 border border-red-700/50 hover:bg-red-950/80 hover:border-red-600/60",
+    "bg-orange-950/70 border border-orange-700/50 hover:bg-orange-950/80 hover:border-orange-600/60",
+    "bg-amber-950/70 border border-amber-700/50 hover:bg-amber-950/80 hover:border-amber-600/60",
+    "bg-cyan-950/70 border border-cyan-700/50 hover:bg-cyan-950/80 hover:border-cyan-600/60",
+    "bg-teal-950/70 border border-teal-700/50 hover:bg-teal-950/80 hover:border-teal-600/60",
   ]
-
+  
   // Use random color for variety
   const colorClass = colors[Math.floor(Math.random() * colors.length)]
-
+  
   return (
     <div
       ref={ref}
       className={cn(
-        `rounded-2xl ${colorClass} border backdrop-blur-sm text-white shadow-lg transition-all hover:shadow-xl hover:scale-[1.02]`,
+        `rounded-2xl ${colorClass} backdrop-blur-md text-white shadow-lg transition-all hover:shadow-xl hover:scale-[1.02]`,
         className,
       )}
       {...props}

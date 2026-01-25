@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useAuth } from "@/components/contexts"
 import { getApiUrl } from "@/lib/api"
-import { Header } from "@/components/Header"
 
 interface PlanStep {
   step: number
@@ -186,9 +185,7 @@ export default function PlansPage() {
 
   return (
     <div className="min-h-screen bg-black/95 relative overflow-hidden">
-      <Header />
-
-      <main className="max-w-5xl mx-auto px-4 pt-24 pb-8">
+      <main className="max-w-5xl mx-auto px-4 pt-8 pb-8">
         {/* New plan button */}
         <div className="mb-8">
           <Link href="/plans/create" className="block">

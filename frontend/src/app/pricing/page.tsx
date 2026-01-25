@@ -6,7 +6,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { Header } from "@/components/Header"
 
 const plans = [
   {
@@ -98,7 +97,6 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-black/95 relative overflow-hidden">
-      <Header />
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/50 rounded-full blur-3xl animate-blob"></div>
         <div
