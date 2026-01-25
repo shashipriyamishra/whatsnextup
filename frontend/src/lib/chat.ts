@@ -8,7 +8,7 @@ export const sendMessage = async (message: string) => {
   const token = await auth.currentUser?.getIdToken()
 
   try {
-    const res = await fetch(`${API_BASE}/chat`, {
+    const res = await fetch(`${API_BASE}/api/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

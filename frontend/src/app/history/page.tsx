@@ -47,19 +47,22 @@ export default function HistoryPage() {
 
         if (mounted) {
           setConversations(historyData || [])
-          setStats(
-            statsData
-              ? {
-                  ...statsData,
-                  agents_used: Array.isArray(statsData.agents_used)
-                    ? statsData.agents_used
-                    : [],
-                }
-              : null,
-          )
+          // Ensure statsData is an object before processing
+          if (statsData && typeof statsData === "object") {
+            setStats({
+              total_conversations: statsData.total_conversations ?? 0,
+              total_messages: statsData.total_messages ?? 0,
+              agents_used: Array.isArray(statsData.agents_used)
+                ? statsData.agents_used
+                : [],
+            })
+          } else {
+            setStats(null)
+          }
         }
       } catch (error) {
         console.error("Failed to load history:", error)
+        if (mounted) setStats(null)
       } finally {
         if (mounted) setLoading(false)
       }
