@@ -107,7 +107,7 @@ export default function AgentsPage() {
             </Button>
           </div>
 
-          {agents.length > 0 ? (
+          {agents && agents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {agents.map((agent, index) => (
                 <AgentCard
