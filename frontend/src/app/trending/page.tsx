@@ -14,11 +14,13 @@ import Link from "next/link"
 export default function TrendingPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const { data: feed, loading, refresh: refreshFeed } = useCachedData(
-    "getPersonalizedFeed",
-    () => getPersonalizedFeed(),
-    { initialState: {} as PersonalizedFeed },
-  )
+  const {
+    data: feed,
+    loading,
+    refresh: refreshFeed,
+  } = useCachedData("getPersonalizedFeed", () => getPersonalizedFeed(), {
+    initialState: {} as PersonalizedFeed,
+  })
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
 
   useEffect(() => {
@@ -31,7 +33,6 @@ export default function TrendingPage() {
       setLastUpdated(new Date())
     }
   }, [authLoading, user, router, feed])
-  }, [user, authLoading, router])
 
   if (loading) {
     return (
@@ -101,9 +102,7 @@ export default function TrendingPage() {
                   Refreshing...
                 </span>
               ) : (
-                <span className="flex items-center gap-2">
-                  🔄 Refresh Feed
-                </span>
+                <span className="flex items-center gap-2">🔄 Refresh Feed</span>
               )}
             </Button>
           </div>

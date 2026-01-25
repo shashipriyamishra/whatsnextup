@@ -13,11 +13,13 @@ import Link from "next/link"
 export default function AgentsPage() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const { data: agents, loading, refresh: refreshAgents } = useCachedData(
-    "getAllAgents",
-    () => getAllAgents(),
-    { initialState: [] as Agent[] },
-  )
+  const {
+    data: agents,
+    loading,
+    refresh: refreshAgents,
+  } = useCachedData("getAllAgents", () => getAllAgents(), {
+    initialState: [] as Agent[],
+  })
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -78,33 +80,33 @@ export default function AgentsPage() {
       {/* Content */}
       <main className="relative z-10 px-4 md:px-6 py-8 flex-1">
         <div className="max-w-7xl mx-auto">
-            <div className="mb-8 flex items-center justify-between">
-              <div>
-                <h2 className="text-4xl font-black text-white mb-3">
-                  🤖 Your AI Agents
-                </h2>
-                <p className="text-white/70">
-                  Specialized AI assistants ready to help you with specific areas of
-                  your life
-                </p>
-              </div>
-              <Button
-                onClick={() => refreshAgents(true)}
-                disabled={loading}
-                variant="outline"
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20 transition"
-              >
-                {loading ? (
-                  <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    Refreshing...
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    🔄 Refresh
-                  </span>
-                )}
-              </Button>
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h2 className="text-4xl font-black text-white mb-3">
+                🤖 Your AI Agents
+              </h2>
+              <p className="text-white/70">
+                Specialized AI assistants ready to help you with specific areas
+                of your life
+              </p>
+            </div>
+            <Button
+              onClick={() => refreshAgents(true)}
+              disabled={loading}
+              variant="outline"
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 transition"
+            >
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  Refreshing...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">🔄 Refresh</span>
+              )}
+            </Button>
+          </div>
+
           {agents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {agents.map((agent, index) => (
