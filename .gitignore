@@ -33,8 +33,7 @@ firebase-adminsdk-*.json
 *.pem
 
 # Local Documentation (not for repo)
-PR_REVIEW_CHECKLIST.md
-PRODUCTION_ISSUES_AUDIT.md
+*.md
 *.local.md
 *.key
 *.pem
