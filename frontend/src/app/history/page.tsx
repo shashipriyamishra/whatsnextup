@@ -165,7 +165,7 @@ export default function HistoryPage() {
               <Card>
                 <CardContent className="py-6">
                   <div className="text-3xl font-bold text-white">
-                    {stats.total_conversations}
+                    {stats?.total_conversations ?? 0}
                   </div>
                   <div className="text-white/60 text-sm">
                     Total Conversations
@@ -175,7 +175,7 @@ export default function HistoryPage() {
               <Card>
                 <CardContent className="py-6">
                   <div className="text-3xl font-bold text-white">
-                    {stats.total_messages}
+                    {stats?.total_messages ?? 0}
                   </div>
                   <div className="text-white/60 text-sm">Total Messages</div>
                 </CardContent>
@@ -183,7 +183,7 @@ export default function HistoryPage() {
               <Card>
                 <CardContent className="py-6">
                   <div className="text-3xl font-bold text-white">
-                    {stats.agents_used.length}
+                    {stats.agents_used?.length ?? 0}
                   </div>
                   <div className="text-white/60 text-sm">Agents Used</div>
                 </CardContent>
