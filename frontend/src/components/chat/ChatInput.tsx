@@ -27,12 +27,10 @@ export const ChatInput = React.memo(function ChatInput() {
   const token = useToken()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Get Zustand setters
-  const { setInput, setLoading, addMessage } = useChatStore((state) => ({
-    setInput: state.setInput,
-    setLoading: state.setLoading,
-    addMessage: state.addMessage,
-  }))
+  // Get Zustand setters - use stable selectors to avoid infinite loops
+  const setInput = useChatStore((state) => state.setInput)
+  const setLoading = useChatStore((state) => state.setLoading)
+  const addMessage = useChatStore((state) => state.addMessage)
 
   // Memoized send handler
   const handleSend = useCallback(async () => {
